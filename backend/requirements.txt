@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+scikit-learn
+pandas
+numpy
+transformers
+torch
+pdfplumber
+pytesseract
+pillow
+python-dotenv

@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield EDU - URL Scan</title>
-    <!-- Google Fonts for typography -->
+    <title>About Us - CyberShield EDU</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
@@ -40,7 +39,7 @@
             <nav class="sidebar-nav" role="navigation" aria-label="Main Navigation">
                 <div class="nav-section-title">Detection Tools</div>
 
-                <a href="index.html" class="nav-item" aria-label="Text Scanner">
+                <a href="index.html" class="nav-item">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -49,7 +48,7 @@
                     <span>Text Scan</span>
                 </a>
 
-                <a href="url-scan.html" class="nav-item active">
+                <a href="url-scan.html" class="nav-item">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -114,7 +113,7 @@
 
                 <div class="nav-section-title mg-top">Information</div>
 
-                <a href="about.html" class="nav-item" aria-label="About CyberShield">
+                <a href="about.html" class="nav-item active" aria-label="About CyberShield">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
@@ -136,61 +135,42 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="main-content">
             <div class="content-wrapper">
-
-                <!-- URL Scan View -->
-                <div id="url-scan-view" class="view-section active">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <div class="card-icon-wrapper">
-                                <svg class="card-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-                                </svg>
-                            </div>
-                            <div class="card-title-content">
-                                <h2>URL Risk Analyzer</h2>
-                                <p>Verify the safety of links before clicking.</p>
-                            </div>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <div class="card-icon-wrapper">
+                            <svg class="card-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                            </svg>
                         </div>
-
-                        <div class="card-body">
-                            <div class="input-glow-wrapper" style="margin-bottom: 24px;">
-                                <!-- Standard inline styling mixed with class to ensure it looks just like text scan -->
-                                <input type="url" id="urlScanInput" placeholder="http://example.com/login"
-                                    style="width: 100%; padding: 1.25rem; font-size: 1rem; color: #f8fafc; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(51, 65, 85, 0.5); border-radius: 0.75rem; outline: none; transition: all 0.2s;"
-                                    onfocus="this.style.borderColor='rgba(96, 165, 250, 0.5)'; this.style.boxShadow='0 0 0 2px rgba(59, 130, 246, 0.25)';"
-                                    onblur="this.style.borderColor='rgba(51, 65, 85, 0.5)'; this.style.boxShadow='none';">
-                            </div>
-
-                            <button id="btn-url-scan" class="btn-primary" style="width: 100%;">
-                                <span class="btn-text">Run AI Analysis</span>
-                                <div class="btn-loader hidden">
-                                    <span class="pulse-text">ANALYZING URL</span>
-                                    <div class="loader-bars">
-                                        <div class="bar bar-1"></div>
-                                        <div class="bar bar-2"></div>
-                                        <div class="bar bar-3"></div>
-                                    </div>
-                                </div>
-                            </button>
+                        <div class="card-title-content">
+                            <h2>About CyberShield-EDU</h2>
+                            <p>Our mission to secure the digital future through education and AI.</p>
                         </div>
                     </div>
 
-                    <!-- Result Container (Hidden by default) -->
-                    <div id="url-result-container" class="result-container hidden uppercase">
-                        <!-- Filled by JS -->
+                    <div class="card-body">
+                        <section class="info-section">
+                            <h3 class="gradient-text">Our Mission</h3>
+                            <p>CyberShield-EDU was born from a simple observation: most cyberattacks succeed not because of failing technology, but because of human error. Our goal is to empower users with the tools and knowledge needed to identify and thwart scams before they happen.</p>
+                        </section>
+
+                        <section class="info-section mg-top">
+                            <h3 class="gradient-text">Advanced AI Technology</h3>
+                            <p>We leverage state-of-the-art Deep Learning models to analyze messages, URLs, images, and documents. Our AI is trained on hundreds of thousands of scam samples to identify the subtle patterns that humans often miss.</p>
+                        </section>
+
+                        <section class="info-section mg-top">
+                            <h3 class="gradient-text">Gamified Learning</h3>
+                            <p>We believe learning should be engaging. Our integrated gamification system rewards students with XP and badges as they use our tools and complete educational quizzes, turning cyber-safety into a rewarding journey.</p>
+                        </section>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- Application Logic -->
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
 </body>

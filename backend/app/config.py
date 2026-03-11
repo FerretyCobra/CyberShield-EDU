@@ -12,6 +12,8 @@ class Settings(BaseModel):
     
     # Security & CORS
     SECRET_KEY: str = os.getenv("SECRET_KEY", "placeholder-key-for-dev")
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     # Parse ALLOWED_ORIGINS from string like "['*']" or "http://localhost:5173"
     ALLOWED_ORIGINS: list = ["*"]
     
@@ -36,5 +38,16 @@ class Settings(BaseModel):
     # Path Configuration
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     MODEL_PATH: str = os.path.join(BASE_DIR, "app", "models")
+
+    # Database Configuration
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "mysql+mysqlconnector://root:password@localhost/cybershield")
+    
+    # Celery & Redis Configuration
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", REDIS_URL)
+    CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", REDIS_URL)
+
+    # External APIs
+    URLSCAN_API_KEY: str = os.getenv("URLSCAN_API_KEY", "")
 
 settings = Settings()

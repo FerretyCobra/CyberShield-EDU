@@ -11,3 +11,7 @@ pdfplumber
 pytesseract
 pillow
 python-dotenv
+aiohttp
+beautifulsoup4
+opencv-python
+python-Levenshtein

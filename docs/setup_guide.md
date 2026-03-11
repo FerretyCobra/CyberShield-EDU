@@ -1,81 +1,86 @@
-# Application Setup Guide
+# CyberShield-EDU: Complete Deployment Guide
 
-This guide details the steps required to set up the CyberShield-EDU project locally.
+Follow these steps to set up the full CyberShield-EDU platform on a new Windows machine.
 
-## 1. System Requirements
-- **Python 3.8 or higher** (Backend and AI Models)
-- **Node.js 16 or higher** (Frontend React App)
-- **Tesseract OCR** (Required for Image Scanning)
+## 1. Prerequisites
+Ensure the following are installed:
+- **Python 3.10 or higher**: [Download here](https://www.python.org/downloads/)
+- **XAMPP**: For MySQL database. [Download here](https://www.apachefriends.org/index.html)
+- **Redis for Windows**: Essential for background tasks. [Download here](https://github.com/tporadowski/redis/releases)
+- **Git** (Optional): For cloning the repository.
+- **Tesseract OCR**: Required for the Image Scanner module. [Download here](https://github.com/UB-Mannheim/tesseract/wiki).
 
-## 2. Installing Tesseract OCR (Phase 6 Requirement)
-The Image/Screenshot analysis module uses `pytesseract`. The underlying OCR engine must be installed on your operating system.
+---
 
-### Windows
-1. Download the Windows installer from [UB-Mannheim Tesseract Wiki](https://github.com/UB-Mannheim/tesseract/wiki).
-2. Run the installer. Leave the default installation path (`C:\Program Files\Tesseract-OCR`).
-3. **Environment Variable**: You must add `C:\Program Files\Tesseract-OCR` to your System's `PATH` environment variable.
-4. Restart your terminal or command prompt.
+## 2. Database Setup (XAMPP)
+1.  Open the **XAMPP Control Panel**.
+2.  Start **MySQL**.
+3.  Click the **Admin** button next to MySQL to open phpMyAdmin.
+4.  Create a new database named `cybershield`.
+5.  Import the SQL file located at: `backend/setup_xampp.sql`.
+    - *Alternatively, run the SQL script via the terminal in the MySQL bin folder.*
 
-### macOS
-```bash
-brew install tesseract
-```
-
-### Linux (Ubuntu/Debian)
-```bash
-sudo apt update
-sudo apt install tesseract-ocr
-```
+---
 
 ## 3. Backend Setup
+1.  Open a terminal in the `backend` folder.
+2.  **Create a Virtual Environment**:
+    ```bash
+    python -m venv venv
+    ```
+3.  **Activate the Environment**:
+    ```bash
+    venv\Scripts\activate
+    ```
+4.  **Install Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+5.  **Configure Environment Variables**:
+    Create a file named `.env` in the `backend` folder with the following content:
+    ```env
+    DEBUG=True
+    APP_NAME="CyberShield EDU"
+    SECRET_KEY="cyeber-shield-dev-secret-!@#"
+    DATABASE_URL=mysql+mysqlconnector://root@localhost/cybershield
+    REDIS_URL=redis://localhost:6379/0
+    URLSCAN_API_KEY="your-api-key-here"
+    ```
+6.  **Run the Server**:
+    ```bash
+    python main.py
+    ```
+    *The API will be available at `http://localhost:8000`.*
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a Virtual Environment:
-   ```bash
-   # Windows
-   python -m venv venv
-   .\venv\Scripts\activate
+---
 
-   # macOS/Linux
-   python -m venv venv
-   source venv/bin/activate
-   ```
-3. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Configure Environment Variables:
-   - Create a `.env` file in the `backend/` directory.
-   - Example configuration:
-     ```env
-     APP_NAME="CyberShield EDU API"
-     SECRET_KEY="your-super-secret-key"
-     DEBUG=True
-     ALLOWED_ORIGINS="*"
-     ```
-5. Run the Server:
-   ```bash
-   python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 --reload
-   ```
-   *Note: Upon first launch, the `transformers` library will download the DistilBERT model. This may take a few minutes depending on your internet connection.*
+## 4. Background Workers (Celery)
+1.  Ensure **Redis** is running (Start `redis-server.exe`).
+2.  Open a **new** terminal in the `backend` folder.
+3.  **Activate the Environment**:
+    ```bash
+    venv\Scripts\activate
+    ```
+4.  **Start the Worker**:
+    ```bash
+    celery -A app.tasks worker --loglevel=info -P solo
+    ```
+    *Note: The `-P solo` flag is required for stability on Windows.*
 
-## 4. Frontend Setup
+---
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install Node dependencies:
-   ```bash
-   npm install
-   ```
-3. Configure API Connection:
-   - Ensure the `API_BASE_URL` in `frontend/src/services/api.js` points to your running backend (e.g., `http://localhost:8080/api/v1`).
-4. Run the Development Server:
-   ```bash
-   npm run dev
-   ```
-5. Open your browser and navigate to `http://localhost:5173`.
+## 5. Frontend Setup
+The project primarily uses the premium Vanilla implementation.
+1.  **Option A (Direct)**: Simply open `frontend_vanilla/index.html` in any modern browser.
+2.  **Option B (Served)**: In a new terminal in the `frontend_vanilla` folder, run:
+    ```bash
+    python -m http.server 8080
+    ```
+    *Then navigate to `http://localhost:8080`.*
+
+---
+
+## 6. Verification
+- **Login**: Use `admin` / `admin123` to test the Admin Panel.
+- **Scanning**: Try pasting text in the Text Scan tool; look for the "Analysis Complete" notification.
+- **Themes**: Click the sun/moon icon in the sidebar to test Light/Dark modes.

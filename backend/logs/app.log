@@ -1012,3 +1012,66 @@ Congratulations! You have been selected f...
 2026-03-10 05:26:50,905 | INFO     | CyberShield:log_requests:29 - Response status: 200
 2026-03-10 05:27:12,827 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /awareness
 2026-03-10 05:27:12,829 | ERROR    | CyberShield:global_exception_handler:18 - Global Error: list indices must be integers or slices, not str | Path: /awareness
+2026-03-10 21:06:13,524 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-10 21:06:14,049 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-10 21:06:14,478 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-10 21:06:14,687 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-10 21:06:14,899 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-10 21:06:15,127 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-10 21:10:00,922 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-10 21:10:01,375 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-10 21:10:01,641 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-10 21:10:01,859 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-10 21:10:02,068 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-10 21:10:02,284 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-10 21:12:11,659 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-10 21:12:12,109 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-10 21:12:12,364 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-10 21:12:12,577 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-10 21:12:12,793 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-10 21:12:13,009 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-10 21:12:34,356 | INFO     | CyberShield:log_requests:27 - Incoming request: HEAD /
+2026-03-10 21:12:34,356 | INFO     | CyberShield:log_requests:29 - Response status: 405
+2026-03-10 21:12:34,357 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /
+2026-03-10 21:12:34,358 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-10 21:14:20,950 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /
+2026-03-10 21:14:20,950 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-10 21:14:21,387 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /favicon.ico
+2026-03-10 21:14:21,387 | INFO     | CyberShield:log_requests:29 - Response status: 404
+2026-03-10 21:14:26,332 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /docs
+2026-03-10 21:14:26,333 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-10 21:14:26,515 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /api/v1/openapi.json
+2026-03-10 21:14:26,537 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:30:27,881 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-11 00:30:28,469 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-11 00:30:28,887 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-11 00:30:29,095 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-11 00:30:29,327 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-11 00:30:29,538 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-11 00:31:29,294 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /
+2026-03-11 00:31:29,297 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:31:29,345 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /favicon.ico
+2026-03-11 00:31:29,348 | INFO     | CyberShield:log_requests:29 - Response status: 404
+2026-03-11 00:31:47,645 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /docs
+2026-03-11 00:31:47,647 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:31:48,236 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /api/v1/openapi.json
+2026-03-11 00:31:48,262 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:39:47,633 | INFO     | CyberShield:log_requests:27 - Incoming request: POST /detect_url
+2026-03-11 00:39:47,637 | INFO     | CyberShield:log_requests:29 - Response status: 404
+2026-03-11 00:39:56,354 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /docs
+2026-03-11 00:39:56,359 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:39:56,499 | INFO     | CyberShield:log_requests:27 - Incoming request: GET /api/v1/openapi.json
+2026-03-11 00:39:56,511 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:41:50,155 | INFO     | CyberShield:log_requests:27 - Incoming request: POST /api/v1/detect/text
+2026-03-11 00:41:50,202 | INFO     | CyberShield:log_requests:29 - Response status: 422
+2026-03-11 00:42:44,075 | INFO     | CyberShield:log_requests:27 - Incoming request: POST /api/v1/detect/text
+2026-03-11 00:42:44,078 | INFO     | CyberShield:detect_text:18 - Received text for analysis: URGENT: Click here...
+2026-03-11 00:42:44,917 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=0.95
+2026-03-11 00:42:44,920 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-11 00:42:44,986 | INFO     | CyberShield:log_requests:27 - Incoming request: POST /api/v1/detect/url
+2026-03-11 00:42:44,993 | INFO     | CyberShield:detect_url:18 - Received URL for analysis: http://paypa1.com
+2026-03-11 00:42:44,995 | INFO     | CyberShield:analyze:116 - Analyzing URL: http://paypa1.com
+2026-03-11 00:42:45,003 | INFO     | CyberShield:analyze:198 - Static score inconclusive. Initializing Deep Scan web execution...
+2026-03-11 00:42:46,193 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=0.98
+2026-03-11 00:42:46,194 | INFO     | CyberShield:analyze:226 - URL Analysis Complete: SCAM [98.1%] - Score: 0.75
+2026-03-11 00:42:46,197 | INFO     | CyberShield:log_requests:29 - Response status: 200

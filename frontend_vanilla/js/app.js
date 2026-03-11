@@ -1,7 +1,97 @@
-// app.js - Main Application Logic for Vanilla UI
+// Session Guard & Theme Init
+(function() {
+    // Theme Loading
+    const mode = localStorage.getItem('themeMode') || 'dark';
+    const accent = localStorage.getItem('themeAccent') || 'classic';
+    document.body.classList.add(`mode-${mode}`);
+    document.body.classList.add(`accent-${accent}`);
 
-// --- Shared Logic ---
-// Removed SPA switchView logic for Multi-Page Architecture.
+    const publicPages = ['login.html', 'signup.html'];
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    if (!window.api.auth.isLoggedIn() && !publicPages.includes(currentPage)) {
+        window.location.href = 'login.html';
+    }
+})();
+
+function setThemeMode(mode) {
+    document.body.classList.remove('mode-light', 'mode-dark');
+    document.body.classList.add(`mode-${mode}`);
+    localStorage.setItem('themeMode', mode);
+}
+
+function setThemeAccent(accent) {
+    document.body.classList.remove('accent-classic', 'accent-emerald', 'accent-crimson');
+    document.body.classList.add(`accent-${accent}`);
+    localStorage.setItem('themeAccent', accent);
+}
+
+// User Profile & Sidebar Logic
+async function initSidebar() {
+    const footer = document.querySelector('.sidebar-footer');
+    
+        const currentMode = localStorage.getItem('themeMode') || 'dark';
+        const currentAccent = localStorage.getItem('themeAccent') || 'classic';
+
+        footer.innerHTML = `
+            <div class="user-profile-gamified">
+                <!-- Theme Settings -->
+                <div class="theme-settings">
+                    <div class="theme-mode-toggle">
+                        <span class="settings-label">Appearance</span>
+                        <div class="mode-buttons">
+                            <button class="mode-btn ${currentMode === 'light' ? 'active' : ''}" onclick="setThemeMode('light'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');" title="Light Mode">☀️</button>
+                            <button class="mode-btn ${currentMode === 'dark' ? 'active' : ''}" onclick="setThemeMode('dark'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');" title="Dark Mode">🌙</button>
+                        </div>
+                    </div>
+                    <div class="theme-accent-picker">
+                        <span class="settings-label">Accent Color</span>
+                        <div class="accent-dots">
+                            <button class="accent-dot dot-classic ${currentAccent === 'classic' ? 'active' : ''}" onclick="setThemeAccent('classic'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');" title="Classic Indigo"></button>
+                            <button class="accent-dot dot-emerald ${currentAccent === 'emerald' ? 'active' : ''}" onclick="setThemeAccent('emerald'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');" title="Emerald Green"></button>
+                            <button class="accent-dot dot-crimson ${currentAccent === 'crimson' ? 'active' : ''}" onclick="setThemeAccent('crimson'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');" title="Crimson Rose"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-main">
+                    <div class="avatar-glow">${initials}</div>
+                    <div class="user-details">
+                        <span class="username">${user.username}</span>
+                        <div class="level-badge">LVL ${user.level}</div>
+                    </div>
+                </div>
+                <div class="xp-container">
+                    <div class="xp-header">
+                        <span>Progression</span>
+                        <span>${xpProgress}/100 XP</span>
+                    </div>
+                    <div class="xp-bar-bg">
+                        <div class="xp-bar-fill" style="width: ${xpProgress}%"></div>
+                    </div>
+                </div>
+                <button id="btn-logout" class="btn-logout-minimal">
+                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            window.api.auth.logout();
+        });
+    } catch (err) {
+        console.error("Sidebar init failed:", err);
+        // Fallback to local storage if API fails
+        const user = window.api.auth.getCurrentUser();
+        if (user && footer) {
+            footer.innerHTML = `<button id="btn-logout" class="btn-logout">Logout ${user.username}</button>`;
+            document.getElementById('btn-logout').addEventListener('click', () => window.api.auth.logout());
+        }
+    }
+}
 
 
 // --- Text Scan Logic ---
@@ -191,11 +281,8 @@ if (textScanBtn && textScanInput && textResultContainer) {
             // Note: window.api is defined in api.js
             const resultWrapper = await window.api.detection.analyzeText(text);
 
-            // Artificial delay for UI dramatic effect (similar to React version)
-            setTimeout(() => {
-                renderScanResult(resultWrapper, textResultContainer);
-                setLoadingState(textScanBtn, false);
-            }, 800);
+            renderScanResult(resultWrapper, textResultContainer);
+            setLoadingState(textScanBtn, false);
 
         } catch (error) {
             console.error("Scan Error:", error);
@@ -242,10 +329,8 @@ if (urlScanBtn && urlScanInput && urlResultContainer) {
         try {
             const resultWrapper = await window.api.detection.analyzeUrl(url);
 
-            setTimeout(() => {
-                renderScanResult(resultWrapper, urlResultContainer);
-                setLoadingState(urlScanBtn, false);
-            }, 800);
+            renderScanResult(resultWrapper, urlResultContainer);
+            setLoadingState(urlScanBtn, false);
 
         } catch (error) {
             console.error("URL Scan Error:", error);
@@ -336,16 +421,24 @@ function setupFileUploader({ dropZoneId, fileInputId, btnId, nameDisplayId, resu
         formData.append('file', selectedFile);
 
         try {
-            const resultWrapper = await apiCall(formData);
+            const response = await apiCall(formData);
 
-            setTimeout(() => {
+            if (response.task_id) {
+                // Asynchronous flow
+                nameDisplay.querySelector('span').textContent = "Processing on server...";
+                const resultWrapper = await window.api.tasks.pollUntilFinished(response.task_id);
                 renderScanResult(resultWrapper, resultContainer);
-                setLoadingState(scanBtn, false);
-            }, 800);
+            } else {
+                // Synchronous flow (Text/URL)
+                renderScanResult(response, resultContainer);
+            }
+            
+            setLoadingState(scanBtn, false);
+            nameDisplay.querySelector('span').textContent = selectedFile.name;
 
         } catch (error) {
             console.error("File Scan Error:", error);
-            alert("Analysis failed. Ensure the FastAPI backend is running and the file is valid.");
+            alert(error.message || "Analysis failed. Ensure the server is running.");
             setLoadingState(scanBtn, false);
         }
     });
@@ -420,17 +513,14 @@ async function initEducationCenter() {
             `;
         }).join('');
 
-        // Brief artificial delay for the loading animation effect
-        setTimeout(() => {
-            grid.innerHTML = cardsHtml;
-            // Add staggered fade in animation
-            const cards = grid.querySelectorAll('.edu-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(10px)';
-                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
-            });
-        }, 600);
+        grid.innerHTML = cardsHtml;
+        // Add staggered fade in animation
+        const cards = grid.querySelectorAll('.edu-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+            card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+        });
 
     } catch (error) {
         console.error('Error loading awareness content:', error);
@@ -461,16 +551,30 @@ function initAdminDashboard() {
     const addKeywordForm = document.getElementById('addKeywordForm');
     const newKeywordInput = document.getElementById('newKeywordInput');
 
-    // 1. Mock Authentication
-    loginBtn.addEventListener('click', () => {
-        if (passwordInput.value === 'admin123') {
-            passwordGate.style.display = 'none';
-            adminContent.style.display = 'block';
-            adminContent.style.animation = 'fadeIn 0.5s ease-out forwards';
-            loadAdminData();
-        } else {
-            alert('Incorrect password. Please use admin123');
+    // 1. Authentication Check
+    const user = window.api.auth.getCurrentUser();
+    if (user && user.role === 'admin') {
+        passwordGate.style.display = 'none';
+        adminContent.style.display = 'block';
+        loadAdminData();
+    }
+
+    loginBtn.addEventListener('click', async () => {
+        const password = passwordInput.value;
+        const username = 'admin'; // For standard admin login via dashboard gate
+        
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Verifying...';
+
+        try {
+            await window.api.auth.login(username, password);
+            window.location.reload(); // Refresh to trigger the role check above
+        } catch (err) {
+            alert('Invalid admin credentials.');
             passwordInput.value = '';
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Enter Dashboard';
         }
     });
 
@@ -498,6 +602,51 @@ function initAdminDashboard() {
                 </div>
             `;
         }
+    }
+
+    function renderCharts(trends, distribution) {
+        const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+        const distCtx = document.getElementById('distributionChart').getContext('2d');
+
+        // Trends Chart (Line)
+        new Chart(trendsCtx, {
+            type: 'line',
+            data: {
+                labels: trends.map(t => t.date),
+                datasets: [{
+                    label: 'Scans',
+                    data: trends.map(t => t.count),
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Distribution Chart (Doughnut)
+        new Chart(distCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(distribution),
+                datasets: [{
+                    data: Object.values(distribution),
+                    backgroundColor: ['#38bdf8', '#f59e0b', '#f43f5e', '#10b981'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
+                cutout: '70%'
+            }
+        });
     }
 
     // 3. Render Keywords
@@ -559,77 +708,21 @@ function initAdminDashboard() {
     }
 }
 
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    initSidebar();
+    initMobileMenu();
     initEducationCenter();
     initAdminDashboard();
-}); ventName => {
-    dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
 });
 
-['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-});
-
-dropZone.addEventListener('drop', (e) => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    if (files.length > 0) {
-        fileInput.files = files; // Sync input
-        handleFile(files[0]);
+// Mobile Toggle Logic
+function initMobileMenu() {
+    const toggle = document.getElementById('mobile-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (toggle && sidebar) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
     }
-});
-
-// Scan Button Logic
-scanBtn.addEventListener('click', async () => {
-    if (!selectedFile) return;
-
-    // Hide previous results
-    resultContainer.classList.add('hidden');
-    resultContainer.innerHTML = '';
-
-    setLoadingState(scanBtn, true);
-
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    try {
-        const resultWrapper = await apiCall(formData);
-
-        setTimeout(() => {
-            renderScanResult(resultWrapper, resultContainer);
-            setLoadingState(scanBtn, false);
-        }, 800);
-
-    } catch (error) {
-        console.error("File Scan Error:", error);
-        alert("Analysis failed. Ensure the FastAPI backend is running and the file is valid.");
-        setLoadingState(scanBtn, false);
-    }
-});
-
-// Initial state
-scanBtn.disabled = true;
 }
-
-// Initialize PDF Scanner
-setupFileUploader({
-    dropZoneId: 'pdfDropZone',
-    fileInputId: 'pdfFileInput',
-    btnId: 'btn-pdf-scan',
-    nameDisplayId: 'pdfFileNameDisplay',
-    resultContainerId: 'pdf-result-container',
-    apiCall: window.api.detection.analyzePdf,
-    allowedTypes: ['application/pdf']
-});
-
-// Initialize Image Scanner
-setupFileUploader({
-    dropZoneId: 'imageDropZone',
-    fileInputId: 'imageFileInput',
-    btnId: 'btn-image-scan',
-    nameDisplayId: 'imageFileNameDisplay',
-    resultContainerId: 'image-result-container',
-    apiCall: window.api.detection.analyzeImage,
-    allowedTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/*']
-});

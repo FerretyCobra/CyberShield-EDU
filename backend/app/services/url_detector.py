@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from app.utils.logger import logger
 from app.config import settings
 from app.services.text_detector import text_detector
+from app.services.external_intel import external_intel
 
 try:
     from Levenshtein import distance as lev_distance
@@ -186,6 +187,14 @@ class URLDetectorService:
             risk_score = max(0, risk_score - 0.5)
             reasoning.append("Domain matches known trusted configuration")
 
+
+        # --- EXTERNAL INTEL SCAN ---
+        intel_result = await external_intel.check_url_reputation(url)
+        if intel_result and intel_result["malicious"]:
+            risk_score += 0.6
+            reasoning.append(f"External Threat Intel (URLScan): URL flagged as malicious (Score: {intel_result['score']})")
+        elif intel_result:
+            reasoning.append("External Threat Intel: No immediate threats found in global databases")
 
         # --- DEEP SCAN AI INTEGRATION ---
         # Only run Deep Scan if the url is not already definitively blocked (>0.8) and not a short-circuit error.

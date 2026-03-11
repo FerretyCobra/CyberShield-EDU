@@ -57,7 +57,7 @@ For university IT administrators and researchers:
 
 CyberShield-EDU is engineered with a modern, decoupled frontend-backend architecture to ensure scalability, responsiveness, and clean separation of concerns.
 
-- **Frontend Configuration:** The client interface is a React 18 Single Page Application (SPA) utilizing Vite for lightning-fast builds. A sleek, Glassmorphism-inspired UI is built using Tailwind CSS. It communicates securely with the backend via RESTful APIs using Axios. An alternative Vanilla HTML/JS/CSS frontend is also available in `frontend_vanilla`.
+- **Frontend Configuration:** The primary client interface is a premium Vanilla HTML/JS/CSS implementation located in `frontend_vanilla`. It features a sleek, Glassmorphism-inspired UI with full responsive support and a multi-theme system. It communicates securely with the backend via RESTful APIs using Axios. (A legacy React version is also available in `frontend`).
 - **Backend Configuration:** A high-performance Python server built on the FastAPI framework. It handles asynchronous requests, orchestrates machine learning inference using Hugging Face Transformers, validates schemas with Pydantic, and generates automated OpenAPI documentation.
 
 For a deep dive, see the [Architecture Overview](./docs/architecture.md).
@@ -161,20 +161,6 @@ Expand your knowledge regarding the platform's inner workings by exploring the `
 - 📖 **[Setup & Installation Guide](./docs/setup_guide.md)**: Deep dive into environment variables and troubleshooting.
 - 🏗️ **[Architecture Overview](./docs/architecture.md)**: Explore the Mermaid diagrams and system design principles.
 - 🔌 **[API Documentation](./docs/api_documentation.md)**: A complete reference for the RESTful endpoints available.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the open-source and educational community! 
-If you have ideas for new features, heuristic rules, or find a bug, please:
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
-
-Please see the [CONTRIBUTING.md](./CONTRIBUTING.md) file for more detailed contribution guidelines.
 
 ---
 

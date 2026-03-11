@@ -1,11 +1,14 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException
-from app.utils.logger import logger
 from app.services.pdf_analyzer import pdf_analyzer
+from app.tasks import process_pdf_task
+from app.utils.auth import get_current_user
+from app.utils.logger import logger
+from app.main import limiter
 
 router = APIRouter()
 
 @router.post("/pdf")
-async def detect_pdf(file: UploadFile = File(...)):
+@limiter.limit("5/minute")
+async def detect_pdf(req: Request, file: UploadFile = File(...), current_user: Optional[dict] = Depends(get_current_user)):
     if not file.filename.lower().endswith('.pdf'):
         throw_msg = "Only PDF files are supported"
         logger.warning(throw_msg)
@@ -15,8 +18,13 @@ async def detect_pdf(file: UploadFile = File(...)):
     
     try:
         content = await file.read()
-        result = await pdf_analyzer.analyze(content, file.filename)
-        return result
+        # Trigger background task
+        task = process_pdf_task.delay(
+            content, 
+            file.filename, 
+            user_id=current_user.get("id") if current_user else None
+        )
+        return {"task_id": task.id, "status": "processing", "message": "Analysis started in background"}
     except Exception as e:
         logger.error(f"PDF detection route failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Error during PDF document analysis")

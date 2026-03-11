@@ -1,26 +1,111 @@
 // api.js - Vanilla JS wrapper for FastAPI backend
 
 const API_BASE_URL = 'http://localhost:8000/api/v1';
+const ROOT_API_URL = 'http://localhost:8000';
+
+/**
+ * Helper to get the auth token from localStorage.
+ */
+const getAuthToken = () => localStorage.getItem('access_token');
+
+/**
+ * Helper to create headers with Auth token if available.
+ */
+const getHeaders = (contentType = 'application/json') => {
+    const headers = {};
+    if (contentType) headers['Content-Type'] = contentType;
+    const token = getAuthToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    return headers;
+};
+
+const authApi = {
+    async login(username, password) {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Login failed');
+            }
+            const data = await response.json();
+            localStorage.setItem('access_token', data.access_token);
+            if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+            return data;
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
+        }
+    },
+
+    async register(username, email, password) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Registration failed');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Registration error:', error);
+            throw error;
+        }
+    },
+
+    logout() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    },
+
+    isLoggedIn() {
+        return !!getAuthToken();
+    },
+
+    getCurrentUser() {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    },
+
+    async getMe() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error('Failed to fetch user profile');
+            const user = await response.json();
+            localStorage.setItem('user', JSON.stringify(user));
+            return user;
+        } catch (error) {
+            console.error('getMe error:', error);
+            throw error;
+        }
+    }
+};
 
 const detectionApi = {
-    /**
-     * Analyze a text message for scam indicators.
-     * @param {string} text - The text to analyze.
-     * @returns {Promise<Object>} The analysis result.
-     */
     async analyzeText(text) {
         try {
             const response = await fetch(`${API_BASE_URL}/detect/text`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: getHeaders(),
                 body: JSON.stringify({ text }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
             console.error('Text analysis failed:', error);
@@ -28,24 +113,15 @@ const detectionApi = {
         }
     },
 
-    /**
-     * Analyze a URL for phishing indicators.
-     * @param {string} url - The URL to analyze.
-     * @returns {Promise<Object>} The analysis result.
-     */
     async analyzeUrl(url) {
         try {
             const response = await fetch(`${API_BASE_URL}/detect/url`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: getHeaders(),
                 body: JSON.stringify({ url }),
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
             console.error('URL analysis failed:', error);
@@ -53,22 +129,15 @@ const detectionApi = {
         }
     },
 
-    /**
-     * Analyze a PDF document for scam indicators.
-     * @param {FormData} formData - The FormData containing the file.
-     * @returns {Promise<Object>} The analysis result.
-     */
     async analyzePdf(formData) {
         try {
             const response = await fetch(`${API_BASE_URL}/detect/pdf`, {
                 method: 'POST',
-                // Note: Do not set Content-Type for FormData, fetch sets it automatically with boundary
+                headers: { 'Authorization': `Bearer ${getAuthToken()}` },
                 body: formData,
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
             console.error('PDF analysis failed:', error);
@@ -76,36 +145,78 @@ const detectionApi = {
         }
     },
 
-    /**
-     * Analyze an Image for scam intent (OCR).
-     * @param {FormData} formData - The FormData containing the file.
-     * @returns {Promise<Object>} The analysis result.
-     */
     async analyzeImage(formData) {
         try {
             const response = await fetch(`${API_BASE_URL}/detect/image`, {
                 method: 'POST',
+                headers: { 'Authorization': `Bearer ${getAuthToken()}` },
                 body: formData,
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
             console.error('Image analysis failed:', error);
             throw error;
         }
+    },
+
+    async getHistory() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/detect/history`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to fetch scan history:', error);
+            throw error;
+        }
+    }
+};
+
+const tasksApi = {
+    async getStatus(taskId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/tasks/status/${taskId}`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Task status fetch failed:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Poll until a task is finished.
+     */
+    async pollUntilFinished(taskId, interval = 2000) {
+        return new Promise((resolve, reject) => {
+            const poll = async () => {
+                try {
+                    const status = await this.getStatus(taskId);
+                    if (status.status === 'SUCCESS') {
+                        resolve(status.result);
+                    } else if (status.status === 'FAILURE') {
+                        reject(new Error(status.error || 'Task failed'));
+                    } else {
+                        setTimeout(poll, interval);
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            poll();
+        });
     }
 };
 
 const awarenessApi = {
-    /**
-     * Fetch the educational content.
-     */
     async getContent() {
         try {
-            const response = await fetch(`${API_BASE_URL}/awareness`);
+            const response = await fetch(`${ROOT_API_URL}/awareness`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
@@ -118,7 +229,9 @@ const awarenessApi = {
 const adminApi = {
     async getStats() {
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/system/stats`);
+            const response = await fetch(`${API_BASE_URL}/admin/system/stats`, {
+                headers: getHeaders()
+            });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
@@ -128,7 +241,9 @@ const adminApi = {
     },
     async getKeywords() {
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/keywords`);
+            const response = await fetch(`${API_BASE_URL}/admin/keywords`, {
+                headers: getHeaders()
+            });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return await response.json();
         } catch (error) {
@@ -140,9 +255,7 @@ const adminApi = {
         try {
             const response = await fetch(`${API_BASE_URL}/admin/keywords`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: getHeaders(),
                 body: JSON.stringify({ keyword }),
             });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -154,9 +267,41 @@ const adminApi = {
     }
 };
 
+const quizApi = {
+    async getQuestions(limit = 5) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/awareness/questions?limit=${limit}`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to fetch quiz questions:', error);
+            throw error;
+        }
+    },
+
+    async submit() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/awareness/submit`, {
+                method: 'POST',
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to submit quiz:', error);
+            throw error;
+        }
+    }
+};
+
 // Export to global scope
 window.api = {
+    auth: authApi,
     detection: detectionApi,
+    tasks: tasksApi,
     awareness: awarenessApi,
+    quiz: quizApi,
     admin: adminApi
 };

@@ -1,16 +1,22 @@
 from fastapi import FastAPI, Request
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import detect_text, detect_url, detect_pdf, detect_image, admin
+from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_history, quiz, admin, auth, tasks
 from app.config import settings
 from app.utils.logger import logger
 
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
     title=settings.APP_NAME,
     description="Backend for student scam detection platform",
     version="0.1.0",
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Global Exception Handler
 @app.exception_handler(Exception)
@@ -43,24 +49,30 @@ app.include_router(detect_text.router, prefix=f"{settings.API_V1_STR}/detect", t
 app.include_router(detect_url.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
 app.include_router(detect_pdf.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
 app.include_router(detect_image.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
+app.include_router(detect_history.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
+app.include_router(quiz.router, prefix=f"{settings.API_V1_STR}/awareness", tags=["awareness"])
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
+app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
+app.include_router(tasks.router, prefix=f"{settings.API_V1_STR}/tasks", tags=["tasks"])
 
 from app.services.awareness_service import awareness_service
+
+from app.database import engine, Base, get_db
+from app.models import schema
+from sqlalchemy.orm import Session
+from fastapi import Depends
+
+# Create tables on startup
+Base.metadata.create_all(bind=engine)
 
 @app.get("/", tags=["Health"])
 async def root():
     return {"message": "CyberShield EDU API is running", "version": "1.0.0"}
 
 @app.get("/awareness", tags=["Awareness"])
-async def get_awareness_content():
+async def get_awareness_content(db: Session = Depends(get_db)):
     """Return educational content and wellness tips for students."""
-    content_dict = awareness_service.get_all_content()
-    # The frontend expects an array to .map() over, so we convert the dict mapping
-    content_list = []
-    for key, value in content_dict.items():
-        item = value.copy()
-        item["id"] = key
-        content_list.append(item)
+    content_list = awareness_service.get_all_content(db)
     return content_list
 
 if __name__ == "__main__":

@@ -1,7 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Depends
 from pydantic import BaseModel
-from app.utils.logger import logger
+from typing import Optional
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.models.schema import ScanRecord
 from app.services.url_detector import url_detector
+from app.utils.auth import get_current_user
+from app.utils.logger import logger
+from app.utils.sanitizer import sanitizer
+from app.utils.gamification import gamification_service
+from app.main import limiter
 
 router = APIRouter()
 
@@ -9,7 +17,13 @@ class URLRequest(BaseModel):
     url: str
 
 @router.post("/url")
-async def detect_url(request: URLRequest):
+@limiter.limit("5/minute")
+async def detect_url(request: URLRequest, req: Request, db: Session = Depends(get_db), current_user: Optional[dict] = Depends(get_current_user)):
+    # Sanitize URL
+    request.url = sanitizer.sanitize_url(request.url)
+    if "blocked:" in request.url:
+        raise HTTPException(status_code=400, detail="Invalid or unsafe URL protocol detected.")
+
     if not request.url:
         throw_msg = "URL input cannot be empty"
         logger.warning(throw_msg)
@@ -19,6 +33,23 @@ async def detect_url(request: URLRequest):
     
     try:
         result = await url_detector.analyze(request.url)
+        
+        # Log to DB
+        new_record = ScanRecord(
+            scan_type="url",
+            input_data=request.url[:500],
+            prediction=result["prediction"],
+            confidence=result["confidence"],
+            reasoning=result["reasoning"],
+            user_id=current_user.get("id") if current_user else None
+        )
+        db.add(new_record)
+        db.commit()
+        
+        # Award XP
+        if current_user:
+            gamification_service.award_xp(db, current_user.get("id"), 15)
+            
         return result
     except Exception as e:
         logger.error(f"URL detection failed: {str(e)}")

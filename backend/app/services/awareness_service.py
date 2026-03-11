@@ -3,27 +3,19 @@ import os
 from app.utils.logger import logger
 from app.config import settings
 
+from sqlalchemy.orm import Session
+from app.models.schema import AwarenessContent
+from app.utils.logger import logger
+
 class AwarenessService:
-    def __init__(self):
-        self.resources_path = os.path.join(settings.BASE_DIR, "..", "data", "educational_resources.json")
-        self.content = self._load_resources()
-
-    def _load_resources(self):
+    def get_all_content(self, db: Session):
         try:
-            if os.path.exists(self.resources_path):
-                with open(self.resources_path, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            else:
-                logger.warning(f"Resources file not found at {self.resources_path}")
-                return {}
+            return db.query(AwarenessContent).all()
         except Exception as e:
-            logger.error(f"Failed to load educational resources: {str(e)}")
-            return {}
+            logger.error(f"Failed to fetch educational resources from DB: {str(e)}")
+            return []
 
-    def get_all_content(self):
-        return self.content
-
-    def get_category(self, category_name: str):
-        return self.content.get(category_name, {})
+    def get_category(self, db: Session, category_name: str):
+        return db.query(AwarenessContent).filter(AwarenessContent.category == category_name).all()
 
 awareness_service = AwarenessService()

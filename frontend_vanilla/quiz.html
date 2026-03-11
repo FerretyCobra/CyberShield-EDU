@@ -4,11 +4,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield EDU - URL Scan</title>
-    <!-- Google Fonts for typography -->
+    <title>Scam or Safe? - CyberShield EDU</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
+    <style>
+        .quiz-container {
+            max-width: 700px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .quiz-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-content {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #f1f5f9;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            width: 100%;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .btn-quiz {
+            flex: 1;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-trust {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-trust:hover {
+            background: #10b981;
+            color: white; They box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-scam {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fb7185;
+            border-color: rgba(244, 63, 94, 0.3);
+        }
+
+        .btn-scam:hover {
+            background: #f43f5e;
+            color: white;
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+        }
+
+        .feedback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2.5rem;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .feedback-correct {
+            background: rgba(6, 78, 59, 0.9);
+            color: #ecfdf5;
+        }
+
+        .feedback-wrong {
+            background: rgba(153, 27, 27, 0.9);
+            color: #fef2f2;
+        }
+
+        .feedback-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-text {
+            font-size: 1.125rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .dot.active { background: #6366f1; }
+        .dot.correct { background: #10b981; }
+        .dot.wrong { background: #f43f5e; }
+    </style>
 </head>
 
 <body>
@@ -37,10 +180,10 @@
                 <h1 class="logo-text">CyberShield</h1>
             </div>
 
-            <nav class="sidebar-nav" role="navigation" aria-label="Main Navigation">
+            <nav class="sidebar-nav">
                 <div class="nav-section-title">Detection Tools</div>
 
-                <a href="index.html" class="nav-item" aria-label="Text Scanner">
+                <a href="index.html" class="nav-item">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -49,7 +192,7 @@
                     <span>Text Scan</span>
                 </a>
 
-                <a href="url-scan.html" class="nav-item active">
+                <a href="url-scan.html" class="nav-item">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -84,7 +227,7 @@
                     <span>My Scans</span>
                 </a>
 
-                <a href="quiz.html" class="nav-item">
+                <a href="quiz.html" class="nav-item active">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-5.75c-.622 0-1.125.504-1.125 1.125V18.75m9 0H7.5" />
@@ -136,63 +279,110 @@
             </div>
         </aside>
 
-        <!-- Main Content Area -->
         <main class="main-content">
             <div class="content-wrapper">
-
-                <!-- URL Scan View -->
-                <div id="url-scan-view" class="view-section active">
-                    <div class="glass-card">
-                        <div class="card-header">
-                            <div class="card-icon-wrapper">
-                                <svg class="card-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-                                </svg>
-                            </div>
-                            <div class="card-title-content">
-                                <h2>URL Risk Analyzer</h2>
-                                <p>Verify the safety of links before clicking.</p>
-                            </div>
+                <div class="quiz-container">
+                    <div class="score-bar">
+                        <div style="color: #94a3b8; font-weight: 600;">Question <span id="currentIdx">1</span>/5</div>
+                        <div class="progress-dots" id="dots">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
                         </div>
-
-                        <div class="card-body">
-                            <div class="input-glow-wrapper" style="margin-bottom: 24px;">
-                                <!-- Standard inline styling mixed with class to ensure it looks just like text scan -->
-                                <input type="url" id="urlScanInput" placeholder="http://example.com/login"
-                                    style="width: 100%; padding: 1.25rem; font-size: 1rem; color: #f8fafc; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(51, 65, 85, 0.5); border-radius: 0.75rem; outline: none; transition: all 0.2s;"
-                                    onfocus="this.style.borderColor='rgba(96, 165, 250, 0.5)'; this.style.boxShadow='0 0 0 2px rgba(59, 130, 246, 0.25)';"
-                                    onblur="this.style.borderColor='rgba(51, 65, 85, 0.5)'; this.style.boxShadow='none';">
-                            </div>
-
-                            <button id="btn-url-scan" class="btn-primary" style="width: 100%;">
-                                <span class="btn-text">Run AI Analysis</span>
-                                <div class="btn-loader hidden">
-                                    <span class="pulse-text">ANALYZING URL</span>
-                                    <div class="loader-bars">
-                                        <div class="bar bar-1"></div>
-                                        <div class="bar bar-2"></div>
-                                        <div class="bar bar-3"></div>
-                                    </div>
-                                </div>
-                            </button>
-                        </div>
+                        <div id="scoreDisplay" style="color: #6366f1; font-weight: 700;">Score: 0</div>
                     </div>
 
-                    <!-- Result Container (Hidden by default) -->
-                    <div id="url-result-container" class="result-container hidden uppercase">
-                        <!-- Filled by JS -->
+                    <div class="quiz-card" id="quizCard">
+                        <div class="quiz-content" id="questionContent">
+                            Loading your first challenge...
+                        </div>
+                        <div class="quiz-actions" id="quizActions">
+                            <button class="btn-quiz btn-trust" onclick="handleChoice(false)">It's Safe</button>
+                            <button class="btn-quiz btn-scam" onclick="handleChoice(true)">It's a Scam</button>
+                        </div>
+
+                        <div id="feedback" class="feedback-overlay">
+                            <div class="feedback-icon" id="feedbackIcon">✅</div>
+                            <h2 style="margin-bottom: 1rem;" id="feedbackTitle">Correct!</h2>
+                            <p class="feedback-text" id="explanationText">Explanation goes here...</p>
+                            <button class="btn-primary" onclick="nextQuestion()" style="padding: 0.75rem 2rem;">Next Challenge</button>
+                        </div>
+                    </div>
+                    
+                    <div id="finalScore" style="display:none; text-align: center;" class="glass-card">
+                        <h1 style="color: white; margin-bottom: 1rem;">Quiz Complete!</h1>
+                        <p style="color: #94a3b8; font-size: 1.25rem; margin-bottom: 2rem;">You identified <span id="finalScoreVal">0</span> out of 5 cyber threats correctly.</p>
+                        <button class="btn-primary" onclick="location.reload()" style="padding: 1rem 3rem;">Try Again</button>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- Application Logic -->
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        let questions = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        async function initQuiz() {
+            try {
+                questions = await window.api.quiz.getQuestions(5);
+                showQuestion();
+            } catch (err) {
+                document.getElementById('questionContent').textContent = "Failed to load questions. Check your connection.";
+            }
+        }
+
+        function showQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('questionContent').textContent = q.content;
+            document.getElementById('currentIdx').textContent = currentIdx + 1;
+            document.getElementById('feedback').style.display = 'none';
+        }
+
+        function handleChoice(userSaysScam) {
+            const q = questions[currentIdx];
+            const isCorrect = userSaysScam === q.is_scam;
+            
+            if (isCorrect) score++;
+            
+            // UI Feedback
+            const feedback = document.getElementById('feedback');
+            const icon = document.getElementById('feedbackIcon');
+            const title = document.getElementById('feedbackTitle');
+            const explanation = document.getElementById('explanationText');
+            const dots = document.getElementById('dots').children;
+
+            feedback.style.display = 'flex';
+            feedback.className = `feedback-overlay ${isCorrect ? 'feedback-correct' : 'feedback-wrong'}`;
+            icon.textContent = isCorrect ? '✅' : '❌';
+            title.textContent = isCorrect ? 'Spot On!' : 'Caught in the Net!';
+            explanation.textContent = q.explanation;
+            
+            dots[currentIdx].className = `dot ${isCorrect ? 'correct' : 'wrong'}`;
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < questions.length) {
+                showQuestion();
+                document.getElementById('dots').children[currentIdx].classList.add('active');
+            } else {
+                document.getElementById('quizCard').style.display = 'none';
+                document.getElementById('finalScore').style.display = 'block';
+                document.getElementById('finalScoreVal').textContent = score;
+                // Award XP on backend
+                window.api.quiz.submit().catch(console.error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
 </body>
 
 </html>

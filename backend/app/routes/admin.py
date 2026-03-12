@@ -1,11 +1,23 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.models.schema import ScanRecord, ScamKeyword
+from app.utils.auth import get_current_admin
+from app.config import settings
+from app.services.awareness_service import awareness_service
+import os
+import json
+from pydantic import BaseModel
 from datetime import datetime, timedelta
 from sqlalchemy import func
-from pydantic import BaseModel
 
 router = APIRouter(dependencies=[Depends(get_current_admin)])
 
 class KeywordUpdate(BaseModel):
     keyword: str
+
+class ResourceUpdate(BaseModel):
+    content: dict
 
 @router.get("/system/stats")
 async def get_stats(db: Session = Depends(get_db)):

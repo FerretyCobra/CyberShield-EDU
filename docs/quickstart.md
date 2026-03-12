@@ -25,7 +25,7 @@ celery -A app.tasks worker --loglevel=info -P solo
 ```
 
 ## 4. Launch Frontend
-1.  Go to the `frontend_vanilla/` folder.
+1.  Go to the `frontend/` folder.
 2.  Double-click `index.html` (or run `python -m http.server 8080`).
 
 ---

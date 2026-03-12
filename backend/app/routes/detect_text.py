@@ -9,7 +9,7 @@ from app.services.text_detector import text_detector
 from app.utils.auth import get_current_user
 from app.utils.logger import logger
 from app.utils.sanitizer import sanitizer
-from app.main import limiter
+from app.utils.limiter import limiter
 
 router = APIRouter()
 
@@ -18,24 +18,24 @@ class TextRequest(BaseModel):
 
 @router.post("/text")
 @limiter.limit("5/minute")
-async def detect_text(request: TextRequest, req: Request, db: Session = Depends(get_db), current_user: Optional[dict] = Depends(get_current_user)):
+async def detect_text(input_data: TextRequest, request: Request, db: Session = Depends(get_db), current_user: Optional[dict] = Depends(get_current_user)):
     # Sanitize input
-    request.text = sanitizer.clean_text(request.text)
+    input_data.text = sanitizer.clean_text(input_data.text)
     
-    if not request.text:
+    if not input_data.text:
         throw_msg = "Text input cannot be empty"
         logger.warning(throw_msg)
         raise HTTPException(status_code=400, detail=throw_msg)
         
-    logger.info(f"Received text for analysis: {request.text[:100]}...")
+    logger.info(f"Received text for analysis: {input_data.text[:100]}...")
     
     try:
-        result = await text_detector.analyze(request.text)
+        result = await text_detector.analyze(input_data.text)
         
         # Log to DB
         new_record = ScanRecord(
             scan_type="text",
-            input_data=request.text[:500],
+            input_data=input_data.text[:500],
             prediction=result["prediction"],
             confidence=result["confidence"],
             reasoning=result["reasoning"],

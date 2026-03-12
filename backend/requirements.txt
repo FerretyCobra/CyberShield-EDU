@@ -15,3 +15,11 @@ aiohttp
 beautifulsoup4
 opencv-python
 python-Levenshtein
+sqlalchemy
+pymysql
+celery
+redis
+slowapi
+python-jose[cryptography]
+passlib[bcrypt]
+mysql-connector-python

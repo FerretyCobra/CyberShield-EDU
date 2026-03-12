@@ -1075,3 +1075,162 @@ Congratulations! You have been selected f...
 2026-03-11 00:42:46,193 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=0.98
 2026-03-11 00:42:46,194 | INFO     | CyberShield:analyze:226 - URL Analysis Complete: SCAM [98.1%] - Score: 0.75
 2026-03-11 00:42:46,197 | INFO     | CyberShield:log_requests:29 - Response status: 200
+2026-03-12 13:05:45,335 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 13:05:45,868 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 13:05:45,868 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:779 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-12 13:05:46,173 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 13:05:46,383 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 13:05:46,597 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 13:05:46,822 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 15:38:11,532 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 15:38:12,399 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 15:38:12,892 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:38:13,146 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 15:38:13,395 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:38:13,641 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 15:40:33,637 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 15:40:34,236 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 15:40:34,538 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:40:34,783 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 15:40:35,029 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:40:35,270 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 15:42:39,084 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 15:42:39,897 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 15:42:40,705 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:42:40,944 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 15:42:41,184 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:42:41,431 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 15:43:36,047 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 15:43:36,598 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 15:43:36,599 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-12 15:43:36,909 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:43:37,150 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 15:43:37,390 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:43:37,628 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 15:44:46,661 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 15:44:47,298 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 15:44:47,735 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:44:47,973 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 15:44:48,216 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:44:48,459 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 15:45:28,809 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 15:45:29,444 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 15:45:29,822 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:45:30,065 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 15:45:30,305 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 15:45:30,561 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 21:57:25,337 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 21:57:26,044 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 21:57:26,394 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 21:57:26,607 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 21:57:26,820 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 21:57:27,045 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 21:57:33,007 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 21:57:33,480 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 21:57:33,740 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 21:57:33,949 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 21:57:34,173 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 21:57:34,384 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 22:00:08,766 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 22:00:09,229 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 22:00:09,503 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 22:00:09,710 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 22:00:09,917 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 22:00:10,144 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 22:00:35,266 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 22:00:35,815 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 22:00:36,100 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 22:00:36,311 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 22:00:36,529 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 22:00:36,755 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 22:02:13,970 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 22:02:14,479 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 22:02:14,480 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-12 22:02:14,753 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 22:02:14,960 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 22:02:15,187 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 22:02:15,395 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 22:11:30,429 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-12 22:11:30,436 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Subject: Internship Selection ConfirmationDear Student,Congratulations! You have been selected for t...
+2026-03-12 22:11:30,815 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=0.94
+2026-03-12 22:11:30,828 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:12:13,389 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/url
+2026-03-12 22:12:13,392 | INFO     | CyberShield:detect_url:32 - Received URL for analysis: HTTP://paypal-account-confirmation-security.xyz
+2026-03-12 22:12:13,392 | INFO     | CyberShield:analyze:117 - Analyzing URL: HTTP://paypal-account-confirmation-security.xyz
+2026-03-12 22:12:13,395 | WARNING  | CyberShield:check_url_reputation:13 - URLScan API Key not configured. Skipping external check.
+2026-03-12 22:12:13,395 | INFO     | CyberShield:analyze:207 - Static score inconclusive. Initializing Deep Scan web execution...
+2026-03-12 22:12:16,104 | WARNING  | CyberShield:fetch_web_content:113 - Failed to deep scan URL http://HTTP://paypal-account-confirmation-security.xyz: Cannot connect to host http:80 ssl:default [getaddrinfo failed]
+2026-03-12 22:12:16,104 | INFO     | CyberShield:analyze:235 - URL Analysis Complete: SAFE [80.0%] - Score: 0.4
+2026-03-12 22:12:16,107 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:12:39,920 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/pdf
+2026-03-12 22:12:39,925 | INFO     | CyberShield:detect_pdf:19 - Received PDF for analysis: legit_certificate.pdf
+2026-03-12 22:12:46,312 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:12:46,316 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/94c1d284-863a-49d3-8254-28e359e27858
+2026-03-12 22:12:48,365 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:12:50,370 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/94c1d284-863a-49d3-8254-28e359e27858
+2026-03-12 22:12:50,371 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:13:04,043 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/image
+2026-03-12 22:13:04,046 | INFO     | CyberShield:detect_image:21 - Received image for OCR analysis: scam_whatsapp.png
+2026-03-12 22:13:04,048 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:13:04,051 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/fc87e1e2-48dc-43a2-afa1-1ecde381d6f3
+2026-03-12 22:13:04,052 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:13:06,057 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/fc87e1e2-48dc-43a2-afa1-1ecde381d6f3
+2026-03-12 22:13:06,058 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:13:13,379 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-12 22:13:13,381 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-12 22:13:14,857 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/awareness/questions
+2026-03-12 22:13:14,874 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:13:34,414 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/awareness/submit
+2026-03-12 22:13:34,415 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-12 22:13:35,970 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/awareness/questions
+2026-03-12 22:13:35,972 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:13:38,739 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-12 22:13:38,740 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-12 22:14:40,378 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 22:14:40,384 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'admin', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 22:14:41,378 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 22:14:41,381 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'admin', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 22:14:42,193 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 22:14:42,195 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'admin', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 22:14:42,839 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 22:14:42,841 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'admin', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 22:14:47,719 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 22:14:47,721 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'admin', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 22:14:58,410 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 22:14:58,413 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'admin', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login

@@ -1,14 +1,16 @@
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request
+from typing import Optional
 from app.services.pdf_analyzer import pdf_analyzer
 from app.tasks import process_pdf_task
 from app.utils.auth import get_current_user
 from app.utils.logger import logger
-from app.main import limiter
+from app.utils.limiter import limiter
 
 router = APIRouter()
 
 @router.post("/pdf")
 @limiter.limit("5/minute")
-async def detect_pdf(req: Request, file: UploadFile = File(...), current_user: Optional[dict] = Depends(get_current_user)):
+async def detect_pdf(request: Request, file: UploadFile = File(...), current_user: Optional[dict] = Depends(get_current_user)):
     if not file.filename.lower().endswith('.pdf'):
         throw_msg = "Only PDF files are supported"
         logger.warning(throw_msg)

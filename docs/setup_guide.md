@@ -71,8 +71,8 @@ Ensure the following are installed:
 
 ## 5. Frontend Setup
 The project primarily uses the premium Vanilla implementation.
-1.  **Option A (Direct)**: Simply open `frontend_vanilla/index.html` in any modern browser.
-2.  **Option B (Served)**: In a new terminal in the `frontend_vanilla` folder, run:
+1.  **Option A (Direct)**: Simply open `frontend/index.html` in any modern browser.
+2.  **Option B (Served)**: In a new terminal in the `frontend` folder, run:
     ```bash
     python -m http.server 8080
     ```

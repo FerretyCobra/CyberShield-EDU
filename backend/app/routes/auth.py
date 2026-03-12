@@ -21,20 +21,15 @@ class Token(BaseModel):
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == user.username).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
-    
-    hashed_password = get_password_hash(user.password)
-    new_user = User(
-        username=user.username,
-        email=user.email,
-        hashed_password=hashed_password,
-        role="student"
+    raise HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE, 
+        detail="Student registration is temporarily disabled for maintenance."
     )
-    db.add(new_user)
-    db.commit()
-    return {"message": "User registered successfully"}
+    # Original logic below
+    # db_user = db.query(User).filter(User.username == user.username).first()
+    # if db_user:
+    #     raise HTTPException(status_code=400, detail="Username already registered")
+    # ...
 
 @router.post("/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

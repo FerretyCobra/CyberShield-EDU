@@ -9,7 +9,7 @@ from app.utils.auth import get_current_user
 from app.utils.logger import logger
 from app.utils.sanitizer import sanitizer
 from app.utils.gamification import gamification_service
-from app.main import limiter
+from app.utils.limiter import limiter
 
 router = APIRouter()
 
@@ -18,26 +18,26 @@ class URLRequest(BaseModel):
 
 @router.post("/url")
 @limiter.limit("5/minute")
-async def detect_url(request: URLRequest, req: Request, db: Session = Depends(get_db), current_user: Optional[dict] = Depends(get_current_user)):
+async def detect_url(input_data: URLRequest, request: Request, db: Session = Depends(get_db), current_user: Optional[dict] = Depends(get_current_user)):
     # Sanitize URL
-    request.url = sanitizer.sanitize_url(request.url)
-    if "blocked:" in request.url:
+    input_data.url = sanitizer.sanitize_url(input_data.url)
+    if "blocked:" in input_data.url:
         raise HTTPException(status_code=400, detail="Invalid or unsafe URL protocol detected.")
 
-    if not request.url:
+    if not input_data.url:
         throw_msg = "URL input cannot be empty"
         logger.warning(throw_msg)
         raise HTTPException(status_code=400, detail=throw_msg)
         
-    logger.info(f"Received URL for analysis: {request.url}")
+    logger.info(f"Received URL for analysis: {input_data.url}")
     
     try:
-        result = await url_detector.analyze(request.url)
+        result = await url_detector.analyze(input_data.url)
         
         # Log to DB
         new_record = ScanRecord(
             scan_type="url",
-            input_data=request.url[:500],
+            input_data=input_data.url[:500],
             prediction=result["prediction"],
             confidence=result["confidence"],
             reasoning=result["reasoning"],

@@ -4,7 +4,7 @@
 
 ![CyberShield Overview](https://img.shields.io/badge/Status-Active-brightgreen)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
-![React](https://img.shields.io/badge/Frontend-React%2018-61DAFB)
+![HTML/JS](https://img.shields.io/badge/Frontend-Vanilla--HTML--JS-E34F26)
 ![ML](https://img.shields.io/badge/AI-DistilBERT-FF9900)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
@@ -57,7 +57,7 @@ For university IT administrators and researchers:
 
 CyberShield-EDU is engineered with a modern, decoupled frontend-backend architecture to ensure scalability, responsiveness, and clean separation of concerns.
 
-- **Frontend Configuration:** The primary client interface is a premium Vanilla HTML/JS/CSS implementation located in `frontend_vanilla`. It features a sleek, Glassmorphism-inspired UI with full responsive support and a multi-theme system. It communicates securely with the backend via RESTful APIs using Axios. (A legacy React version is also available in `frontend`).
+- **Frontend Configuration:** The primary client interface is a premium Vanilla HTML/JS/CSS implementation located in `frontend`. It features a sleek, Glassmorphism-inspired UI with full responsive support and a multi-theme system. It communicates securely with the backend via RESTful APIs.
 - **Backend Configuration:** A high-performance Python server built on the FastAPI framework. It handles asynchronous requests, orchestrates machine learning inference using Hugging Face Transformers, validates schemas with Pydantic, and generates automated OpenAPI documentation.
 
 For a deep dive, see the [Architecture Overview](./docs/architecture.md).
@@ -71,7 +71,6 @@ Follow these steps to get a local instance of CyberShield-EDU running on your ma
 ### 1. Prerequisites
 Ensure you have the following installed on your system:
 - **Python 3.8+** (Required for the FastAPI backend and ML models)
-- **Node.js 16+** (Required for the React frontend)
 - **Git** (For version control)
 - **Tesseract OCR engine** (Crucial for the Image Scanner module)
 
@@ -100,19 +99,14 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 --reload
 *The API will be live at `http://localhost:8080` and interactive API docs at `http://localhost:8080/docs`.*
 
 ### 3. Setup the Frontend Environment
-Open a **new** terminal window:
+Open the `frontend` directory:
 
 ```bash
-# Navigate to the frontend directory
+# Open index.html in a browser or serve via:
 cd frontend
-
-# Install Node.js dependencies
-npm install
-
-# Start the Vite development server
-npm run dev
+python -m http.server 8080
 ```
-*The Dashboard interface will be accessible in your browser at `http://localhost:5173`.*
+*The Dashboard interface will be accessible in your browser at `http://localhost:8080`.*
 
 ---
 
@@ -124,10 +118,7 @@ CyberShield-EDU/
 │   ├── app/                  # Main application code (routes, models, utils)
 │   ├── venv/                 # Local Python environment
 │   └── requirements.txt      # Python dependencies
-├── frontend/                 # React 18 SPA (Primary Interface)
-│   ├── src/                  # React components, pages, and API services
-│   └── package.json          # Node dependencies
-├── frontend_vanilla/         # Alternative Vanilla JS Implementation
+├── frontend/                 # Premium Vanilla JS Implementation
 ├── docs/                     # Comprehensive Project Documentation
 ├── data/                     # Static JSON datasets (e.g., educational info)
 └── README.md                 # Project Overview (You are here)
@@ -140,8 +131,7 @@ CyberShield-EDU/
 CyberShield-EDU leverages industry-standard open-source technologies:
 
 ### Client-Side (Frontend)
-- **Primary:** React 18, Vite, Tailwind CSS, Framer Motion (Animations), Recharts (Data Viz), Axios, React Router API.
-- **Alternative:** Vanilla JavaScript, HTML5, CSS3.
+- **Primary:** Vanilla JavaScript, HTML5, CSS3, Google Fonts.
 
 ### Server-Side (Backend)
 - **Framework:** Python 3, FastAPI, Pydantic, Uvicorn.

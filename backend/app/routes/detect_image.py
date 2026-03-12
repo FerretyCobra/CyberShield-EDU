@@ -1,14 +1,16 @@
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request
+from typing import Optional
 from app.services.image_ocr import image_ocr
 from app.tasks import process_image_task
 from app.utils.auth import get_current_user
 from app.utils.logger import logger
-from app.main import limiter
+from app.utils.limiter import limiter
 
 router = APIRouter()
 
 @router.post("/image")
 @limiter.limit("5/minute")
-async def detect_image(req: Request, file: UploadFile = File(...), current_user: Optional[dict] = Depends(get_current_user)):
+async def detect_image(request: Request, file: UploadFile = File(...), current_user: Optional[dict] = Depends(get_current_user)):
     # Validate file extension
     allowed_extensions = {".jpg", ".jpeg", ".png", ".bmp"}
     if not any(file.filename.lower().endswith(ext) for ext in allowed_extensions):

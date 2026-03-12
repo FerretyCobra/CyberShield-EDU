@@ -6,7 +6,7 @@ CyberShield-EDU is a modern web application built with a decoupled frontend-back
 
 ```mermaid
 graph TD
-    User([Student/Admin User]) --> Frontend[React Frontend (Vite)]
+    User([Student/Admin User]) --> Frontend[Vanilla HTML/JS Frontend]
     Frontend -->|REST API HTTP| Backend[FastAPI Backend]
 
     subgraph Backend Core
@@ -27,13 +27,13 @@ graph TD
 ```
 
 ## 1. Frontend (Client-Side)
-The frontend is single-page application (SPA) built to deliver a premium user experience.
-* **Framework**: React 18 powered by Vite for rapid development and optimized builds.
-* **Styling**: Tailwind CSS is used extensively for utility-first styling. A custom "Glassmorphism" theme is established in `index.css`.
-* **State Management**: Local React State (`useState`, `useEffect`) handles UI interactions. `localStorage` is used to persist recent scans (`persistenceService.js`).
-* **Data Fetching**: `axios` is abstracted into an `api.js` service for clean, reusable HTTP requests to the backend.
-* **Routing**: `react-router-dom` handles navigation between the main tools (Text, URL, PDF, Image, Education, Admin).
-* **Data Visualization**: `recharts` is utilized in the Admin Panel to display system statistics.
+The frontend is a premium, responsive interface built with Vanilla HTML5, CSS3, and JavaScript.
+* **Structure**: Modular HTML templates for different views (Detection, Education, Admin).
+* **Styling**: Vanilla CSS with a custom "Glassmorphism" design system and multi-theme (Light/Dark) support.
+* **State Management**: Local JavaScript variables and `localStorage` to persist recent scans and user preferences.
+* **Data Fetching**: Standard `fetch` API and Axios for communication with the FastAPI backend.
+* **Navigation**: Direct page-to-page navigation with shared header/footer components for a consistent experience.
+* **Data Visualization**: Integrated CSS-based charts and lightweight JS libraries for system statistics in the Admin Panel.
 
 ## 2. Backend (Server-Side)
 The backend is a high-performance Python server capable of handling asynchronous requests and machine learning inference.

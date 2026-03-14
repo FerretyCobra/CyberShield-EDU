@@ -4,7 +4,7 @@ from slowapi.errors import RateLimitExceeded
 from app.utils.limiter import limiter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_history, quiz, admin, auth, tasks
+from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_history, quiz, admin, auth, tasks, scam_report
 from app.config import settings
 from app.utils.logger import logger
 
@@ -54,6 +54,7 @@ app.include_router(quiz.router, prefix=f"{settings.API_V1_STR}/awareness", tags=
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(tasks.router, prefix=f"{settings.API_V1_STR}/tasks", tags=["tasks"])
+app.include_router(scam_report.router, prefix=f"{settings.API_V1_STR}/report", tags=["reporting"])
 
 from app.services.awareness_service import awareness_service
 

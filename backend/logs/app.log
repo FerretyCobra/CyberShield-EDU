@@ -1234,3 +1234,155 @@ WHERE users.username = %(username_1)s
  LIMIT %(param_1)s]
 [parameters: {'username_1': 'admin', 'param_1': 1}]
 (Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 22:44:14,738 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /docs
+2026-03-12 22:44:14,738 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 22:44:14,806 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/openapi.json
+2026-03-12 22:44:14,848 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:11:56,830 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /docs
+2026-03-12 23:11:56,831 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:11:56,902 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/openapi.json
+2026-03-12 23:11:56,902 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:14:38,976 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-12 23:14:39,071 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Congratulations! You have won a $1000 gift card. Click here to claim your prize: http://scammy-link....
+2026-03-12 23:14:39,452 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=safe, Confidence=1.00
+2026-03-12 23:14:39,489 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:20:41,355 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /docs
+2026-03-12 23:20:41,355 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:20:41,422 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/openapi.json
+2026-03-12 23:20:41,423 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:33:33,200 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 23:33:33,759 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 23:33:33,760 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-12 23:33:34,335 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 23:33:34,543 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 23:33:34,770 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 23:33:34,986 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 23:36:16,673 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-12 23:36:17,240 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-12 23:36:17,240 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-12 23:36:17,534 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 23:36:17,741 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-12 23:36:17,948 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 307 Temporary Redirect"
+2026-03-12 23:36:18,160 | INFO     | httpx:_send_single_request:1025 - HTTP Request: GET https://huggingface.co/api/models/distilbert/distilbert-base-uncased-finetuned-sst-2-english/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-12 23:37:04,083 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /docs
+2026-03-12 23:37:04,084 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:37:04,297 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/openapi.json
+2026-03-12 23:37:04,471 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:42:27,500 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-12 23:42:27,503 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-12 23:42:33,100 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-12 23:42:33,102 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-12 23:42:50,656 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 23:42:50,670 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'asc', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 23:42:51,411 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/auth/login
+2026-03-12 23:42:51,421 | ERROR    | CyberShield:global_exception_handler:24 - Global Error: (pymysql.err.OperationalError) (1054, "Unknown column 'users.xp' in 'field list'")
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.xp AS users_xp, users.level AS users_level, users.badges AS users_badges, users.created_at AS users_created_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': 'asc', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8) | Path: /api/v1/auth/login
+2026-03-12 23:46:09,651 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-12 23:46:09,654 | INFO     | CyberShield:detect_text:30 - Received text for analysis: sac...
+2026-03-12 23:46:09,995 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=1.00
+2026-03-12 23:46:10,012 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:46:21,196 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/url
+2026-03-12 23:46:21,199 | INFO     | CyberShield:detect_url:32 - Received URL for analysis: sdfa
+2026-03-12 23:46:21,199 | INFO     | CyberShield:analyze:117 - Analyzing URL: sdfa
+2026-03-12 23:46:21,202 | WARNING  | CyberShield:check_url_reputation:13 - URLScan API Key not configured. Skipping external check.
+2026-03-12 23:46:21,202 | INFO     | CyberShield:analyze:207 - Static score inconclusive. Initializing Deep Scan web execution...
+2026-03-12 23:46:23,899 | WARNING  | CyberShield:fetch_web_content:113 - Failed to deep scan URL http://sdfa: Cannot connect to host sdfa:80 ssl:default [getaddrinfo failed]
+2026-03-12 23:46:23,899 | INFO     | CyberShield:analyze:235 - URL Analysis Complete: SAFE [20.0%] - Score: 0.1
+2026-03-12 23:46:23,902 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:54:26,766 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-12 23:54:26,770 | INFO     | CyberShield:detect_text:30 - Received text for analysis: This is a suspicious message about a lottery win. Please click here to claim your prize!...
+2026-03-12 23:54:26,894 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=0.99
+2026-03-12 23:54:26,901 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-12 23:54:38,878 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-12 23:54:38,880 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-13 00:29:38,973 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-13 00:29:38,978 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-13 00:30:15,426 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-13 00:30:15,436 | INFO     | CyberShield:detect_text:30 - Received text for analysis: get free scholoarships...
+2026-03-13 00:30:15,857 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=0.97
+2026-03-13 00:30:15,911 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 00:30:42,653 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/url
+2026-03-13 00:30:42,656 | INFO     | CyberShield:detect_url:32 - Received URL for analysis: paypa1.co.in/get-free-loan/
+2026-03-13 00:30:42,657 | INFO     | CyberShield:analyze:117 - Analyzing URL: paypa1.co.in/get-free-loan/
+2026-03-13 00:30:42,687 | WARNING  | CyberShield:check_url_reputation:13 - URLScan API Key not configured. Skipping external check.
+2026-03-13 00:30:42,687 | INFO     | CyberShield:analyze:207 - Static score inconclusive. Initializing Deep Scan web execution...
+2026-03-13 00:30:42,707 | WARNING  | CyberShield:fetch_web_content:113 - Failed to deep scan URL http://paypa1.co.in/get-free-loan/: Cannot connect to host paypa1.co.in:80 ssl:default [getaddrinfo failed]
+2026-03-13 00:30:42,707 | INFO     | CyberShield:analyze:235 - URL Analysis Complete: SAFE [80.0%] - Score: 0.4
+2026-03-13 00:30:42,712 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 00:31:04,319 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/pdf
+2026-03-13 00:31:04,338 | INFO     | CyberShield:detect_pdf:19 - Received PDF for analysis: fake_scholarship_notice.pdf
+2026-03-13 00:31:11,144 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 00:31:11,149 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/c5d607d1-d1fc-459e-b182-43bfd01295ba
+2026-03-13 00:31:13,176 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 00:31:29,186 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/image
+2026-03-13 00:31:29,189 | INFO     | CyberShield:detect_image:21 - Received image for OCR analysis: scam_telegram.png
+2026-03-13 00:31:29,192 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 00:31:29,196 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/16a3ab89-a48c-4ed8-8c8e-42535dbe5fba
+2026-03-13 00:31:29,197 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 00:31:31,204 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/tasks/status/16a3ab89-a48c-4ed8-8c8e-42535dbe5fba
+2026-03-13 00:31:31,205 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 01:14:07,541 | INFO     | CyberShield:log_requests:33 - Incoming request: GET /api/v1/detect/history
+2026-03-13 01:14:07,561 | INFO     | CyberShield:log_requests:35 - Response status: 401
+2026-03-13 01:29:41,002 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-13 01:29:41,273 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Verify your account immediately!...
+2026-03-13 01:29:41,867 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=safe, Confidence=0.99
+2026-03-13 01:29:41,964 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 01:31:30,348 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-13 01:31:30,351 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Verify your account immediately!...
+2026-03-13 01:31:30,378 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=safe, Confidence=0.99
+2026-03-13 01:31:30,385 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 01:34:37,279 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-13 01:34:37,281 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Test message...
+2026-03-13 01:34:37,310 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=1.00
+2026-03-13 01:34:37,316 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 01:38:56,416 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-13 01:38:56,419 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Scam test...
+2026-03-13 01:38:56,473 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=1.00
+2026-03-13 01:38:56,478 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 01:41:01,213 | INFO     | CyberShield:log_requests:33 - Incoming request: POST /api/v1/detect/text
+2026-03-13 01:41:01,216 | INFO     | CyberShield:detect_text:30 - Received text for analysis: Scam test...
+2026-03-13 01:41:01,235 | INFO     | CyberShield:analyze:65 - Analysis Complete: Label=scam, Confidence=1.00
+2026-03-13 01:41:01,239 | INFO     | CyberShield:log_requests:35 - Response status: 200
+2026-03-13 01:45:32,224 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-13 01:45:32,225 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-13 01:45:32,922 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:32,924 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:32,928 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:33,403 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:33,403 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-13 01:45:33,407 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:33,407 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:33,633 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:33,638 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:33,638 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-13 01:45:33,640 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:41,736 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-13 01:45:42,373 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:42,708 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:42,945 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:42,945 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-13 01:45:50,520 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-13 01:45:50,521 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-13 01:45:50,675 | INFO     | CyberShield:__init__:9 - Initializing TextDetectorService with DistilBERT...
+2026-03-13 01:45:51,197 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,251 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,334 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,626 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,627 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,697 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,884 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,914 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,915 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-13 01:45:51,933 | INFO     | httpx:_send_single_request:1025 - HTTP Request: HEAD https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english/resolve/main/config.json "HTTP/1.1 200 OK"
+2026-03-13 01:45:51,933 | WARNING  | huggingface_hub.utils._http:_warn_on_warning_headers:916 - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.

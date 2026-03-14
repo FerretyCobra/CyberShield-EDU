@@ -56,3 +56,15 @@ class QuizQuestion(Base):
     explanation = Column(Text)
     difficulty = Column(String(20))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class ScamReport(Base):
+    __tablename__ = "scam_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    company_name = Column(String(255), index=True)
+    description = Column(Text)
+    evidence_path = Column(String(500), nullable=True) # Path to uploaded file
+    is_anonymous = Column(Boolean, default=True)
+    user_id = Column(Integer, nullable=True) # Optional link to registered user
+    status = Column(String(20), default="pending") # pending, reviewed, resolved
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

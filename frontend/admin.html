@@ -1,420 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberShield EDU - Admin Dashboard</title>
-    <!-- Google Fonts for typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <title>Admin Dashboard - CyberShield EDU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .stat-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            border-color: rgba(96, 165, 250, 0.4);
-            background: rgba(30, 41, 59, 0.6);
-        }
-
-        .stat-icon {
-            padding: 0.75rem;
-            border-radius: 0.75rem;
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            flex-shrink: 0;
-        }
-
-        .stat-icon svg {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-
-        .stat-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #f8fafc;
-            line-height: 1.2;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        .keyword-list-container {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            border-radius: 1rem;
-            overflow: hidden;
-        }
-
-        .keyword-list-header {
-            padding: 1rem 1.5rem;
-            background: rgba(30, 41, 59, 0.4);
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .keyword-list-header h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #f1f5f9;
-        }
-
-        .keyword-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .keyword-chip {
-            background: rgba(225, 29, 72, 0.1);
-            border: 1px solid rgba(225, 29, 72, 0.2);
-            color: #fb7185;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            animation: fadeIn 0.3s ease forwards;
-        }
-
-        .add-keyword-form {
-            display: flex;
-            gap: 0.5rem;
-            padding: 1.5rem;
-            border-top: 1px solid rgba(51, 65, 85, 0.5);
-            background: rgba(30, 41, 59, 0.2);
-        }
-
-        .input-sm {
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-sm {
-            padding: 0.75rem 1.25rem;
-            font-size: 0.875rem;
-            height: auto;
-        }
-
-        /* Password Gate Styles */
-        #admin-content {
-            display: none;
-            /* Hidden until authenticated */
-        }
-
-        #password-gate {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .lock-icon {
-            width: 4rem;
-            height: 4rem;
-            color: #64748b;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: rgba(30, 41, 59, 0.4);
-            border-radius: 50%;
-            border: 1px solid rgba(51, 65, 85, 0.5);
-        }
-    </style>
 </head>
-
-<body>
-    <div class="mobile-header">
-        <div class="logo-box-small">
-            <h1 class="logo-text" style="font-size: 1rem;">CyberShield</h1>
+<body class="mode-dark">
+    <!-- Password Gate -->
+    <div id="password-gate">
+        <div class="glass-card animate-on-scroll" style="padding: 3rem;">
+            <div class="logo-icon" style="margin: 0 auto 1.5rem; width: 64px; height: 64px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <rect x="9" y="11" width="6" height="4" rx="1" />
+                </svg>
+            </div>
+            <h2 style="margin-bottom: 0.5rem;">Access Restricted</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Please enter the administrator password to proceed.</p>
+            <input type="password" id="adminPasswordInput" class="search-input" placeholder="••••••••" style="margin-bottom: 1rem; text-align: center;">
+            <button id="btn-admin-login" class="btn-primary" style="width: 100%;">Unlock Dashboard</button>
+            <p id="gate-error" style="color: #f87171; font-size: 0.8rem; margin-top: 1rem; display: none;">Invalid administrator password.</p>
         </div>
-        <button class="hamburger" id="mobile-toggle" aria-label="Toggle menu">
-            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
     </div>
 
-    <div class="layout-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-box">
-                    <svg class="icon-md text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+    <div class="admin-layout" id="admin-interface" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="index.html" class="logo">
+                <div class="logo-badge">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
                     </svg>
                 </div>
-                <h1 class="logo-text">CyberShield</h1>
-            </div>
+                <span>CyberShield</span>
+            </a>
 
             <nav class="sidebar-nav">
-                <div class="nav-section-title">Detection Tools</div>
-
-                <a href="index.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                    </svg>
-                    <span>Text Scan</span>
-                </a>
-
-                <a href="url-scan.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-                    </svg>
-                    <span>URL Scan</span>
-                </a>
-
-                <a href="pdf-scan.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                    </svg>
-                    <span>PDF Scan</span>
-                </a>
-
-                <a href="image-scan.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                    <span>Image Scan</span>
-                </a>
-
-                <a href="history.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <span>My Scans</span>
-                </a>
-
-                <a href="quiz.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-5.75c-.622 0-1.125.504-1.125 1.125V18.75m9 0H7.5" />
-                    </svg>
-                    <span>Scam Quiz</span>
-                </a>
-
-                <div class="nav-section-title mg-top">Management</div>
-
-                <a href="education.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-                    </svg>
-                    <span>Education</span>
-                </a>
-
-                <a href="admin.html" class="nav-item active">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M6 13.5V10.5m0 0v-3m0 3h3m-3 0H3m12 3v-3m0 0v-3m0 3h3m-3 0h-3m-6 4.5h.008v.008H9v-.008Zm0-9h.008v.008H9V9Z" />
-                    </svg>
-                    <span>Admin Controls</span>
-                </a>
-
-                <div class="nav-section-title mg-top">Information</div>
-
-                <a href="about.html" class="nav-item" aria-label="About CyberShield">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    <span>About Us</span>
-                </a>
-
-                <a href="terms.html" class="nav-item" aria-label="Terms and Conditions">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                    <span>Terms & Policies</span>
-                </a>
+                <ul>
+                    <li><a href="#overview" class="sidebar-link active" data-tab="overview">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                        Overview
+                    </a></li>
+                    <li><a href="#scans" class="sidebar-link" data-tab="scans">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                        Scan Explorer
+                    </a></li>
+                    <li><a href="#users" class="sidebar-link" data-tab="users">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+                        Users
+                    </a></li>
+                    <li><a href="#ai-control" class="sidebar-link" data-tab="ai-control">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.456-2.455l.259-1.036.259 1.036a3.375 3.375 0 002.455 2.456l1.036.259-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" /></svg>
+                        AI Control
+                    </a></li>
+                    <li><a href="#settings" class="sidebar-link" data-tab="settings">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-.75 4.5V21m0-18v4.5m-6 3h12" /></svg>
+                        Settings
+                    </a></li>
+                </ul>
             </nav>
 
-            <div class="sidebar-footer">
-                <!-- Managed by JS (Gamified Profile) -->
+            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+                <button id="btn-logout" class="sidebar-link" style="width: 100%; border: none; background: none; cursor: pointer;">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+                    Logout
+                </button>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <div class="content-wrapper">
-
-                <!-- Admin View -->
-                <div id="admin-view" class="view-section active">
-
-                    <!-- Password Gate -->
-                    <div class="glass-card" id="password-gate">
-                        <svg class="lock-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                        </svg>
-                        <h2 style="color: white; margin-bottom: 0.5rem; font-size: 1.5rem;">Restricted Access</h2>
-                        <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 2rem;">Please enter the
-                            administrator password to view system metrics.</p>
-
-                        <div style="display: flex; gap: 0.5rem; max-width: 400px; width: 100%;">
-                            <input type="password" id="adminPasswordInput" placeholder="Enter password (hint: admin123)"
-                                class="input-glow-wrapper"
-                                style="flex-grow: 1; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(15, 23, 42, 0.6); color: white; border: 1px solid rgba(51, 65, 85, 0.8); outline: none;">
-                            <button id="btn-admin-login" class="btn-primary"
-                                style="padding: 0.75rem 1.5rem;">Unlock</button>
-                        </div>
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-container">
+                <!-- Header -->
+                <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; animation: fadeInUp 0.8s ease both;">
+                    <div>
+                        <h1 id="section-title" style="font-size: 2rem;">System Overview</h1>
+                        <p style="color: var(--text-muted);">Real-time metrics and security insights.</p>
                     </div>
-
-                    <!-- Protected Admin Content -->
-                    <div id="admin-content">
-                        <div class="card-header" style="margin-bottom: 2rem;">
-                            <div class="card-icon-wrapper"
-                                style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #818cf8;">
-                                <svg class="card-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                    <div class="nav-actions">
+                        <div class="theme-switch" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
+                            <div class="slider">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
                                 </svg>
                             </div>
-                            <div class="card-title-content">
-                                <h2>System Dashboard</h2>
-                                <p>Real-time analytics and heuristic configuration.</p>
-                            </div>
                         </div>
+                    </div>
+                </header>
 
-                        <!-- Stats Grid -->
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon"
-                                    style="color: #38bdf8; background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.2);">
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                                    </svg>
-                                </div>
-                                <div class="stat-info">
-                                    <span class="stat-value" id="stat-total-scans">--</span>
-                                    <span class="stat-label">Total Scans Processed</span>
-                                </div>
+                <div id="overview" class="admin-section active">
+                    <div class="admin-grid">
+                        <div class="dash-card stagger-1">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                <div class="stat-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg></div>
+                                <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">+12%</span>
                             </div>
-
-                            <div class="stat-card">
-                                <div class="stat-icon"
-                                    style="color: #fb7185; background: rgba(225, 29, 72, 0.1); border-color: rgba(225, 29, 72, 0.2);">
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" />
-                                    </svg>
-                                </div>
-                                <div class="stat-info">
-                                    <span class="stat-value" id="stat-scams-detected">--</span>
-                                    <span class="stat-label">Scams Blocked</span>
-                                </div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-icon"
-                                    style="color: #a78bfa; background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2);">
-                                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
-                                    </svg>
-                                </div>
-                                <div class="stat-info">
-                                    <span class="stat-value" id="stat-active-models">--</span>
-                                    <span class="stat-label">Active AI Models</span>
-                                </div>
-                            </div>
+                            <div class="stat-value" id="stat-total-scans">1,284</div>
+                            <div class="stat-label">Total Audits</div>
                         </div>
-
+                        <div class="dash-card stagger-2">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #f87171;"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" /></svg></div>
+                                <span style="color: #f87171; font-size: 0.8rem; font-weight: 700;">+5%</span>
+                            </div>
+                            <div class="stat-value" id="stat-scams-detected">243</div>
+                            <div class="stat-label">Threats Blocked</div>
                         </div>
-
-                        <!-- Visualization Row -->
-                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
-                            <div class="glass-card" style="padding: 1.5rem;">
-                                <h3 style="color: white; margin-bottom: 1rem; font-size: 1rem;">Scan Activity (Last 7 Days)</h3>
-                                <canvas id="trendsChart" height="150"></canvas>
+                        <div class="dash-card stagger-3">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1); color: #4ade80;"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
+                                <span style="color: #4ade80; font-size: 0.8rem; font-weight: 700;">+48</span>
                             </div>
-                            <div class="glass-card" style="padding: 1.5rem;">
-                                <h3 style="color: white; margin-bottom: 1rem; font-size: 1rem;">Tool Distribution</h3>
-                                <canvas id="distributionChart"></canvas>
-                            </div>
+                            <div class="stat-value" id="stat-total-users">859</div>
+                            <div class="stat-label">Active Users</div>
                         </div>
-
-                        <!-- Heuristics Editor -->
-                        <div class="keyword-list-container">
-                            <div class="keyword-list-header">
-                                <h3>Blacklisted Scam Heuristics</h3>
-                                <span style="font-size: 0.875rem; color: #94a3b8;" id="keyword-count">-- Keywords</span>
+                        <div class="dash-card stagger-4">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                                <span class="health-dot"></span>
                             </div>
-
-                            <div class="keyword-grid" id="keywordGrid">
-                                <!-- Filled by JS -->
-                                <div
-                                    style="display: flex; justify-content: center; width: 100%; grid-column: 1/-1; padding: 2rem;">
-                                    <div class="loader-bars">
-                                        <div class="bar bar-1"></div>
-                                        <div class="bar bar-2"></div>
-                                        <div class="bar bar-3"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <form class="add-keyword-form" id="addKeywordForm">
-                                <input type="text" id="newKeywordInput" required
-                                    placeholder="Add new scam keyword (e.g. 'bitcoin')"
-                                    class="input-glow-wrapper input-sm"
-                                    style="flex-grow: 1; border-radius: 0.5rem; background: rgba(15, 23, 42, 0.6); color: white; border: 1px solid rgba(51, 65, 85, 0.8); outline: none;">
-                                <button type="submit" class="btn-primary btn-sm" id="btn-add-keyword">Add
-                                    Heuristic</button>
-                            </form>
+                            <div class="stat-value">99.9%</div>
+                            <div class="stat-label">System Uptime</div>
                         </div>
                     </div>
 
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+                        <div class="dash-card stagger-5">
+                            <h3 style="margin-bottom: 2rem;">Threat Activity (Past 7 Days)</h3>
+                            <div style="position: relative; height: 300px; flex-grow: 1;">
+                                <canvas id="trendsChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="dash-card stagger-5">
+                            <h3 style="margin-bottom: 2rem;">Scan Distribution</h3>
+                            <div style="position: relative; height: 300px; flex-grow: 1;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+            <div id="scans" class="admin-section">
+                <div class="dash-card stagger-1">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3>Recent Audits</h3>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" class="search-input" placeholder="Search logs..." style="margin-bottom: 0; min-width: 250px;">
+                            <button class="btn-ghost" style="padding: 0 1rem;">Filter</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="scan-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Type</th>
+                                    <th>Content Preview</th>
+                                    <th>Result</th>
+                                    <th>Confidence</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="users" class="admin-section">
+                <div class="dash-card stagger-1">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3>User Management</h3>
+                        <button class="btn-primary">+ Add Auditor</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="user-list">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Audit Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ai-control" class="admin-section">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="dash-card stagger-1">
+                        <h3>Blacklisted Indicators</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Entries here trigger immediate scam classification.</p>
+                        <form id="addKeywordForm" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <input type="text" id="newKeywordInput" class="search-input" placeholder="New indicator..." required style="margin-bottom:0">
+                            <button type="submit" class="btn-primary" style="padding: 0 1rem;">Add</button>
+                        </form>
+                        <div id="keywordGrid" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                    <div class="dash-card stagger-2">
+                        <h3>Model Sensitivity</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Adjust the threshold for AI decision confidence.</p>
+                        <div style="margin-bottom: 2rem;">
+                            <label style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Confidence Threshold</span>
+                                <span id="threshold-val" style="color: var(--primary); font-weight: 700;">80%</span>
+                            </label>
+                            <input type="range" min="50" max="99" value="80" style="width: 100%; accent-color: var(--primary);" oninput="document.getElementById('threshold-val').textContent = this.value + '%'">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button class="btn-ghost" style="justify-content: flex-start; padding: 1rem;">Recalibrate Model</button>
+                            <button class="btn-ghost" style="justify-content: flex-start; padding: 1rem;">View Model Logs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings" class="admin-section">
+                <div class="dash-card stagger-1" style="max-width: 600px;">
+                    <h3>General Settings</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600;">Maintenance Mode</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Disable all public scan features.</div>
+                            </div>
+                            <input type="checkbox" class="theme-switch" style="width: 40px; height: 20px;">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600;">Data Anonymization</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Strip PII from history logs.</div>
+                            </div>
+                            <input type="checkbox" checked class="theme-switch" style="width: 40px; height: 20px;">
+                        </div>
+                        <hr style="border: 0.5px solid var(--glass-border);">
+                        <button class="btn-primary">Flush System Cache</button>
+                        <button class="btn-ghost" style="color: #f87171;">Destructive: Clear All Logs</button>
+                    </div>
+                </div>
+            </div>
             </div>
         </main>
     </div>
@@ -422,6 +260,6 @@
     <!-- Application Logic -->
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/admin.js"></script>
 </body>
-
 </html>

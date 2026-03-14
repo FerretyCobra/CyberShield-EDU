@@ -13,16 +13,17 @@
         .education-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
         .edu-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -30,50 +31,38 @@
         }
 
         .edu-card:hover {
-            border-color: rgba(96, 165, 250, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.1);
-        }
-
-        .edu-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
+            border-color: var(--accent-primary);
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
         }
 
         .category-badge {
             font-size: 0.75rem;
             font-weight: 700;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .difficulty-badge {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #cbd5e1;
-            padding: 0.25rem 0.5rem;
-            background: rgba(30, 41, 59, 0.6);
-            border-radius: 0.5rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            display: inline-block;
+            width: fit-content;
         }
 
         .edu-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #f8fafc;
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.2;
         }
 
         .edu-desc {
-            font-size: 0.875rem;
-            color: #94a3b8;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
             margin-bottom: 1.5rem;
             line-height: 1.6;
             flex-grow: 1;
@@ -81,17 +70,18 @@
 
         .edu-examples {
             background: rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border-radius: 1rem;
             margin-bottom: 1.5rem;
         }
 
         .edu-examples h5 {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: #cbd5e1;
-            margin-bottom: 0.5rem;
+            color: white;
+            margin-bottom: 0.75rem;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .edu-examples ul {
@@ -101,224 +91,119 @@
         }
 
         .edu-examples li {
-            font-size: 0.8125rem;
-            color: #94a3b8;
-            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
             position: relative;
-            padding-left: 1rem;
+            padding-left: 1.25rem;
         }
 
         .edu-examples li::before {
-            content: "•";
+            content: "→";
             position: absolute;
             left: 0;
-            color: #60a5fa;
+            color: var(--accent-primary);
+            font-weight: bold;
         }
 
         .read-more-btn {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            color: #60a5fa;
-            font-weight: 600;
-            font-size: 0.875rem;
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
             text-decoration: none;
-            transition: color 0.2s;
+            transition: all 0.2s;
             margin-top: auto;
-        }
-
-        .read-more-btn:hover {
-            color: #93c5fd;
-        }
-
-        .read-more-btn svg {
-            width: 1rem;
-            height: 1rem;
-            transition: transform 0.2s;
-        }
-
-        .read-more-btn:hover svg {
-            transform: translateX(4px);
-        }
-
-        .loader-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem;
-            width: 100%;
-            grid-column: 1 / -1;
         }
     </style>
 </head>
 
 <body>
-    <div class="mobile-header">
-        <div class="logo-box-small">
-            <h1 class="logo-text" style="font-size: 1rem;">CyberShield</h1>
-        </div>
-        <button class="hamburger" id="mobile-toggle" aria-label="Toggle menu">
-            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
-    </div>
+    <!-- Background Elements -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
 
-    <div class="layout-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-box">
-                    <svg class="icon-md text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+    <!-- Header / Navigation -->
+    <header>
+        <a href="index.html" class="logo">
+            <div class="logo-badge">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                </svg>
+            </div>
+            <span>CyberShield</span>
+        </a>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#detector">Detector</a></li>
+                <li><a href="education.html" class="active">Education</a></li>
+                <li><a href="history.html">My Scans</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+
+        <div class="nav-actions">
+            <!-- Theme Toggle -->
+            <div class="theme-switch" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
+                <div class="slider">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
                     </svg>
                 </div>
-                <h1 class="logo-text">CyberShield</h1>
             </div>
+            <a href="login.html" class="btn btn-ghost">Login</a>
+            <a href="signup.html" class="btn btn-primary">Sign Up</a>
+            <button class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
 
-            <nav class="sidebar-nav">
-                <div class="nav-section-title">Detection Tools</div>
-
-                <a href="index.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                    </svg>
-                    <span>Text Scan</span>
-                </a>
-
-                <a href="url-scan.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-                    </svg>
-                    <span>URL Scan</span>
-                </a>
-
-                <a href="pdf-scan.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                    </svg>
-                    <span>PDF Scan</span>
-                </a>
-
-                <a href="image-scan.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                    <span>Image Scan</span>
-                </a>
-
-                <a href="history.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <span>My Scans</span>
-                </a>
-
-                <a href="quiz.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-5.75c-.622 0-1.125.504-1.125 1.125V18.75m9 0H7.5" />
-                    </svg>
-                    <span>Scam Quiz</span>
-                </a>
-
-                <div class="nav-section-title mg-top">Management</div>
-
-                <a href="education.html" class="nav-item active">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-                    </svg>
-                    <span>Education</span>
-                </a>
-
-                <a href="admin.html" class="nav-item">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M6 13.5V10.5m0 0v-3m0 3h3m-3 0H3m12 3v-3m0 0v-3m0 3h3m-3 0h-3m-6 4.5h.008v.008H9v-.008Zm0-9h.008v.008H9V9Z" />
-                    </svg>
-                    <span>Admin Controls</span>
-                </a>
-
-                <div class="nav-section-title mg-top">Information</div>
-
-                <a href="about.html" class="nav-item" aria-label="About CyberShield">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    <span>About Us</span>
-                </a>
-
-                <a href="terms.html" class="nav-item" aria-label="Terms and Conditions">
-                    <div class="nav-indicator"></div>
-                    <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                    <span>Terms & Policies</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <!-- Managed by JS (Gamified Profile) -->
+    <main>
+        <!-- Education Hero -->
+        <section class="hero-section" style="padding-bottom: 0;">
+            <div class="container animate-on-scroll">
+                <div class="badge">SECURITY CURRICULUM</div>
+                <h1 class="hero-title">Security Awareness Hub</h1>
+                <p class="hero-subtitle">
+                    Master the art of identifying sophisticated online threats. Our AI-driven education center 
+                    teaches you the latest phishing tactics and fraud patterns.
+                </p>
             </div>
-        </aside>
+        </section>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <div class="content-wrapper">
-
-                <!-- Education View -->
-                <div id="education-view" class="view-section active">
-                    <div class="glass-card">
-                        <div class="card-header border-b border-white/5 pb-4">
-                            <div class="card-icon-wrapper"
-                                style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); color: #60a5fa;">
-                                <svg class="card-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-                                </svg>
-                            </div>
-                            <div class="card-title-content">
-                                <h2>Security Awareness Hub</h2>
-                                <p>Learn about the latest phishing tactics and how our AI detects them.</p>
-                            </div>
+        <!-- Curriculum Grid -->
+        <section class="section">
+            <div class="container">
+                <div class="glass-card animate-on-scroll" style="padding: 3rem;">
+                    <div class="card-header" style="margin-bottom: 2rem; justify-content: center; text-align: center;">
+                        <div>
+                            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Knowledge Modules</h2>
+                            <p style="color: var(--text-secondary);">Browse our expert-curated modules on digital safety.</p>
                         </div>
+                    </div>
 
-                        <!-- Grid container dynamically filled by app.js -->
-                        <div class="education-grid" id="educationGrid">
-                            <div class="loader-container">
-                                <div class="loader-bars">
-                                    <div class="bar bar-1"></div>
-                                    <div class="bar bar-2"></div>
-                                    <div class="bar bar-3"></div>
-                                </div>
-                                <p
-                                    style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;">
-                                    Syncing Curriculum...</p>
-                            </div>
+                    <div class="education-grid" id="educationGrid">
+                        <!-- Dynamically filled by app.js -->
+                        <div style="display: flex; justify-content: center; width: 100%; grid-column: 1/-1; padding: 4rem;">
+                            <div class="loading-spinner"></div>
                         </div>
                     </div>
                 </div>
-
             </div>
-        </main>
-    </div>
+        </section>
+
+    <footer class="footer">
+        <p>&copy; 2025 CyberShield EDU. Stay Safe, Stay Informed.</p>
+    </footer>
+    </main>
 
     <!-- Application Logic -->
     <script src="js/api.js"></script>

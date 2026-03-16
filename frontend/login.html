@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
 </head>
-<body class="mode-dark">
+<body>
     <!-- Background Effects -->
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
@@ -28,9 +28,10 @@
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="index.html#detector">Detector</a></li>
+                <li><a href="detector.html">Detector</a></li>
                 <li><a href="education.html">Education</a></li>
                 <li><a href="history.html">My Scans</a></li>
+                <li><a href="quiz.html">Scam Quiz</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
         </nav>
@@ -102,6 +103,8 @@
 
             try {
                 await window.api.auth.login(username, password);
+                // Reset guest scans on login
+                localStorage.removeItem('cs_guest_scans');
                 window.location.href = 'index.html';
             } catch (err) {
                 errorEl.textContent = err.message || 'Login failed. Please check your credentials.';

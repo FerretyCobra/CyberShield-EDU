@@ -14,8 +14,18 @@ class Settings(BaseModel):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "placeholder-key-for-dev")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    # Parse ALLOWED_ORIGINS from string like "['*']" or "http://localhost:5173"
-    ALLOWED_ORIGINS: list = ["*"]
+    # Parse ALLOWED_ORIGINS from string like "http://localhost:5173,http://localhost:3000"
+    ALLOWED_ORIGINS: list = []
+
+    def __init__(self, **values):
+        super().__init__(**values)
+        origins = os.getenv("ALLOWED_ORIGINS", "*")
+        if origins == "*":
+            self.ALLOWED_ORIGINS = ["*"]
+        else:
+            # Robust split that handles "['a', 'b']" or "a,b"
+            clean_origins = origins.replace("[", "").replace("]", "").replace("'", "").replace('"', "")
+            self.ALLOWED_ORIGINS = [o.strip() for o in clean_origins.split(",") if o.strip()]
     
     # Scam Detection Config
     SCAM_KEYWORDS: list = [

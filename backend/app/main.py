@@ -4,7 +4,7 @@ from slowapi.errors import RateLimitExceeded
 from app.utils.limiter import limiter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_history, quiz, admin, auth, tasks, scam_report
+from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_audio, detect_history, quiz, admin, auth, tasks, scam_report, public_api
 from app.config import settings
 from app.utils.logger import logger
 
@@ -49,12 +49,14 @@ app.include_router(detect_text.router, prefix=f"{settings.API_V1_STR}/detect", t
 app.include_router(detect_url.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
 app.include_router(detect_pdf.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
 app.include_router(detect_image.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
+app.include_router(detect_audio.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
 app.include_router(detect_history.router, prefix=f"{settings.API_V1_STR}/detect", tags=["detection"])
 app.include_router(quiz.router, prefix=f"{settings.API_V1_STR}/awareness", tags=["awareness"])
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(tasks.router, prefix=f"{settings.API_V1_STR}/tasks", tags=["tasks"])
 app.include_router(scam_report.router, prefix=f"{settings.API_V1_STR}/report", tags=["reporting"])
+app.include_router(public_api.router, prefix=f"{settings.API_V1_STR}/public", tags=["developer"])
 
 from app.services.awareness_service import awareness_service
 

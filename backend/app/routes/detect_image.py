@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request
 from typing import Optional
-from app.services.image_ocr import image_ocr
-from app.tasks import process_image_task
+from app.services.image_detector_service import image_detector
 from app.utils.auth import get_current_user
 from app.utils.logger import logger
 from app.utils.limiter import limiter
@@ -22,13 +21,9 @@ async def detect_image(request: Request, file: UploadFile = File(...), current_u
     
     try:
         content = await file.read()
-        # Trigger background task
-        task = process_image_task.delay(
-            content, 
-            file.filename, 
-            user_id=current_user.get("id") if current_user else None
-        )
-        return {"task_id": task.id, "status": "processing", "message": "OCR Analysis started in background"}
+        # Direct analysis for demo simplicity
+        result = await image_detector.analyze_screenshot(content)
+        return result
     except Exception as e:
         logger.error(f"Image detection route failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Error during image OCR analysis")

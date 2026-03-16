@@ -28,7 +28,14 @@ This document provides a step-by-step script for presenting CyberShield-EDU to a
 * **Action:** Click **"Analyze Message"**.
 * **Talking Points:**
   * *"When we analyze this, our backend uses a Natural Language Processing model (DistilBERT) to evaluate the intent."*
-  * *(Point to the result)* *"As you can see, the AI flagged this as a **SCAM** with high confidence. Below the result, the system provides a **Reasoning Feed**, explaining exactly *why* it was flagged—in this case, high urgency and money requests."*
+  * *(Point to the result)* *"As you can see, the AI flagged this as a **SCAM**. Below the result, notice the **Reasoning Indicators**: identifying the urgent tone and malicious intent."*
+
+### 2.1 Multilingual & Context-Aware Highlight (1 Minute)
+* **Action:** Clear the text and type:
+  * > "नमस्ते (Namaste), I am the Admission Dean. Please send your tuition fee via this crypto portal to confirm your seat immediately."
+* **Action:** Click **"Analyze Message"**.
+* **Talking Points:**
+  * *"CyberShield isn't just for English. Our new **Multilingual Engine** detects threats in Hindi and other languages. More importantly, it understands **Context**. It flagged this because a 'Dean' asking for 'Crypto' is a clear social engineering conflict."*
 
 ### 3. Live Demo: URL Analysis & Typo-squatting (2 Minutes)
 * **Action:** Click on 'URL Scan' in the sidebar.
@@ -38,6 +45,14 @@ This document provides a step-by-step script for presenting CyberShield-EDU to a
 * **Action:** Click **"Analyze Link"**.
 * **Talking Points:**
   * *"Our URL engine uses Levenshtein distance algorithms to catch these subtle misspellings against known safe domains, alongside entropy checks to catch machine-generated phishing links."*
+
+### 4. Live Demo: Audio Vishing (1.5 Minutes)
+* **Action:** Click on 'Audio Scan' in the top navigation.
+* **Talking Points:**
+  * *"Scams are moving to voice notes and robocalls—what we call 'Vishing'. CyberShield now protects against this."*
+* **Action:** Upload a mock Recording and click **"Analyze Recording"**.
+* **Talking Points:**
+  * *"The system transcribes the audio and looks for high-pressure voice tactics. It just flagged this recording as a vishing threat targeting bank credentials."*
 
 ### 4. Interactive Education: Building Awareness (1 Minute)
 * **Action:** Click on 'Education' in the sidebar.

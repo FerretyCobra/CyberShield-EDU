@@ -10,13 +10,14 @@ graph TD
     Frontend -->|REST API HTTP| Backend[FastAPI Backend]
 
     subgraph Backend Core
-        Backend --> DetectText[Text Detector (DistilBERT)]
-        Backend --> DetectURL[URL Analyzer (Heuristics)]
-        Backend --> DetectPDF[PDF Analyzer (pdfplumber)]
-        Backend --> DetectImg[Image OCR (Tesseract)]
+        Backend --> DetectText[Multilingual Text Detector]
+        Backend --> DetectURL[URL Analyzer]
+        Backend --> DetectPDF[PDF Analyzer]
+        Backend --> DetectImg[Image OCR]
+        Backend --> DetectAudio[Audio Vishing Detector]
         
-        Backend <--> Config[Dynamic Configuration]
-        Backend <--> Storage[JSON Data Files]
+        Backend <--> KeyService[API Key Manager]
+        Backend <--> DB[(MySQL Database)]
     end
     
     subgraph Frontend Client
@@ -39,13 +40,14 @@ The frontend is a premium, responsive interface built with Vanilla HTML5, CSS3, 
 The backend is a high-performance Python server capable of handling asynchronous requests and machine learning inference.
 * **Framework**: FastAPI provides asynchronous request handling, automatic OpenAPI (`/docs`) generation, and robust data validation with Pydantic.
 * **Text Processing (AI)**:
-  * Uses the `transformers` library to run inference on a pre-trained `DistilBERT` model (`distilbert-base-uncased-finetuned-sst-2-english`).
-  * Optimized for CPU inference speed to ensure rapid responses to user queries.
-* **Vision & Document Processing**:
-  * `pdfplumber` is utilized to extract textual content from uploaded PDF documents.
-  * `pytesseract` (Python wrapper for Tesseract OCR) extracts text from user-submitted images, facilitated by `Pillow` and `opencv-python`.
+  - Uses `distilbert-base-multilingual-cased` to support international student protection.
+  - **Context Engine**: Implements a role-action conflict matrix to identify high-probability social engineering (e.g., Role: "Faculty" -> Action: "Request OTP").
+* **Vision & Audio Scanning**:
+  - `pytesseract` extracts text from image screenshots for multi-modal analysis.
+  - **Audio Engine**: Transcribes voice notes and scans transcriptions for vishing keywords and bank fraud patterns.
 * **URL Heuristics**:
   * Utilizes `python-levenshtein` to compute string distances to detect domain typosquatting against known safe brands.
   * Implements Shannon entropy calculations to identify machine-generated or obfuscated URLs.
 * **Data Storage**:
-  * Currently utilizes localized static configurations (`config.py`) and JSON files (`educational_resources.json`) for data persistence. The modular design allows for future swap-out to a formal PostgreSQL/MongoDB database.
+  - **Relational Database**: Uses MySQL (via SQLAlchemy) to store user accounts, API keys (hashed), and permanent scan logs.
+  - **API Key Infrastructure**: Secures the public developer endpoints using a hashed-key validation layer.

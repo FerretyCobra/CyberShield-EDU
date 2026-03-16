@@ -12,8 +12,9 @@ Upon accessing the platform (typically at `http://localhost:5173`), you will see
 2. **URL Scan:** Check links for phishing attempts or typo-squatting.
 3. **PDF Scanner:** Upload documents (e.g., job offer letters) for text extraction and analysis.
 4. **Image OCR:** Upload screenshots of direct messages for AI analysis.
-5. **Education Hub:** Access wellness tips, quiz games, and security awareness content.
-6. **Dashboard Stats (Admin):** View platform usage analytics and configure detection rules.
+5. **Audio Scan:** Upload voice notes or recordings to detect "Voice Phishing."
+6. **Education Hub:** Access wellness tips, quiz games, and security awareness content.
+7. **Dashboard Stats (Admin):** View platform usage analytics and configure detection rules.
 
 *Note: The platform is built as a Single Page Application (SPA), ensuring seamless and rapid transitions between these modules without page reloads.*
 
@@ -44,13 +45,12 @@ If you receive an unprompted job offer letter or scholarship award document:
 3. Click **"Analyze Document"**.
 4. The system will extract the text from the layout and run it through the core text detection engine. It will flag inconsistencies or common fraudulent job offer phrases.
 
-### 4. Image OCR Scanner
-Scams frequently occur on platforms where you cannot highlight and copy text (like Instagram DMs or Snapchat).
-1. Take a screenshot of the suspicious conversation.
-2. Navigate to the **Image OCR** tab.
-3. Upload the screenshot (PNG or JPG).
-4. Click **"Extract & Analyze Text"**.
-5. The Optical Character Recognition (OCR) engine will "read" the image, extract the embedded text, and immediately analyze it for threats.
+5. **Audio Vishing Scanner**
+If you receive a suspicious voice note or automated robocall recording:
+1. Navigate to the **Audio Scan** tab in the top navigation.
+2. Upload the audio file (MP3, WAV, or M4A).
+3. Click **"Analyze Recording"**.
+4. The system will transcribe the audio and flag common vishing tactics like "IRS Debt" or "Account Verification" threats.
 
 ---
 

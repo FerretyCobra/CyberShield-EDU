@@ -66,21 +66,42 @@ All detection endpoints return a consistent JSON structure containing a `predict
 }
 ```
 
-### 4. Analyze Image (OCR)
-**Endpoint:** `POST /api/v1/detect/image`
-**Description:** Uses Tesseract OCR to read text from image screenshots and runs it through the Text Detection engine.
-**Request Headers:** `Content-Type: multipart/form-data`
-**Request Body:**
-- `file`: The Image file upload (PNG/JPG).
-**Response (200 OK):**
-```json
-{
-  "prediction": "safe",
-  "confidence": 0.99,
-  "reasoning": [],
   "extracted_text": "Hey Mom, just letting you know I made it to campus safely!"
 }
 ```
+
+### 5. Analyze Audio (Vishing)
+**Endpoint:** `POST /api/v1/detect/audio`
+**Description:** Scans voice notes or audio recordings for vishing (voice phishing) patterns.
+**Request Headers:** `Content-Type: multipart/form-data`
+**Request Body:**
+- `file`: The Audio file upload (MP3/WAV).
+**Response (200 OK):**
+```json
+{
+  "prediction": "scam",
+  "confidence": 0.95,
+  "reasoning": [
+    "Detected voice phishing pattern.",
+    "Suspicious financial arrest threat identified."
+  ],
+  "transcription": "This is an urgent call from the IRS. You have an unpaid debt..."
+}
+```
+
+## Public Developer API
+
+CyberShield provides a secondary set of endpoints for external student platforms. These require an `X-API-Key`.
+
+### 6. Public Text Detection
+**Endpoint:** `POST /api/v1/public/detect/text`
+**Headers:** `X-API-Key: YOUR_KEY`
+**Response:** Same as `/detect/text` but includes advanced `V2 Reasoning` indicators.
+
+### 7. Public URL Detection
+**Endpoint:** `POST /api/v1/public/detect/url`
+**Headers:** `X-API-Key: YOUR_KEY`
+**Sandbox Support:** Add `X-Sandbox: true` to get mock results without using quota.
 
 ## Educational Endpoints
 

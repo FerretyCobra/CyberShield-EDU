@@ -8,6 +8,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/gamification.css">
 </head>
 
 <body>
@@ -30,15 +31,31 @@
 
         <nav>
             <ul>
-                <li><a href="#home" class="active">Home</a></li>
-                <li><a href="#detector">Detector</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="detector.html">Detector</a></li>
+                <li><a href="audio-scan.html">Audio Scan</a></li>
                 <li><a href="education.html">Education</a></li>
+                <li><a href="providers.html">Verified Providers</a></li>
+                <li><a href="quiz.html">Scam Quiz</a></li>
+                <li><a href="developer.html">Developer API</a></li>
                 <li><a href="history.html">My Scans</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
         </nav>
 
         <div class="nav-actions">
+            <!-- Gamified Stats -->
+            <div class="user-stats-badge">
+                <div class="level-indicator" data-gamif="level">1</div>
+                <div class="stat-group">
+                    <span class="stat-label" data-gamif="title">Initiate</span>
+                    <span class="stat-value"><span data-gamif="xp">0</span> XP</span>
+                    <div class="xp-progress-mini">
+                        <div class="xp-fill" data-gamif="progress" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Theme Toggle -->
             <div class="theme-switch" onclick="toggleTheme()" title="Toggle Light/Dark Mode">
                 <div class="slider">
@@ -56,6 +73,16 @@
             </button>
         </div>
     </header>
+    
+    <!-- Scam Alert Ticker -->
+    <div class="scam-ticker">
+        <div class="ticker-content">
+            <span class="ticker-label">⚠️ RECENT ALERTS:</span>
+            <div class="ticker-text" id="scamTicker">
+                <span>Loading latest community reports...</span>
+            </div>
+        </div>
+    </div>
 
     <main>
         <!-- Hero Section -->
@@ -65,106 +92,70 @@
                 <h1>Stay Safe from <br> Online Fraud</h1>
                 <p>Shield yourself from fake internships, predatory scholarships, and career scams with our advanced AI detection engine.</p>
                 <div class="nav-actions" style="justify-content: center;">
-                    <a href="#detector" class="btn btn-primary" style="padding: 16px 40px;">Get Started</a>
+                <div class="nav-actions" style="justify-content: center;">
+                    <a href="detector.html" class="btn btn-primary" style="padding: 16px 40px;">Get Started</a>
                     <a href="education.html" class="btn btn-ghost" style="padding: 16px 40px;">Learn More</a>
                 </div>
             </div>
         </section>
 
-        <!-- Detector Section -->
-        <section id="detector" class="animateOnScroll">
+        <!-- Quick Tips Section -->
+        <section class="quick-tips-section animateOnScroll">
             <div class="container">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Scam Detector</h2>
-                    <p>Upload files or paste text to analyze for fraudulent indicators.</p>
-                </div>
-
-                <div class="detector-container">
-                    <div class="tabs-header">
-                        <button class="tab-btn active" onclick="switchTab('text-tab')">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>
-                            Text Scan
-                        </button>
-                        <button class="tab-btn" onclick="switchTab('url-tab')">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" /></svg>
-                            URL Scan
-                        </button>
-                        <button class="tab-btn" onclick="switchTab('pdf-tab')">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-                            PDF Scan
-                        </button>
-                        <button class="tab-btn" onclick="switchTab('image-tab')">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
-                            Image Scan
-                        </button>
-                    </div>
-
-                    <!-- Tab Contents -->
-                    <div id="text-tab" class="tab-content active">
-                        <div class="input-group">
-                            <textarea id="textScanInput" rows="6" placeholder="Paste the suspicious message (WhatsApp, SMS, Email)..."></textarea>
-                        </div>
-                        <button id="btn-text-scan" class="btn btn-primary w-full">Run Analysis</button>
-                    </div>
-
-                    <div id="url-tab" class="tab-content">
-                        <div class="input-group">
-                            <input type="text" id="urlScanInput" placeholder="Enter the suspicious URL (e.g., http://scam-site.com)...">
-                        </div>
-                        <button id="btn-url-scan" class="btn btn-primary w-full">Scan URL</button>
-                    </div>
-
-                    <div id="pdf-tab" class="tab-content">
-                        <div class="input-group">
-                            <div style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;" onclick="document.getElementById('pdfInput').click()">
-                                <p>Click to upload PDF or drop here</p>
-                                <input type="file" id="pdfInput" accept=".pdf" style="display:none">
-                            </div>
-                        </div>
-                        <button id="btn-pdf-scan" class="btn btn-primary w-full">Analyze PDF</button>
-                    </div>
-
-                    <div id="image-tab" class="tab-content">
-                        <div class="input-group">
-                            <div style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;" onclick="document.getElementById('imageInput').click()">
-                                <p>Click to upload Image or drop here</p>
-                                <input type="file" id="imageInput" accept="image/*" style="display:none">
-                            </div>
-                        </div>
-                        <button id="btn-image-scan" class="btn btn-primary w-full">Analyze Image</button>
-                    </div>
-
-                    <!-- Result Area -->
-                    <div id="result-container" class="result-box">
-                        <!-- Filled by dynamic scan logic -->
+                <div class="tips-container glass-card">
+                    <div class="tip-icon">💡</div>
+                    <div class="tip-content">
+                        <span class="tip-label">Quick Tip</span>
+                        <p id="quickTipText">Always check the sender's email address for slight misspellings.</p>
                     </div>
                 </div>
             </div>
         </section>
+        
+        <!-- Quiz CTA Section -->
+        <section class="animateOnScroll" style="margin-top: 60px;">
+            <div class="container">
+                <div class="glass-card" style="display: flex; align-items: center; gap: 40px; padding: 4rem; overflow: hidden; position: relative; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 300px; z-index: 2;">
+                        <div class="hero-tag" style="background: rgba(168, 85, 247, 0.1); color: var(--secondary); border-color: rgba(168, 85, 247, 0.2);">🧠 TEST YOUR KNOWLEDGE</div>
+                        <h2 style="font-size: clamp(2rem, 4vw, 2.5rem); margin-bottom: 1.5rem; color: var(--text-main);">Can You Spot the Scam?</h2>
+                        <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 500px;">Take our interactive quiz to see if you can identify the latest phishing tactics and fraudulent messages. Earn XP and level up your security score!</p>
+                        <a href="quiz.html" class="btn btn-primary" style="padding: 16px 40px; background: var(--secondary); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); border: none;">Start Quiz Challenge</a>
+                    </div>
+                    <div style="flex: 1; min-width: 250px; display: flex; justify-content: center; position: relative; z-index: 1;">
+                        <div style="font-size: 8rem; opacity: 0.1; filter: blur(2px);">🏆</div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem;">🛡️</div>
+                    </div>
+                    <!-- Decorative Circle -->
+                    <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: var(--secondary); filter: blur(100px); opacity: 0.2; border-radius: 50%;"></div>
+                </div>
+            </div>
+        </section>
+
         
         <!-- Report a Scam Section -->
         <section id="report" class="animateOnScroll" style="margin-top: 100px;">
             <div class="container" style="max-width: 800px;">
                 <div style="text-align: center; margin-bottom: 40px;">
                     <div class="hero-tag" style="margin-bottom: 10px;">📢 COMMUNITY PROTECTION</div>
-                    <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Report a Scam</h2>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 10px; color: var(--text-main);">Report a Scam</h2>
                     <p>Help others stay safe by reporting suspicious companies or fraudulent activities.</p>
                 </div>
 
                 <div class="glass-card" style="padding: 3rem;">
                     <form id="scamReportForm" enctype="multipart/form-data">
                         <div class="input-group">
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: white;">Company / Organization Name *</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Company / Organization Name *</label>
                             <input type="text" id="reportCompanyName" placeholder="e.g., Global Tech Internships" required name="company_name">
                         </div>
                         
                         <div class="input-group" style="margin-top: 20px;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: white;">Scam Description *</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Scam Description *</label>
                             <textarea id="reportDescription" rows="5" placeholder="Describe the scam in detail... What happened? How did they contact you?" required name="description"></textarea>
                         </div>
 
                         <div class="input-group" style="margin-top: 20px;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: white;">Upload Evidence (Optional)</label>
+                            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">Upload Evidence (Optional)</label>
                             <div style="border: 2px dashed var(--glass-border); padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.3s;" 
                                  onclick="document.getElementById('reportEvidence').click()"
                                  id="dropZone">
@@ -192,7 +183,7 @@
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </div>
-                        <h3 style="color: white; margin-bottom: 10px;">Report Submitted</h3>
+                        <h3 style="color: var(--text-main); margin-bottom: 10px;">Report Submitted</h3>
                         <p style="color: var(--text-secondary);">Thank you for helping keep the community safe. Our team will review this report shortly.</p>
                         <button class="btn btn-ghost" style="margin-top: 20px;" onclick="resetReportForm()">Submit Another Report</button>
                     </div>
@@ -225,7 +216,41 @@
         <p>&copy; 2025 CyberShield EDU. Stay Safe, Stay Informed.</p>
     </footer>
 
+    <!-- Confidence Explanation Modal -->
+    <div id="confidenceModal" class="modal">
+        <div class="modal-content glass-card">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <div class="tip-icon">🛡️</div>
+                <h3>Understanding the Confidence Score</h3>
+            </div>
+            <div class="modal-body">
+                <p>The <strong>AI Confidence Score</strong> represents how closely the analyzed content matches known fraudulent patterns in our database.</p>
+                <div class="explanation-grid">
+                    <div class="exp-item">
+                        <span class="exp-label">90% - 100%</span>
+                        <p>High certainty of a scam. Features align perfectly with verified fraud tactics.</p>
+                    </div>
+                    <div class="exp-item">
+                        <span class="exp-label">70% - 89%</span>
+                        <p>Suspicious indicators found. Proceed with extreme caution.</p>
+                    </div>
+                    <div class="exp-item">
+                        <span class="exp-label">50% - 69%</span>
+                        <p>Potential risk detected. Patterns are ambiguous but warrant a second look.</p>
+                    </div>
+                    <div class="exp-item">
+                        <span class="exp-label">Below 50%</span>
+                        <p>Low matching with fraud signatures. Usually indicates safe content.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.85rem; color: var(--text-muted);">Note: Our AI evaluates linguistics, metadata, and structural patterns. Always use your best judgment in addition to our analysis.</p>
+            </div>
+        </div>
+    </div>
+
     <script src="js/api.js"></script>
+    <script src="js/gamification.js"></script>
     <script src="js/app.js"></script>
     <script>
         function updateFileName(input) {

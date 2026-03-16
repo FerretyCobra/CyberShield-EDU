@@ -46,7 +46,9 @@ Ensure the following are installed:
     REDIS_URL=redis://localhost:6379/0
     URLSCAN_API_KEY="your-api-key-here"
     ```
-6.  **Run the Server**:
+6.  **Download AI Models**:
+    Upon first run, the system will automatically download the `distilbert-base-multilingual-cased` model (~250MB). Ensure you have a stable internet connection.
+7.  **Run the Server**:
     ```bash
     python main.py
     ```
@@ -81,6 +83,5 @@ The project primarily uses the premium Vanilla implementation.
 ---
 
 ## 6. Verification
-- **Login**: Use `admin` / `admin123` to test the Admin Panel.
-- **Scanning**: Try pasting text in the Text Scan tool; look for the "Analysis Complete" notification.
-- **Themes**: Click the sun/moon icon in the sidebar to test Light/Dark modes.
+- **Audio Scan**: Visit `audio-scan.html` and upload a mock .wav file to trigger the vishing analysis.
+- **Developer API**: Use Postman to send a request to `http://localhost:8000/api/v1/public/detect/text` with an `X-API-Key` header.

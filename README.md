@@ -4,8 +4,8 @@
 
 ![CyberShield Overview](https://img.shields.io/badge/Status-Active-brightgreen)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
-![HTML/JS](https://img.shields.io/badge/Frontend-Vanilla--HTML--JS-E34F26)
-![ML](https://img.shields.io/badge/AI-DistilBERT-FF9900)
+![ML](https://img.shields.io/badge/AI-Multilingual--NLP-FF9900)
+![API](https://img.shields.io/badge/Developer--API-v1.0-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 ---
@@ -18,32 +18,39 @@ Students globally are frequently targeted by sophisticated cyber scams involving
 
 Our platform employs a multi-layered approach to threat detection, ensuring users are protected across various digital communication channels:
 
-### 1. 📝 Text Scam Detection (NLP)
-Analyzes SMS, WhatsApp messages, or emails using an advanced Natural Language Processing model (`DistilBERT` fine-tuned for sequence classification). It identifies signs of:
-- Artificial urgency or pressure tactics.
-- Suspicious financial requests (e.g., gift cards, unexpected fees).
-- Common scam patterns specific to student targeting.
+### 1. 🌍 Multilingual & Context-Aware NLP
+Analyzes SMS, WhatsApp messages, or emails using an advanced **Multilingual DistilBERT** model. 
+- **Language Detection:** Scans threats in Hindi, Spanish, English, and more.
+- **Context Engine:** Detects "Social Engineering" (e.g., a "Professor" asking for an OTP).
+- **Sentiment Analysis:** Flags artificial urgency and psychological pressure.
 
-### 2. 🔗 URL Phishing Scanner
-Proactively checks raw URLs for malicious intent before the user clicks:
-- **Typosquatting Check:** Calculates Levenshtein distance against known safe brands (e.g., `paypal.com` vs `paypa1.com`).
-- **Domain Analysis:** Flags suspicious Top-Level Domains (TLDs) often used by threat actors.
-- **Entropy Calculation:** Identifies randomly generated or highly obfuscated URLs indicative of malware hosting.
+### 2. 🎙️ Audio Vishing Detector
+Protection against "Voice Phishing" (Vishing).
+- Transcribes audio recordings or voice notes.
+- Analyzes voice patterns for high-risk financial or arrest threats.
 
-### 3. 📄 PDF Document Analysis
-Defends against fake offer letters and fraudulent scholarship documents.
-- Extracts text, metadata, and embedded artifacts using `pdfplumber`.
-- Scans for known fraudulent signatures, altered creation dates, and suspicious formatting inconsistencies.
+- Extracts text, metadata, and embedded artifacts.
+- Scans for known fraudulent signatures and malicious patterns.
 
-### 4. 📸 Image OCR Scanner
-Many scams occur via social media DMs where text cannot be easily copied. 
-- Uses robust Optical Character Recognition (`pytesseract` & `OpenCV`) to extract text from screenshots of suspicious conversations.
-- Feeds extracted text directly into the NLP engine for threat analysis.
+### 4. 🔗 URL Phishing Scanner
+Proactively checks raw URLs for malicious intent:
+- **Typosquatting Check:** Detects impersonated brands (e.g., `paypa1.com`).
+- **Domain Analysis:** Flags suspicious TLDs and entropy levels.
+
+### 5. 📸 Image OCR Scanner
+Scans screenshots of DMs or Instagram/WhatsApp chats.
+- Uses **Optical Character Recognition** to extract text from images.
+- Feeds extracted data directly into the Multilingual AI engine.
 
 ### 5. 🎓 Education & Awareness Hub
 Prevention is better than cure. The platform includes an interactive learning center:
-- **Daily Wellness Tips:** Bite-sized cybersecurity advice tailored for students.
-- **"Spot the Scam" Quizzes:** Gamified learning modules testing users against real-world scam examples.
+- **"Spot the Scam" Quizzes:** Interactive learning modules.
+- **Simulated Phishing:** Real-world training scenarios.
+
+### 7. 🔌 Developer API
+Open infrastructure for the student ecosystem.
+- **X-API-Key:** Secure access for job boards and campus platforms.
+- **Sandbox Mode:** Safe testing environment for external developers.
 
 ### 6. 📊 Admin & Analytics Dashboard
 For university IT administrators and researchers:
@@ -136,11 +143,10 @@ CyberShield-EDU leverages industry-standard open-source technologies:
 ### Server-Side (Backend)
 - **Framework:** Python 3, FastAPI, Pydantic, Uvicorn.
 - **AI & Data Processing Engine:**
-  - Hugging Face Transformers (`DistilBERT` sequence classification)
-  - PyTorch (Tensor operations)
-  - `pdfplumber` (Document parsing)
-  - `OpenCV` (`cv2`) & `Pillow` (Image manipulation)
-  - `pytesseract` (Optical Character Recognition)
+  - `distilbert-base-multilingual-cased` (NLP Inference)
+  - `SpeechRecognition` / `Transcribers` (Audio Analysis)
+  - `pytesseract` (OCR Engine)
+  - `SQLAlchemy` & `MySQL` (Permanent Data Storage)
 
 ---
 

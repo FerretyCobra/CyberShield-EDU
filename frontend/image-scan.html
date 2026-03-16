@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="css/main.css">
     <style>
         .file-drop-zone {
-            border: 2px dashed rgba(96, 165, 250, 0.4);
+            background: var(--bg-card);
+            border: 2px dashed var(--primary);
             border-radius: 1rem;
             padding: 3rem 2rem;
             text-align: center;
-            background: rgba(15, 23, 42, 0.4);
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -25,9 +25,9 @@
 
         .file-drop-zone:hover,
         .file-drop-zone.dragover {
-            border-color: rgba(96, 165, 250, 0.8);
-            background: rgba(30, 41, 59, 0.6);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15) inset;
+            border-color: var(--primary);
+            background: var(--glass-bg);
+            box-shadow: 0 0 20px var(--primary-glow) inset;
         }
 
         .file-input-hidden {
@@ -51,7 +51,7 @@
         .file-text-primary {
             font-size: 1.125rem;
             font-weight: 600;
-            color: #f1f5f9;
+            color: var(--text-main);
             margin-bottom: 0.5rem;
         }
 
@@ -98,7 +98,7 @@
             <nav class="sidebar-nav" role="navigation" aria-label="Main Navigation">
                 <div class="nav-section-title">Detection Tools</div>
 
-                <a href="index.html" class="nav-item" aria-label="Text Scanner">
+                <a href="detector.html" class="nav-item" aria-label="Text Scanner">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"

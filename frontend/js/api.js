@@ -160,6 +160,21 @@ const detectionApi = {
             throw error;
         }
     },
+    
+    async analyzeAudio(formData) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/detect/audio`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${getAuthToken()}` },
+                body: formData,
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Audio analysis failed:', error);
+            throw error;
+        }
+    },
 
     async getHistory() {
         try {

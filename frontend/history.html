@@ -21,16 +21,16 @@
             align-items: center;
             gap: 1.5rem;
             padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--bg-card);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             border-radius: 1.25rem;
             transition: all 0.3s ease;
         }
 
         .history-item:hover {
-            border-color: var(--accent-primary);
-            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            background: var(--glass-bg);
             transform: translateX(8px);
         }
 
@@ -59,7 +59,7 @@
         .item-data {
             font-size: 1rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -117,9 +117,11 @@
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="index.html#detector">Detector</a></li>
-                <li><a href="education.html">Education</a></li>
+                <li><a href="detector.html">Detector</a></li>
+                <li><a href="detector.html">Detector</a></li>
+                <li><a href="audio-scan.html">Audio Scan</a></li>
                 <li><a href="history.html" class="active">My Scans</a></li>
+                <li><a href="quiz.html">Scam Quiz</a></li>
                 <li><a href="admin.html">Admin</a></li>
             </ul>
         </nav>
@@ -160,10 +162,16 @@
         <section class="section">
             <div class="container">
                 <div class="glass-card animate-on-scroll" style="padding: 3rem;">
-                    <div class="card-header" style="margin-bottom: 1rem;">
+                    <div class="card-header" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <div class="card-title-content">
                             <h2 style="font-size: 1.5rem;">Recent Security Audits</h2>
                             <p style="color: var(--text-secondary);">Your personal detection timeline.</p>
+                        </div>
+                        <div class="search-container" style="position: relative; flex-grow: 1; max-width: 400px;">
+                            <input type="text" id="historySearch" placeholder="Search by text or URL..." style="padding-left: 40px; margin-bottom: 0;">
+                            <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; color: var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                         </div>
                     </div>
 
@@ -180,6 +188,16 @@
     <footer class="footer">
         <p>&copy; 2025 CyberShield EDU. All scan data is encrypted and private.</p>
     </footer>
+
+    <!-- History Detail Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content glass-card" style="max-width: 800px;">
+            <span class="close-modal">&times;</span>
+            <div id="modalResultContainer">
+                <!-- Filled by scan result renderer -->
+            </div>
+        </div>
+    </div>
     </main>
 
     <script src="js/api.js"></script>
@@ -187,14 +205,33 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const list = document.getElementById('historyList');
-            try {
-                const history = await window.api.detection.getHistory();
-                if (history.length === 0) {
-                    list.innerHTML = '<div style="text-align: center; padding: 4rem;"><p style="color: var(--text-secondary); font-size: 1.1rem;">No scans found. Start your first security check!</p><a href="index.html#detector" class="btn-primary" style="margin-top: 1.5rem; display: inline-block;">Go to Detector</a></div>';
+            const searchInput = document.getElementById('historySearch');
+            const modal = document.getElementById('historyModal');
+            const modalContent = document.getElementById('modalResultContainer');
+            const closeBtn = document.querySelector('.close-modal');
+            
+            let allHistory = [];
+
+            if (closeBtn) {
+                closeBtn.onclick = () => modal.classList.remove('show');
+                window.onclick = (e) => { if (e.target == modal) modal.classList.remove('show'); };
+            }
+
+            window.showDetails = (id) => {
+                const item = allHistory.find(h => h.id === id);
+                if (item && window.renderScanResult) {
+                    modal.classList.add('show');
+                    window.renderScanResult(item, modalContent);
+                }
+            };
+
+            const renderList = (items) => {
+                if (items.length === 0) {
+                    list.innerHTML = '<div style="text-align: center; padding: 4rem;"><p style="color: var(--text-secondary); font-size: 1.1rem;">No matching scans found.</p></div>';
                     return;
                 }
 
-                list.innerHTML = history.map(item => {
+                list.innerHTML = items.map(item => {
                     const isScam = item.prediction === 'scam';
                     const date = new Date(item.created_at).toLocaleDateString(undefined, {
                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
@@ -222,13 +259,13 @@
                     }
 
                     return `
-                        <div class="history-item">
+                        <div class="history-item" onclick="window.showDetails(${item.id})" style="cursor: pointer;">
                             <div class="type-icon ${typeClass}">${iconHtml}</div>
                             <div class="item-info">
                                 <div class="item-data">${item.input_data}</div>
                                 <div class="item-meta">
                                     <span>${date}</span>
-                                    <span style="width: 4px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 50%;"></span>
+                                    <span style="width: 4px; height: 4px; background: var(--text-muted); border-radius: 50%;"></span>
                                     <span>${(item.confidence * 100).toFixed(0)}% Certainty</span>
                                 </div>
                             </div>
@@ -238,10 +275,27 @@
                         </div>
                     `;
                 }).join('');
+            };
 
+            try {
+                allHistory = await window.api.detection.getHistory();
+                if (allHistory.length === 0) {
+                    list.innerHTML = '<div style="text-align: center; padding: 4rem;"><p style="color: var(--text-secondary); font-size: 1.1rem;">No scans found. Start your first security check!</p><a href="detector.html" class="btn-primary" style="margin-top: 1.5rem; display: inline-block;">Go to Detector</a></div>';
+                    return;
+                }
+                renderList(allHistory);
             } catch (err) {
                 list.innerHTML = '<div style="text-align: center; padding: 4rem;"><p style="color: #f87171;">Failed to load history. Please try again later.</p></div>';
             }
+
+            searchInput?.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = allHistory.filter(h => 
+                    h.input_data.toLowerCase().includes(term) || 
+                    h.scan_type.toLowerCase().includes(term)
+                );
+                renderList(filtered);
+            });
         });
     </script>
 </body>

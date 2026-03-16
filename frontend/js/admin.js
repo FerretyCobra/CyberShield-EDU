@@ -125,9 +125,38 @@ function initCharts() {
 }
 
 // --- Data Loading ---
-function loadDashboardData() {
+async function loadDashboardData() {
+    try {
+        const stats = await window.api.admin.getStats();
+        updateStatsUI(stats);
+        updateCharts(stats);
+    } catch (err) {
+        console.error("Failed to load dashboard stats:", err);
+    }
     loadScanLogs();
-    loadUserTable();
+    // loadUserTable(); // Keep mock for now or implement if backend supports
+}
+
+function updateStatsUI(stats) {
+    document.getElementById('stat-total-scans').textContent = stats.total_scans.toLocaleString();
+    document.getElementById('stat-scams-detected').textContent = stats.scams_detected.toLocaleString();
+    // Assuming active users is not in stats yet, we could mock or add to backend
+}
+
+function updateCharts(stats) {
+    if (trendsChart && stats.trends) {
+        trendsChart.data.labels = stats.trends.map(t => t.date);
+        trendsChart.data.datasets[0].data = stats.trends.map(t => t.count);
+        trendsChart.update();
+    }
+    
+    if (categoryChart && stats.distribution) {
+        const labels = Object.keys(stats.distribution);
+        const data = Object.values(stats.distribution);
+        categoryChart.data.labels = labels;
+        categoryChart.data.datasets[0].data = data;
+        categoryChart.update();
+    }
 }
 
 function loadScanLogs() {
@@ -177,36 +206,51 @@ function loadUserTable() {
 }
 
 // --- AI Control ---
-function initAIControl() {
+async function initAIControl() {
     const grid = document.getElementById('keywordGrid');
     const form = document.getElementById('addKeywordForm');
     const input = document.getElementById('newKeywordInput');
 
-    let keywords = ['urgency', 'verify account', 'lottery', 'inheritance', 'bank alert', 'ssn'];
+    if (!grid) return;
 
-    const renderKeywords = () => {
+    const loadKeywords = async () => {
+        try {
+            const data = await window.api.admin.getKeywords();
+            renderKeywords(data.keywords);
+        } catch (err) {
+            console.error("Failed to load keywords:", err);
+        }
+    };
+
+    const renderKeywords = (keywords) => {
         grid.innerHTML = keywords.map(kw => `
             <div class="keyword-chip">
                 <span>${kw}</span>
-                <span class="remove-keyword" onclick="removeKeyword('${kw}')">&times;</span>
+                <span class="remove-keyword" onclick="window.removeKeyword('${kw}')">&times;</span>
             </div>
         `).join('');
     };
 
-    window.removeKeyword = (kw) => {
-        keywords = keywords.filter(k => k !== kw);
-        renderKeywords();
+    window.removeKeyword = async (kw) => {
+        // Backend currently doesn't have a DELETE keyword endpoint in admin.py
+        // We might want to add it or just inform the user.
+        // For now, let's just alert.
+        alert("Removing keywords is not yet implemented on the backend.");
     };
 
-    form?.addEventListener('submit', (e) => {
+    form?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const val = input.value.trim().toLowerCase();
-        if (val && !keywords.includes(val)) {
-            keywords.push(val);
-            renderKeywords();
-            input.value = '';
+        if (val) {
+            try {
+                await window.api.admin.addKeyword(val);
+                input.value = '';
+                await loadKeywords();
+            } catch (err) {
+                alert("Failed to add keyword.");
+            }
         }
     });
 
-    renderKeywords();
+    await loadKeywords();
 }

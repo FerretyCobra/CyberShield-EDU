@@ -87,6 +87,13 @@ We believe that a security tool should look as modern as the threats it fights.
 
 ## 🎬 Live Demo Instructions
 Want to show your friends how it works right now?
+
+### 🚩 Prerequisites
+Before running, make sure you have:
+1. **XAMPP Started**: The MySQL module must be running (the project uses a database named `cybershield`).
+2. **Python Environment**: The backend uses the virtual environment in `backend/venv`.
+
+### 🚀 Running the Demo
 1. **The URL Test**: Input `paypa1-security-update.xyz`. Watch the system flag the typosquatting.
 2. **The Text Test**: Paste: *"URGENT: Your student account will be suspended in 2 hours. Click here to verify: [link]"*. The AI will flag the high-urgency and pressure tactics.
 

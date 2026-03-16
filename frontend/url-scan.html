@@ -40,7 +40,7 @@
             <nav class="sidebar-nav" role="navigation" aria-label="Main Navigation">
                 <div class="nav-section-title">Detection Tools</div>
 
-                <a href="index.html" class="nav-item" aria-label="Text Scanner">
+                <a href="detector.html" class="nav-item" aria-label="Text Scanner">
                     <div class="nav-indicator"></div>
                     <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -161,9 +161,9 @@
                             <div class="input-glow-wrapper" style="margin-bottom: 24px;">
                                 <!-- Standard inline styling mixed with class to ensure it looks just like text scan -->
                                 <input type="url" id="urlScanInput" placeholder="http://example.com/login"
-                                    style="width: 100%; padding: 1.25rem; font-size: 1rem; color: #f8fafc; background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(51, 65, 85, 0.5); border-radius: 0.75rem; outline: none; transition: all 0.2s;"
-                                    onfocus="this.style.borderColor='rgba(96, 165, 250, 0.5)'; this.style.boxShadow='0 0 0 2px rgba(59, 130, 246, 0.25)';"
-                                    onblur="this.style.borderColor='rgba(51, 65, 85, 0.5)'; this.style.boxShadow='none';">
+                                    style="width: 100%; padding: 1.25rem; font-size: 1rem; color: var(--text-main); background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 0.75rem; outline: none; transition: all 0.2s;"
+                                    onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 2px var(--primary-glow)';"
+                                    onblur="this.style.borderColor='var(--input-border)'; this.style.boxShadow='none';">
                             </div>
 
                             <button id="btn-url-scan" class="btn-primary" style="width: 100%;">

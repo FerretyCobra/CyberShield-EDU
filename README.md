@@ -42,21 +42,28 @@ Scans screenshots of DMs or Instagram/WhatsApp chats.
 - Uses **Optical Character Recognition** to extract text from images.
 - Feeds extracted data directly into the Multilingual AI engine.
 
-### 5. 🎓 Education & Awareness Hub
+### 6. 🎓 Education & Awareness Hub
 Prevention is better than cure. The platform includes an interactive learning center:
-- **"Spot the Scam" Quizzes:** Interactive learning modules.
-- **Simulated Phishing:** Real-world training scenarios.
+- **Knowledge Modules**: Multi-path educational guides on specific threats.
+- **"Spot the Scam" Quizzes**: Interactive learning modules.
+- **Progress Tracking**: Earn **+30 XP** for each completed module.
 
-### 7. 🔌 Developer API
+### 7. ⚙️ User Settings & Gamification
+Personalized experience with persistent progress.
+- **Profile Management**: View your role, email, and security stats.
+- **XP & Leveling System**: Track your security mastery through scans and learning.
+- **Theme Engine**: Seamless toggle between premium Light and Dark modes.
+
+### 8. 🔌 Developer API
 Open infrastructure for the student ecosystem.
-- **X-API-Key:** Secure access for job boards and campus platforms.
-- **Sandbox Mode:** Safe testing environment for external developers.
+- **X-API-Key**: Secure access for job boards and campus platforms.
+- **Developer Mode**: Toggle API access and documentation directly from your settings.
 
-### 6. 📊 Admin & Analytics Dashboard
+### 9. 📊 Admin & Analytics Dashboard
 For university IT administrators and researchers:
 - Real-time threat analytics and scan statistics.
-- Interactive charts built with `recharts`.
-- Dynamic keyword and threat-signature management.
+- Interactive charts and dynamic threat-signature management.
+- **User Management**: Monitor user progress and engagement.
 
 ---
 
@@ -77,43 +84,26 @@ Follow these steps to get a local instance of CyberShield-EDU running on your ma
 
 ### 1. Prerequisites
 Ensure you have the following installed on your system:
-- **Python 3.8+** (Required for the FastAPI backend and ML models)
-- **Git** (For version control)
-- **Tesseract OCR engine** (Crucial for the Image Scanner module)
+- **Python 3.10+** (Required for the FastAPI backend and AI models)
+- **XAMPP / MySQL**: For persistent data storage.
+- **Redis**: Essential for background task orchestration.
+- **Tesseract OCR engine**: Crucial for the Image Scanner module.
 
 ### 2. Setup the Backend Environment
-Open your terminal and execute the following:
-
-```bash
-# Navigate to the backend directory
-cd backend
-
-# Create a localized Python virtual environment
-python -m venv venv
-
-# Activate the virtual environment
-# On Windows:
-.\venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install all required Python dependencies
-pip install -r requirements.txt
-
-# Start the FastAPI development server
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 --reload
-```
-*The API will be live at `http://localhost:8080` and interactive API docs at `http://localhost:8080/docs`.*
+1.  **Database**: Start MySQL in XAMPP and import `backend/setup_xampp.sql`.
+2.  **Environment**: Create and activate a virtual environment in the `backend` folder.
+3.  **Install**: `pip install -r requirements.txt`.
+4.  **Configure**: Create a `.env` file (see `docs/setup_guide.md` for template).
+5.  **Run**: `python main.py` (Server starts on port 8000).
 
 ### 3. Setup the Frontend Environment
-Open the `frontend` directory:
-
+The frontend is integrated and served via the internal server, or can be served independently:
 ```bash
-# Open index.html in a browser or serve via:
+# To serve independently:
 cd frontend
-python -m http.server 8080
+python -m http.server 8081
 ```
-*The Dashboard interface will be accessible in your browser at `http://localhost:8080`.*
+*Access the platform at `http://localhost:8081`.*
 
 ---
 
@@ -141,12 +131,13 @@ CyberShield-EDU leverages industry-standard open-source technologies:
 - **Primary:** Vanilla JavaScript, HTML5, CSS3, Google Fonts.
 
 ### Server-Side (Backend)
-- **Framework:** Python 3, FastAPI, Pydantic, Uvicorn.
+- **Framework:** Python 3, FastAPI, Pydantic, Uvicorn, Celery.
 - **AI & Data Processing Engine:**
   - `distilbert-base-multilingual-cased` (NLP Inference)
-  - `SpeechRecognition` / `Transcribers` (Audio Analysis)
+  - `SpeechRecognition` / `pydub` (Audio Analysis)
   - `pytesseract` (OCR Engine)
   - `SQLAlchemy` & `MySQL` (Permanent Data Storage)
+  - `Redis` (Task Queue & Caching)
 
 ---
 

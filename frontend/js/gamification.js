@@ -25,10 +25,11 @@ const Gamification = {
     },
 
     init() {
-        if (!window.api || !window.api.auth || !window.api.auth.isLoggedIn()) {
-            console.log("Gamification disabled: User not logged in (Guest Mode)");
-            // Hide gamification elements
-            document.querySelectorAll('.user-stats-badge, [data-gamif]').forEach(el => el.style.display = 'none');
+        const isLoggedIn = window.api && window.api.auth && window.api.auth.isLoggedIn();
+        if (!isLoggedIn) {
+            console.log("Gamification initializing in Guest Mode");
+            // Only hide the standalone legacy badge if it exists
+            document.querySelectorAll('.user-stats-badge').forEach(el => el.style.display = 'none');
             return;
         }
         this.loadState();
@@ -109,9 +110,18 @@ const Gamification = {
         const levelInfo = this.getCurrentLevelInfo();
         const nextLevel = this.getNextLevelInfo();
 
-        xpElements.forEach(el => el.textContent = this.state.xp);
-        levelElements.forEach(el => el.textContent = this.state.level);
-        titleElements.forEach(el => el.textContent = levelInfo.title);
+        xpElements.forEach(el => {
+            el.textContent = this.state.xp;
+            el.style.display = ''; 
+        });
+        levelElements.forEach(el => {
+            el.textContent = this.state.level;
+            el.style.display = '';
+        });
+        titleElements.forEach(el => {
+            el.textContent = levelInfo.title;
+            el.style.display = '';
+        });
 
         if (progressElements.length > 0 && nextLevel) {
             const currentLevelXp = levelInfo.minXp;
@@ -121,6 +131,7 @@ const Gamification = {
             
             progressElements.forEach(el => {
                 el.style.width = `${percent}%`;
+                el.style.display = '';
             });
         }
     },

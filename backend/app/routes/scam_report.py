@@ -68,3 +68,10 @@ async def report_scam(
         if evidence_path and os.path.exists(evidence_path):
             os.remove(evidence_path)
         raise HTTPException(status_code=500, detail="Failed to save scam report")
+        
+@router.get("/recent")
+async def get_recent_reports(db: Session = Depends(get_db)):
+    """Fetch recent scam reports for the ticker."""
+    reports = db.query(ScamReport).order_by(ScamReport.id.desc()).limit(5).all()
+    return [{"company_name": r.company_name, "description": r.description} for r in reports]
+

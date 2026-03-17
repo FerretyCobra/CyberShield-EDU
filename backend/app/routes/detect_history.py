@@ -33,7 +33,7 @@ async def get_scan_history(
         raise HTTPException(status_code=401, detail="Authentication required")
     
     history = db.query(ScanRecord).filter(
-        ScanRecord.user_id == current_user.id
+        ScanRecord.user_id == current_user.get("id")
     ).order_by(ScanRecord.created_at.desc()).all()
     
     return history

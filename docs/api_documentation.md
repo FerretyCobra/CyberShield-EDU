@@ -1,137 +1,145 @@
 # API Documentation
 
-The CyberShield-EDU backend runs on FastAPI. All core detection routes are prefixed with `/api/v1/detect`. Administrative and data routes have their respective prefixes.
+The CyberShield-EDU backend runs on FastAPI. Core detection routes are prefixed with `/api/v1/detect`. Administrative and data routes have their respective prefixes.
 
-## Detection Endpoints
+## 🔓 Authentication Endpoints
+Secure access control for student and admin sessions.
 
-All detection endpoints return a consistent JSON structure containing a `prediction` (`scam` or `safe`) and a `confidence` score (float between 0 and 1).
-
-### 1. Analyze Text
-**Endpoint:** `POST /api/v1/detect/text`
-**Description:** Analyzes a text message for scam patterns using DistilBERT.
-**Request Body (JSON):**
+### 1. User Registration
+**Endpoint:** `POST /auth/register`
+**Request Body:**
 ```json
 {
-  "text": "Your account is locked. Click here to verify: http://scam.link"
+  "username": "student_jdoe",
+  "email": "jdoe@university.edu",
+  "password": "securepassword123"
 }
 ```
 **Response (200 OK):**
+```json
+{
+  "message": "User registered successfully",
+  "user": { "id": 4, "username": "student_jdoe", "role": "student" }
+}
+```
+
+### 2. User Login
+**Endpoint:** `POST /auth/login`
+**Request Body (Form Data):**
+`username=student_jdoe&password=securepassword123`
+**Response (200 OK):**
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "bearer",
+  "user": { "username": "student_jdoe", "role": "student", "xp": 150, "level": 2 }
+}
+```
+
+---
+
+## 🎮 Gamification & Progress
+Endpoints for tracking student security mastery.
+
+### 3. Get User Stats
+**Endpoint:** `GET /gamification/stats`
+**Headers:** `Authorization: Bearer <token>`
+**Response:**
+```json
+{
+  "xp": 340,
+  "level": 4,
+  "badges": ["Phishing Expert", "First Scan"],
+  "rank": "Guardian"
+}
+```
+
+### 4. Complete Module
+**Endpoint:** `POST /gamification/complete`
+**Request Body:** `{"module_id": "scam-0"}`
+**Response:**
+```json
+{
+  "xp_gained": 30,
+  "new_total_xp": 370,
+  "level_up": false
+}
+```
+
+---
+
+## 🔍 Detection Endpoints
+ML-powered analysis for disparate threat vectors.
+
+### 5. Analyze Text
+**Endpoint:** `POST /api/v1/detect/text`
+**Description:** Analyzes messages for scam patterns using Multilingual DistilBERT.
+**Request Body:** `{"text": "Your account is locked. Click here..."}`
+**Response:**
 ```json
 {
   "prediction": "scam",
   "confidence": 0.98,
-  "reasoning": [
-    "Detected high urgency language.",
-    "Contains suspicious URL link."
-  ]
+  "reasoning": ["Detected high urgency language", "Suspicious URL"]
 }
 ```
 
-### 2. Analyze URL
-**Endpoint:** `POST /api/v1/detect/url`
-**Description:** Evaluates a URL for phishing characteristics (typosquatting, high entropy, malicious TLDs).
-**Request Body (JSON):**
-```json
-{
-  "url": "http://paypal-support-update-secure.com"
-}
-```
-**Response (200 OK):**
-```json
-{
-  "prediction": "scam",
-  "confidence": 0.85,
-  "reasoning": [
-    "Detected common brand keyword in domain.",
-    "Subdomain count is suspiciously high."
-  ]
-}
-```
-
-### 3. Analyze PDF
-**Endpoint:** `POST /api/v1/detect/pdf`
-**Description:** Extracts text and metadata from a PDF file to check for fraudulent job/scholarship offers.
-**Request Headers:** `Content-Type: multipart/form-data`
-**Request Body:**
-- `file`: The PDF file upload.
-**Response (200 OK):**
-```json
-{
-  "prediction": "scam",
-  "confidence": 0.92,
-  "reasoning": [
-    "Contains request for personal bank details.",
-    "Poor grammar and spelling detected in text."
-  ]
-}
-```
-
-  "extracted_text": "Hey Mom, just letting you know I made it to campus safely!"
-}
-```
-
-### 5. Analyze Audio (Vishing)
+### 6. Analyze Audio (Vishing)
 **Endpoint:** `POST /api/v1/detect/audio`
-**Description:** Scans voice notes or audio recordings for vishing (voice phishing) patterns.
-**Request Headers:** `Content-Type: multipart/form-data`
-**Request Body:**
-- `file`: The Audio file upload (MP3/WAV).
-**Response (200 OK):**
+**Description:** Scans voice notes for voice-phishing (vishing) strategies.
+**Request Body:** `multipart/form-data` with `file`.
+**Response:**
 ```json
 {
   "prediction": "scam",
   "confidence": 0.95,
-  "reasoning": [
-    "Detected voice phishing pattern.",
-    "Suspicious financial arrest threat identified."
-  ],
-  "transcription": "This is an urgent call from the IRS. You have an unpaid debt..."
+  "transcription": "This is an urgent call regarding your debt..."
 }
 ```
 
-## Public Developer API
+---
 
-CyberShield provides a secondary set of endpoints for external student platforms. These require an `X-API-Key`.
+## 🎓 Awareness Hub Endpoints
 
-### 6. Public Text Detection
+### 7. Get Educational Content
+**Endpoint:** `GET /awareness`
+**Description:** Returns dynamic modules, wellness tips, and quiz questions from the database.
+**Response:**
+```json
+{
+  "modules": [
+    {
+      "id": 1,
+      "title": "Internship Scams",
+      "category": "Threat Type",
+      "difficulty": "Beginner",
+      "path_id": "scam-0",
+      "examples": [...]
+    }
+  ],
+  "wellness_tips": [...],
+  "quiz_questions": [...]
+}
+```
+
+---
+
+## 🔌 Public Developer API
+Requires an `X-API-Key` for external integration.
+
+### 8. Public Detect
 **Endpoint:** `POST /api/v1/public/detect/text`
 **Headers:** `X-API-Key: YOUR_KEY`
-**Response:** Same as `/detect/text` but includes advanced `V2 Reasoning` indicators.
+**Sandbox:** `X-Sandbox: true` to bypass quota for testing.
 
-### 7. Public URL Detection
-**Endpoint:** `POST /api/v1/public/detect/url`
-**Headers:** `X-API-Key: YOUR_KEY`
-**Sandbox Support:** Add `X-Sandbox: true` to get mock results without using quota.
+---
 
-## Educational Endpoints
+## 📊 Admin Endpoints
 
-### 5. Get Awareness Content
-**Endpoint:** `GET /awareness`
-**Description:** Retrieves static educational content, wellness tips, and quiz questions.
-**Response (200 OK):**
-```json
-{
-  "tips": [...],
-  "wellness": [...],
-  "quiz": [...]
-}
-```
-
-## Admin Endpoints
-
-### 6. Get System Stats
+### 9. System Analytics
 **Endpoint:** `GET /api/v1/admin/stats`
-**Description:** Returns current system usage statistics.
+**Description:** Real-time metrics for total scans, threat detection rates, and user engagement.
 
-### 7. Manage Keywords
-**Endpoint (GET):** `GET /api/v1/admin/keywords`
-Returns the current list of keywords used across all detection heuristics.
-
-**Endpoint (POST):** `POST /api/v1/admin/keywords`
-Updates the global scam keyword list.
-**Request Body:**
-```json
-{
-  "keywords": ["urgent", "verify", "password", "crypto"]
-}
-```
+### 10. Keyword Management
+**Endpoint:** `POST /api/v1/admin/keywords`
+**Description:** Dynamically add or remove keywords from the heuristic engine.

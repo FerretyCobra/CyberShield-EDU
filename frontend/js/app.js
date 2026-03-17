@@ -6,6 +6,87 @@
     document.body.className = `mode-${mode}`;
 })();
 
+// --- Authentication & Header UI ---
+window.updateHeaderAuthUI = async function() {
+    const authButtons = document.getElementById('auth-buttons');
+    const userProfile = document.getElementById('user-profile');
+    const usernameDisplay = document.getElementById('header-username');
+    
+    // Safety check for API initialization
+    if (!window.api || !window.api.auth) return;
+
+    const isLoggedIn = window.api.auth.isLoggedIn();
+    let user = window.api.auth.getCurrentUser();
+
+    // If logged in but no user object in localStorage, try to fetch it
+    if (isLoggedIn && !user) {
+        try {
+            console.log("User data missing from localStorage, fetching from API...");
+            user = await window.api.auth.getMe();
+        } catch (error) {
+            console.error("Failed to recover user data:", error);
+        }
+    }
+
+    console.log("Header Update - LoggedIn:", isLoggedIn, "User:", user);
+
+    if (isLoggedIn && user) {
+        if (authButtons) authButtons.style.display = 'none';
+        if (userProfile) {
+            userProfile.style.display = 'flex';
+            // Ensure gamification indicators are not hidden
+            userProfile.querySelectorAll('[data-gamif]').forEach(el => el.style.display = '');
+        }
+        
+        if (usernameDisplay) {
+            usernameDisplay.textContent = user.username || user.name || 'User';
+            // Add clickability to username
+            usernameDisplay.style.cursor = 'pointer';
+            usernameDisplay.title = 'Go to Account Settings';
+            usernameDisplay.onclick = () => window.location.href = 'settings.html';
+        }
+        
+        // Hide Admin panel for students
+        const adminNav = document.getElementById('admin-nav');
+        if (adminNav) {
+            if (user.role === 'student' || !user.role) {
+                adminNav.parentElement.style.display = 'none';
+            } else if (user.role === 'admin') {
+                adminNav.parentElement.style.display = '';
+            }
+        }
+
+        // Ensure gamification is initialized
+        if (window.Gamification && typeof window.Gamification.init === 'function') {
+            window.Gamification.init();
+        }
+    } else {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userProfile) userProfile.style.display = 'none';
+        
+        // Show Admin panel for guests (it has its own password gate)
+        const adminNav = document.getElementById('admin-nav');
+        if (adminNav) adminNav.parentElement.style.display = '';
+    }
+};
+
+window.logout = async function() {
+    if (window.api && window.api.auth) {
+        await window.api.auth.logout();
+        window.location.href = 'index.html';
+    }
+};
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Shared animations
+    if (typeof initAnimations === 'function') initAnimations();
+    
+    // Auth UI Update
+    window.updateHeaderAuthUI();
+});
+
+
 // --- Theme Management ---
 window.toggleTheme = function() {
     const isLight = document.body.classList.contains('mode-light');
@@ -48,7 +129,7 @@ function initAnimations() {
 // --- Unified Tab System ---
 window.switchTab = function(tabId) {
     const isLoggedIn = window.api && window.api.auth && window.api.auth.isLoggedIn();
-    const restrictedTabs = ['url-tab', 'pdf-tab', 'image-tab', 'report-tab'];
+    const restrictedTabs = ['url-tab', 'pdf-tab', 'image-tab', 'audio-tab', 'report-tab'];
     
     if (!isLoggedIn && restrictedTabs.includes(tabId)) {
         showAuthPrompt(`The ${tabId.replace('-tab', '').toUpperCase()} tools are premium security features. Please log in to unlock full protection.`);

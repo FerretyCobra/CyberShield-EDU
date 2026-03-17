@@ -18,6 +18,7 @@ Ensure the following are installed:
 3.  Click the **Admin** button next to MySQL to open phpMyAdmin.
 4.  Create a new database named `cybershield`.
 5.  Import the SQL file located at: `backend/setup_xampp.sql`.
+    - *This script automatically creates all tables and seeds the database with initial educational modules, quiz questions, and verified partners.*
     - *Alternatively, run the SQL script via the terminal in the MySQL bin folder.*
 
 ---
@@ -53,6 +54,12 @@ Ensure the following are installed:
     python main.py
     ```
     *The API will be available at `http://localhost:8000`.*
+
+8.  **Seed/Refresh Content (Optional)**:
+    If you need to manually refresh the educational content from `data/educational_resources.json`, run:
+    ```bash
+    python fix_awareness_db.py
+    ```
 
 ---
 

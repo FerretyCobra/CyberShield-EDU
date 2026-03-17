@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishSim Challenge - CyberShield EDU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .sim-container {
+            max-width: 800px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        .phish-email-preview {
+            background: white;
+            color: #333;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: left;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            position: relative;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .phish-email-preview.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .email-header {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+        }
+        .email-meta { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
+        .email-body { font-size: 1rem; line-height: 1.6; }
+        .action-tray {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .timer-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .timer-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--secondary);
+            transition: width 1s linear;
+        }
+        #score-display {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow bg-glow-3"></div>
+    
+    <header>
+        <a href="index.html" class="logo">
+            <div class="logo-badge">🛡️</div>
+            <span>CyberShield</span>
+        </a>
+    </header>
+
+    <main class="container sm-container">
+        <div class="sim-container">
+            <div class="hero-tag">🎣 PHISH-SIM EXPERIENCE</div>
+            <h1>Simulated Phishing Challenge</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Spot the scams before time runs out. Earn +50 XP for every correct identification!</p>
+
+            <div id="score-display">Correct: 0</div>
+            <div class="timer-bar"><div id="timer" class="timer-fill"></div></div>
+
+            <div id="email-stage">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="action-tray">
+                <button class="btn btn-primary" style="background:#ef4444; border:none;" onclick="triggerVoice(true)">🚨 SCAM</button>
+                <button class="btn btn-primary" style="background:#22c55e; border:none;" onclick="triggerVoice(false)">✅ SAFE</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/gamification.js"></script>
+    <script>
+        const CHALLENGES = [
+            {
+                from: "security@netfIix-support.com",
+                subject: "Urgent: Your account is on hold",
+                body: "Dear User, Your last payment failed. Please click here to update your billing details immediately or your subscription will be cancelled.",
+                isScam: true,
+                reason: "Look at the 'Netflix' misspelling with an 'I' (capital i)."
+            },
+            {
+                from: "noreply@google.com",
+                subject: "New login from Chrome on Windows",
+                body: "A new device just logged into your account. If this was you, you can ignore this email.",
+                isScam: false,
+                reason: "Standard security notification from a legitimate domain."
+            },
+            {
+                from: "payroll@youruniversity.edu",
+                subject: "Summer Internship Stipend Update",
+                body: "Please download the attached PDF to view your summer internship payment schedule.",
+                isScam: true,
+                reason: "Universities usually don't send stipend info via unexpected attachments."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let timeLeft = 100;
+
+        function renderChallenge() {
+            const stage = document.getElementById('email-stage');
+            const item = CHALLENGES[currentIdx];
+            stage.innerHTML = `
+                <div class="phish-email-preview active">
+                    <div class="email-header">
+                        <div class="email-meta"><strong>From:</strong> ${item.from}</div>
+                        <div class="email-meta"><strong>Subject:</strong> ${item.subject}</div>
+                    </div>
+                    <div class="email-body">${item.body}</div>
+                </div>
+            `;
+        }
+
+        function triggerVoice(val) {
+            const item = CHALLENGES[currentIdx];
+            if (val === item.isScam) {
+                score++;
+                alert("Nice catch! " + item.reason);
+                if (window.Gamification) window.Gamification.addXp(50, "Spotted Simulated Phish");
+            } else {
+                alert("Oops! You missed it. " + item.reason);
+            }
+            
+            currentIdx = (currentIdx + 1) % CHALLENGES.length;
+            document.getElementById('score-display').textContent = `Correct: ${score}`;
+            renderChallenge();
+        }
+
+        renderChallenge();
+    </script>
+</body>
+</html>

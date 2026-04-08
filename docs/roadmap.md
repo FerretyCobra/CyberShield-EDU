@@ -14,7 +14,7 @@ This document outlines the strategic evolution of the CyberShield-EDU core platf
 ### 2. 🧩 Advanced Forensic Pattern Engine
 - **Goal**: Hardened heuristic detection (COMPLETED).
 - **Action**: Real-time TLD analysis, full-path keyword scanning, and GeoIP enrichment.
-- **Status**: ✅ **ACTIVE**
+- **Status**: ✅ **ACTIVE / ENHANCED** (Recursive Scanning Integrated)
 
 ---
 
@@ -45,9 +45,9 @@ This document outlines the strategic evolution of the CyberShield-EDU core platf
 - **Goal**: Helping students take official action.
 - **Action**: A "Generate Evidence Report" button that builds a signed PDF with all forensic data.
 
-### 8. 🔌 Advanced PDF-URL Recursive Scanning
 - **Goal**: Extracting threats buried inside document layers.
 - **Action**: Automatically extract links found *inside* uploaded PDFs and run them through the URL scanner.
+- **Status**: ✅ **INITIAL IMPLEMENTATION ACTIVE** (v1.0 PDF Analyzer deployed)
 
 ### 9. 🕵️ Multi-Vector Correlation (The Campaign Engine)
 - **Goal**: Connecting the dots between different scans.

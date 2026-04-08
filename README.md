@@ -35,32 +35,40 @@ Analyzes underlying technical vectors of digital artifacts to identify synthetic
 Proactively checks raw URLs for malicious intent:
 - **Typosquatting Check:** Detects impersonated brands (e.g., `paypa1.com`).
 - **Domain Analysis:** Flags suspicious TLDs and entropy levels.
+- **Recursive Scan:** Integrates with the PDF analyzer to check embedded links.
 
-### 5. 📸 Image OCR Scanner
+### 5. 📄 PDF Forensic Analysis (Pillar 7)
+Extracts and analyzes threats buried within document layers.
+- **Metadata Inspection:** Audits author info, creation software, and hidden timestamps.
+- **Recursive URL Extraction:** Automatically pulls links from PDF pages and runs them through the URL scanner.
+- **Content Auditing:** Scans for suspicious scripts or embedded objects within document streams.
+
+### 6. 📸 Image OCR Scanner
 Scans screenshots of DMs or Instagram/WhatsApp chats.
 - Uses **Optical Character Recognition** to extract text from images.
 - Feeds extracted data directly into the Multilingual AI engine.
 
-### 6. 🎓 Educational Academy & Gamification (Pillar 6)
+### 7. 🎓 Educational Academy & Gamification (Pillar 6)
 Prevention is better than cure. The platform includes a persistent, gamified learning center:
 - **Interactive Quizzes:** "Spot the Scam" modules that award XP upon completion.
 - **Academy Dossier:** Persistent user profiles tracking level, rank (Cyber Scout to Grand Protector), and earned badges.
 - **State Persistence:** Secure database synchronization of XP and rewards across all educational modules.
 
-### 7. ⚙️ User Settings & Gamification
+### 8. ⚙️ User Settings & Gamification
 Personalized experience with persistent progress.
 - **Profile Management**: View your role, email, and security stats.
 - **XP & Leveling System**: Track your security mastery through scans and learning.
 - **Theme Engine**: Seamless toggle between premium Light and Dark modes.
 
-### 8. 🛡️ Reliability & Migration Suite
+### 9. 🛡️ Reliability & Migration Suite
 Engineered for stability and long-term maintenance.
 - **Alembic Migrations**: Fully automated database schema evolution.
 - **Pytest Suite**: Comprehensive unit testing for all detection logic.
 - **Singleton AI Loading**: Optimized model pre-loading for sub-second latency.
+- **Git History Optimization**: Purged large binary artifacts for lightweight repository cloning.
 
 
-### 9. 📊 Admin & Analytics Dashboard
+### 10. 📊 Admin & Analytics Dashboard
 For university IT administrators and researchers:
 - Real-time threat analytics and scan statistics.
 - Interactive charts and dynamic threat-signature management.

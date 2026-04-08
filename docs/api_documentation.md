@@ -114,13 +114,40 @@ ML-powered analysis for disparate threat vectors.
 }
 ```
 
+### 7. Analyze URL
+**Endpoint:** `POST /api/v1/detect/url`
+**Description:** Performs deep heuristic and typosquatting analysis on raw URLs.
+**Request Body:** `{"url": "http://paypa1-security.com"}`
+**Response:**
+```json
+{
+  "prediction": "scam",
+  "confidence": 0.96,
+  "reasoning": ["Typosquatting detected (Impersonating Paypal)", "Suspicious TLD (.com)"]
+}
+```
+
+### 8. Forensic PDF Audit
+**Endpoint:** `POST /api/v1/detect/pdf`
+**Description:** Extracts links and metadata from PDF documents. Processing is handled as an asynchronous background task.
+**Form Data:** `file` (PDF binary)
+**Response (202 Accepted):**
+```json
+{
+  "task_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "processing",
+  "message": "Analysis started in background"
+}
+```
+*Use the task ID to poll for results via the history or task status endpoints.*
+
 
 
 ---
 
 ## 🎓 Awareness Hub Endpoints
 
-### 7. Get Educational Content
+### 9. Get Educational Content
 **Endpoint:** `GET /awareness`
 **Description:** Returns dynamic modules, wellness tips, and quiz questions from the database.
 **Response:**
@@ -146,7 +173,7 @@ ML-powered analysis for disparate threat vectors.
 ## 🔌 Public Developer API
 Requires an `X-API-Key` for external integration.
 
-### 8. Public Detect
+### 10. Public Detect
 **Endpoint:** `POST /api/v1/public/detect/text`
 **Headers:** `X-API-Key: YOUR_KEY`
 **Sandbox:** `X-Sandbox: true` to bypass quota for testing.
@@ -155,10 +182,10 @@ Requires an `X-API-Key` for external integration.
 
 ## 📊 Admin Endpoints
 
-### 9. System Analytics
+### 11. System Analytics
 **Endpoint:** `GET /api/v1/admin/stats`
 **Description:** Real-time metrics for total scans, threat detection rates, and user engagement.
 
-### 10. Keyword Management
+### 12. Keyword Management
 **Endpoint:** `POST /api/v1/admin/keywords`
 **Description:** Dynamically add or remove keywords from the heuristic engine.

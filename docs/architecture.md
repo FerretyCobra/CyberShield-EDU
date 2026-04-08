@@ -11,9 +11,10 @@ graph TD
 
     subgraph Backend Core
         Backend --> DetectText[Multilingual Text Detector]
-        Backend --> DetectURL[URL Analyzer]
-        Backend --> DetectPDF[PDF Analyzer]
         Backend --> DetectImg[Forensic Image Audit]
+        Backend --> DetectPDF[PDF Analyzer]
+        DetectPDF -->|Recursive extraction| DetectURL[URL Analyzer]
+        Backend --> DetectURL
         Backend --> DetectAudio[Audio Vishing Detector]
         
         Backend <--> GamifService[Gamification Engine]
@@ -49,6 +50,11 @@ The backend is a high-performance Python server capable of handling asynchronous
   - **Metadata Audit**: Deep EXIF extraction to identify "Software" signatures from Generative AI tools (Stable Diffusion, Midjourney, etc.).
   - **Texture Analysis**: OpenCV-based Laplacian Variance testing to detect synthetic smoothing common in AI-generated imagery.
   - **Integrity Scoring**: A weighted fusion of metadata trust, texture naturalness, and AI signature detection.
+
+* **PDF & Multi-Vector Intelligence (Pillar 7)**:
+  - **PDF Analyzer**: Uses `pdfplumber` to extract structured data and embedded URLs from documents.
+  - **Recursive Scanning**: Links extracted from PDFs are automatically channeled into the `URL Analyzer` for deep inspection.
+  - **Audit Trails**: Forensic metadata (Author, Producer, PDF Version) is saved to the dossier for pattern correlation.
 
 * **Gamification & Academy (Pillar 6)**:
   - **GamificationService**: Logic engine for awarding XP, calculating levels (XP/100 + 1), and managing badge milestones (e.g., "Phishing Hunter").

@@ -335,6 +335,81 @@
                        <p>Regards,<br>Internal Financial Services</p>`,
                 isScam: true,
                 reason: "Universities use official .edu domains. A .org domain for payroll from a student worker is highly suspicious."
+            },
+            {
+                id: 4,
+                from: "HR Global Talent <google.recruitment.global@gmail.com>",
+                subject: "Internship Offer: Google Cloud Division",
+                body: `<p>Hello Student,</p>
+                       <p>Congratulations! Your profile has been selected for a remote internship at Google Cloud. The monthly stipend is $4,000.</p>
+                       <p>To finalize your placement, please download the <span class="sim-link" onclick="triggerBreach(4)">PlacementAgreement.zip</span> and return it within 2 hours.</p>
+                       <p>HR Recruitment Team</p>`,
+                isScam: true,
+                reason: "A major tech company like Google will NEVER recruit via a generic @gmail.com address for official roles, and sending .zip files for 'agreements' is a major malware risk."
+            },
+            {
+                id: 5,
+                from: "LinkedIn <notifications-noreply@linkedin.com>",
+                subject: "You have a new connection request",
+                body: `<p>Hi there,</p>
+                       <p>Sarah Johnson, a Senior Developer at Meta, has invited you to connect on LinkedIn.</p>
+                       <p>See Sarah's profile and accept the invitation on the LinkedIn website or app.</p>
+                       <p>The LinkedIn Team</p>`,
+                isScam: false,
+                reason: "This is a standard LinkedIn notification. It leads you to the official platform without requesting sensitive data directly or using suspicious links."
+            },
+            {
+                id: 6,
+                from: "Amazon Support <order-update@amazon-disputes.net>",
+                subject: "Problem with your Order #882-9912",
+                body: `<p>Valued Customer,</p>
+                       <p>We were unable to process your most recent order. Your payment method has been temporarily suspended for safety.</p>
+                       <p>Please <span class="sim-link" onclick="triggerBreach(6)">Verify Your Payment Method</span> to avoid order cancellation and account closure.</p>
+                       <p>Amazon Support</p>`,
+                isScam: true,
+                reason: "The domain 'amazon-disputes.net' is not an official Amazon domain. Scammers use 'Account Closure' threats to create panic."
+            },
+            {
+                id: 7,
+                from: "Instagram Copyright <security@ig-copyright-notice.tk>",
+                subject: "Urgent: Copyright Infringement Notice",
+                body: `<p>Your recent post has been flagged for copyright infringement by a third party.</p>
+                       <p>If you believe this is a mistake, you must appeal here: <span class="sim-link" onclick="triggerBreach(7)">bit.ly/ig-manual-appeal</span></p>
+                       <p>Failing to appeal within 12 hours will result in your account being permanently deleted.</p>`,
+                isScam: true,
+                reason: "The '.tk' TLD is common for free, malicious hosting. Instagram provides copyright notices within the app's 'Account Status' section, not via external .tk sites."
+            },
+            {
+                id: 8,
+                from: "University Library <library@university.edu>",
+                subject: "New Workshop: Digital Literacy for Students",
+                body: `<p>Dear Students,</p>
+                       <p>The library is hosting a workshop on Digital Literacy and advanced research techniques this Friday at 2:00 PM in the Main Hall.</p>
+                       <p>No registration required. Just bring your student ID. Hope to see you there!</p>
+                       <p>Library Services</p>`,
+                isScam: false,
+                reason: "This is a legitimate university announcement. It uses an official .edu domain and points to a physical location with no suspicious digital requests."
+            },
+            {
+                id: 9,
+                from: "DHL Express <delivery@dhl-tracking-portal.info>",
+                subject: "Your package is on hold",
+                body: `<p>Dear Customer,</p>
+                       <p>Your package from 'Global Electronics' is currently on hold at our sorting facility due to unpaid customs duties of $2.50.</p>
+                       <p><span class="sim-link" onclick="triggerBreach(9)">Pay Duties & Release Package</span></p>
+                       <p>Thank you for choosing DHL.</p>`,
+                isScam: true,
+                reason: "The 'small delivery fee' is a classic hook to steal credit card info. The domain '.info' is a major red flag for official shipping services."
+            },
+            {
+                id: 10,
+                from: "Bank Center <alerts@bankofamerica.com>",
+                subject: "Your monthly eStatement is ready",
+                body: `<p>Your digital bank statement for the period ending March 2024 is now available.</p>
+                       <p>To view your statement, please log in to our secure Online Banking portal or use our mobile app.</p>
+                       <p>Bank of America Security</p>`,
+                isScam: false,
+                reason: "Official bank notifications usually don't include direct links to login pages. Instead, they instruct you to use their secure app or official portal."
             }
         ];
 

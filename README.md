@@ -24,13 +24,12 @@ Analyzes SMS, WhatsApp messages, or emails using an advanced **Multilingual Dist
 - **Context Engine:** Detects "Social Engineering" (e.g., a "Professor" asking for an OTP).
 - **Sentiment Analysis:** Flags artificial urgency and psychological pressure.
 
-### 2. 🎙️ Audio Vishing Detector
-Protection against "Voice Phishing" (Vishing).
-- Transcribes audio recordings or voice notes.
-- Analyzes voice patterns for high-risk financial or arrest threats.
-
-- Extracts text, metadata, and embedded artifacts.
-- Scans for known fraudulent signatures and malicious patterns.
+### 3. 📸 Deep Forensic Metadata Engine (Pillar 5)
+Analyzes underlying technical vectors of digital artifacts to identify synthetic or manipulated content.
+- **AI Signature Detection:** Scans EXIF data for markers from Stable Diffusion, Midjourney, and DALL-E.
+- **Physical Texture Analysis:** Uses Laplacian Variance to detect suspiciously smooth (AI-generated) image regions.
+- **Metadata Auditing:** Validates camera make, model, and software history to ensure artifact integrity.
+- **OCR & URL Integration:** Extracts and analyzes embedded text and links within forensic signatures.
 
 ### 4. 🔗 URL Phishing Scanner
 Proactively checks raw URLs for malicious intent:
@@ -42,11 +41,11 @@ Scans screenshots of DMs or Instagram/WhatsApp chats.
 - Uses **Optical Character Recognition** to extract text from images.
 - Feeds extracted data directly into the Multilingual AI engine.
 
-### 6. 🎓 Education & Awareness Hub
-Prevention is better than cure. The platform includes an interactive learning center:
-- **Knowledge Modules**: Multi-path educational guides on specific threats.
-- **"Spot the Scam" Quizzes**: Interactive learning modules.
-- **Progress Tracking**: Earn **+30 XP** for each completed module.
+### 6. 🎓 Educational Academy & Gamification (Pillar 6)
+Prevention is better than cure. The platform includes a persistent, gamified learning center:
+- **Interactive Quizzes:** "Spot the Scam" modules that award XP upon completion.
+- **Academy Dossier:** Persistent user profiles tracking level, rank (Cyber Scout to Grand Protector), and earned badges.
+- **State Persistence:** Secure database synchronization of XP and rewards across all educational modules.
 
 ### 7. ⚙️ User Settings & Gamification
 Personalized experience with persistent progress.
@@ -54,10 +53,12 @@ Personalized experience with persistent progress.
 - **XP & Leveling System**: Track your security mastery through scans and learning.
 - **Theme Engine**: Seamless toggle between premium Light and Dark modes.
 
-### 8. 🔌 Developer API
-Open infrastructure for the student ecosystem.
-- **X-API-Key**: Secure access for job boards and campus platforms.
-- **Developer Mode**: Toggle API access and documentation directly from your settings.
+### 8. 🛡️ Reliability & Migration Suite
+Engineered for stability and long-term maintenance.
+- **Alembic Migrations**: Fully automated database schema evolution.
+- **Pytest Suite**: Comprehensive unit testing for all detection logic.
+- **Singleton AI Loading**: Optimized model pre-loading for sub-second latency.
+
 
 ### 9. 📊 Admin & Analytics Dashboard
 For university IT administrators and researchers:
@@ -86,8 +87,9 @@ Follow these steps to get a local instance of CyberShield-EDU running on your ma
 Ensure you have the following installed on your system:
 - **Python 3.10+** (Required for the FastAPI backend and AI models)
 - **XAMPP / MySQL**: For persistent data storage.
-- **Redis**: Essential for background task orchestration.
 - **Tesseract OCR engine**: Crucial for the Image Scanner module.
+- **Pytest**: For running the reliability suite.
+
 
 ### 2. Setup the Backend Environment
 1.  **Database**: Start MySQL in XAMPP and import `backend/setup_xampp.sql`.
@@ -131,13 +133,16 @@ CyberShield-EDU leverages industry-standard open-source technologies:
 - **Primary:** Vanilla JavaScript, HTML5, CSS3, Google Fonts.
 
 ### Server-Side (Backend)
-- **Framework:** Python 3, FastAPI, Pydantic, Uvicorn, Celery.
+- **Framework:** Python 3, FastAPI, Pydantic, Uvicorn, SQLAlchemy.
+- **Database Evolution:** Alembic Migrations.
 - **AI & Data Processing Engine:**
-  - `distilbert-base-multilingual-cased` (NLP Inference)
-  - `SpeechRecognition` / `pydub` (Audio Analysis)
+  - `distilbert-base-multilingual-cased` (Singleton NLP Inference)
   - `pytesseract` (OCR Engine)
+  - `opencv-python` & `numpy` (Advanced Forensic Texture Analysis)
+  - `pdfplumber` (PDF Metadata extraction)
   - `SQLAlchemy` & `MySQL` (Permanent Data Storage)
-  - `Redis` (Task Queue & Caching)
+  - `Pytest` (Automated Verification)
+
 
 ---
 

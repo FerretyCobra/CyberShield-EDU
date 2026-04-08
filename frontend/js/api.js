@@ -1,7 +1,7 @@
 // api.js - Vanilla JS wrapper for FastAPI backend
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
-const ROOT_API_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8001/api/v1';
+const ROOT_API_URL = 'http://localhost:8001';
 
 /**
  * Helper to get the auth token from localStorage.
@@ -160,21 +160,7 @@ const detectionApi = {
             throw error;
         }
     },
-    
-    async analyzeAudio(formData) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/detect/audio`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-                body: formData,
-            });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error('Audio analysis failed:', error);
-            throw error;
-        }
-    },
+
 
     async getHistory() {
         try {
@@ -236,6 +222,21 @@ const awarenessApi = {
             return await response.json();
         } catch (error) {
             console.error('Failed to fetch education content:', error);
+            throw error;
+        }
+    },
+
+    async reward(xp_amount, reason) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/awareness/reward`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ xp_amount, reason })
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to persist educational reward:', error);
             throw error;
         }
     }
@@ -311,6 +312,21 @@ const quizApi = {
     }
 };
 
+const gamificationApi = {
+    async getProfile() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/gamification/profile`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to fetch gamification profile:', error);
+            throw error;
+        }
+    }
+};
+
 // Export to global scope
 window.api = {
     auth: authApi,
@@ -318,5 +334,6 @@ window.api = {
     tasks: tasksApi,
     awareness: awarenessApi,
     quiz: quizApi,
-    admin: adminApi
+    admin: adminApi,
+    gamification: gamificationApi
 };

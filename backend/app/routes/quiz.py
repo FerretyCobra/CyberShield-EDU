@@ -23,54 +23,15 @@ class QuizItem(BaseModel):
 @router.get("/questions", response_model=List[QuizItem])
 async def get_quiz_questions(limit: int = 5, db: Session = Depends(get_db)):
     """
-    Get a random set of quiz questions.
+    Get a random set of quiz questions from the forensic library.
     """
     questions = db.query(QuizQuestion).all()
     
-    # If no questions, seed some basic ones
     if not questions:
-        seed_questions = [
-            {
-                "content": "URGENT: Your account will be locked in 1 hour. Click here to verify your identity: http://secure-login-bank.com/verify",
-                "content_type": "text",
-                "is_scam": True,
-                "explanation": "This is a classic phishing attack. Banks never create artificial urgency or ask for sensitive verification via unencrypted links.",
-                "difficulty": "easy"
-            },
-            {
-                "content": "Hi! I saw your profile and thought we could chat. Here is my photo: [IMG_SCAN_442.jpg]",
-                "content_type": "text",
-                "is_scam": True,
-                "explanation": "Random messages from strangers with suspicious attachments are often used to distribute malware or social engineering scams.",
-                "difficulty": "easy"
-            },
-            {
-                "content": "Your package is waiting for delivery. Please pay the $1.99 shipping fee at http://tracking-post.net",
-                "content_type": "text",
-                "is_scam": True,
-                "explanation": "Smishing (SMS Phishing) often uses small fees to trick you into entering card details on a fake site.",
-                "difficulty": "medium"
-            },
-            {
-                "content": "Official University Notice: The library will be closed this Sunday for maintenance. No action required.",
-                "content_type": "text",
-                "is_scam": False,
-                "explanation": "This is a generic informative message with no suspicious links, requests for data, or urgency.",
-                "difficulty": "easy"
-            },
-            {
-                "content": "Congratulations! You've been selected as a finalist for the Apple Scholarship. Apply here: http://apple-schlarships.edu.org",
-                "content_type": "text",
-                "is_scam": True,
-                "explanation": "Notice the typo in the URL ('schlarships'). Scammers often use slightly misspelled domains to look official.",
-                "difficulty": "medium"
-            }
-        ]
-        for q in seed_questions:
-            db_q = QuizQuestion(**q)
-            db.add(db_q)
-        db.commit()
-        questions = db.query(QuizQuestion).all()
+        raise HTTPException(
+            status_code=404, 
+            detail="Forensic library is empty. Please run the seed script: backend/scripts/seed_quiz.py"
+        )
 
     # Randomize and limit
     return random.sample(questions, min(len(questions), limit))
@@ -84,6 +45,17 @@ async def submit_quiz(db: Session = Depends(get_db), current_user: dict = Depend
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     # Award 50 XP for completion
-    gamification_service.award_xp(db, current_user.get("id"), 50)
+    user_id = current_user.get("id")
+    if not user_id:
+        # Fallback to lookup by username if id is missing in token
+        from app.models.schema import User
+        user = db.query(User).filter(User.username == current_user.get("sub")).first()
+        if user:
+            user_id = user.id
+
+    if not user_id:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    gamification_service.award_xp(db, user_id, 50)
     
     return {"message": "Quiz completed, XP awarded!", "xp_gained": 50}

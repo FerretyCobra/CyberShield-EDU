@@ -8,7 +8,7 @@ If you've noticed a bug or have a feature request, make one! It's generally best
 
 ## 2. Setting up your environment
 
-Please refer to our [`docs/setup_guide.md`](docs/setup_guide.md) for full instructions on how to install dependencies and run both the FastAPI backend and the React frontend locally.
+Please refer to our [`docs/setup_guide.md`](docs/setup_guide.md) for full instructions on how to install dependencies and run both the FastAPI backend and the Vanilla JS frontend locally.
 
 ## 3. Pull Request Process
 

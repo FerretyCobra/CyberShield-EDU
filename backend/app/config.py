@@ -19,9 +19,13 @@ class Settings(BaseModel):
 
     def __init__(self, **values):
         super().__init__(**values)
-        origins = os.getenv("ALLOWED_ORIGINS", "*")
+        # Default origins for development if not specified in .env
+        default_origins = "http://localhost:5500,http://127.0.0.1:5500,http://localhost:3000,http://localhost:5173"
+        origins = os.getenv("ALLOWED_ORIGINS", default_origins)
+        
         if origins == "*":
-            self.ALLOWED_ORIGINS = ["*"]
+            # WARNING: In production with allow_credentials=True, this will cause CORS errors.
+            self.ALLOWED_ORIGINS = [o.strip() for o in default_origins.split(",") if o.strip()]
         else:
             # Robust split that handles "['a', 'b']" or "a,b"
             clean_origins = origins.replace("[", "").replace("]", "").replace("'", "").replace('"', "")

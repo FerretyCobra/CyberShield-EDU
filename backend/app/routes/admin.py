@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models.schema import ScanRecord, ScamKeyword
+from app.models.schema import ScanRecord, ScamKeyword, ThreatPattern
 from app.utils.auth import get_current_admin
 from app.config import settings
 from app.services.awareness_service import awareness_service
@@ -53,32 +53,42 @@ async def get_stats(db: Session = Depends(get_db)):
         "distribution": type_data
     }
 
+@router.get("/patterns")
+async def get_patterns(db: Session = Depends(get_db)):
+    patterns = db.query(ThreatPattern).all()
+    return {"patterns": patterns}
+
+@router.post("/patterns")
+async def create_pattern(data: dict, db: Session = Depends(get_db)):
+    new_p = ThreatPattern(
+        pattern_type=data.get("type", "keyword"),
+        value=data.get("value"),
+        risk_score=data.get("risk", 0.2),
+        description=data.get("description", "Admin added pattern")
+    )
+    db.add(new_p)
+    db.commit()
+    # Reload engine memory
+    from app.services.pattern_service import pattern_service
+    pattern_service.load_from_db(db)
+    return {"message": "Dynamic pattern added and deployed."}
+
 @router.get("/keywords")
 async def get_keywords(db: Session = Depends(get_db)):
     keywords = db.query(ScamKeyword).all()
-    # If table is empty, fall back to settings for initial load
-    if not keywords and settings.SCAM_KEYWORDS:
-        for kw in settings.SCAM_KEYWORDS:
-            new_kw = ScamKeyword(keyword=kw)
-            db.add(new_kw)
-        db.commit()
-        keywords = db.query(ScamKeyword).all()
-
-    return {
-        "total_keywords": len(keywords),
-        "keywords": [kw.keyword for kw in keywords]
-    }
+    return {"keywords": [k.keyword for k in keywords]}
 
 @router.post("/keywords")
-async def update_keywords(data: dict, db: Session = Depends(get_db)):
-    new_keyword = data.get("keyword")
-    if new_keyword:
-        existing = db.query(ScamKeyword).filter(ScamKeyword.keyword == new_keyword).first()
-        if not existing:
-            db_kw = ScamKeyword(keyword=new_keyword)
-            db.add(db_kw)
-            db.commit()
-    return {"message": "Keywords updated successfully"}
+async def add_keyword(data: dict, db: Session = Depends(get_db)):
+    kw = data.get("keyword")
+    if kw:
+        db_kw = ScamKeyword(keyword=kw)
+        db.add(db_kw)
+        db.commit()
+        # Sync with pattern engine
+        from app.services.pattern_service import pattern_service
+        pattern_service.load_from_db(db)
+    return {"message": "Keyword added."}
 
 @router.post("/resources")
 async def update_resources(data: ResourceUpdate):

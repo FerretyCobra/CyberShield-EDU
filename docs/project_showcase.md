@@ -16,7 +16,8 @@ Modern cyber-threats are increasingly targeting students through high-pressure t
 3. **Phase 3: Multi-Sensory Input**: Implemented OCR (`Tesseract`) and PDF analysis (`pdfplumber`).
 4. **Phase 4: Aesthetic Design**: Developed the **Glassmorphism** frontend for a premium feel.
 5. **Phase 5: Gamification & Persistence**: Integrated MySQL for persistent history, XP, and leveling.
-6. **Phase 6: User-Centric Controls**: Added a unified header, settings page, and Developer Mode.
+6. **Phase 6: Advanced Media Forensics**: Implemented EXIF metadata auditing and Laplacian texture analysis.
+7. **Phase 7: Academy & Dossier**: Added comprehensive student rank hierarchy and badge milestones.
 
 ---
 
@@ -25,13 +26,16 @@ Modern cyber-threats are increasingly targeting students through high-pressure t
 ### 1. NLP Scam Detection (The AI Core)
 We utilize a fine-tuned **DistilBERT** model to analyze contextual embeddings. It identifies "Artificial Urgency" and "Authoritative Pressure"—common linguistic markers of a scan.
 
-### 2. Gamification: Turning Security into a Skill
-We believe prevention should be rewarding. Our **Gamification Engine** tracks student engagement across the platform.
-- **XP Ecosystem**: Points are awarded for every scan performed and every educational module completed.
-- **Level Progression**: Higher levels represent increased security literacy, providing students with a tangible metric of their digital safety skills.
+### 2. Academy Gamification: Transforming Learning
+We believe prevention should be rewarding. Our **Gamification Engine** tracks student engagement across the platform using a persistent "Academy Dossier."
+- **XP Ecosystem**: Points are awarded for every scan (+10 XP) and every educational module (+30 XP).
+- **Rank Hierarchy**: From **Cyber Scout** to **Grand Protector**, students can visualize their growing safety expertise.
+- **Badge Milestones**: Earn unique digital certifications like "Phishing Hunter" for high-volume detection.
 
-### 3. Computer Vision (OCR)
- screenshots of WhatsApp chats or DMs are processed via `pytesseract` to extract hidden threats that simple text scanners would miss.
+### 3. Forensic Computer Vision (Pillar 5)
+Beyond simple OCR, our vision engine performs **Deep Media Forensics**:
+- **Texture Analysis**: Detects synthetic smoothing signatures common in AI-generated imagery.
+- **Metadata Auditing**: Scans for EXIF software markers from Stable Diffusion, Midjourney, and DAF-E.
 
 ---
 
@@ -52,7 +56,8 @@ A security tool should look as modern as the threats it fights.
 ## 🗺️ The Future Roadmap
 - **[x] Real-time Database**: MySQL integration completed for global threat tracking.
 - **[x] Multi-Lingual Support**: DistilBERT now detects scams in 100+ languages.
-- **[x] Gamification Engine**: XP and Leveling system fully operational.
+- **[x] Forensics Engine**: Advanced Deep-Fake and Texture Analysis (Pillar 5).
+- **[x] Academy Suite**: XP Persistence, Ranks, and Badges (Pillar 6).
 - **[ ] Browser Extension**: (In Progress) Real-time scanning for Chrome/Firefox.
 - **[ ] AI Assistant**: Integrated chatbot for real-time security advice.
 

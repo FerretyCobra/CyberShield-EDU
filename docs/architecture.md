@@ -13,7 +13,7 @@ graph TD
         Backend --> DetectText[Multilingual Text Detector]
         Backend --> DetectURL[URL Analyzer]
         Backend --> DetectPDF[PDF Analyzer]
-        Backend --> DetectImg[Image OCR]
+        Backend --> DetectImg[Forensic Image Audit]
         Backend --> DetectAudio[Audio Vishing Detector]
         
         Backend <--> GamifService[Gamification Engine]
@@ -44,9 +44,16 @@ The backend is a high-performance Python server capable of handling asynchronous
 * **Text Processing (AI)**:
   - Uses `distilbert-base-multilingual-cased` to support international student protection.
   - **Context Engine**: Implements a role-action conflict matrix to identify high-probability social engineering (e.g., Role: "Faculty" -> Action: "Request OTP").
-* **Vision & Audio Scanning**:
-  - `pytesseract` extracts text from image screenshots for multi-modal analysis.
-  - **Audio Engine**: Transcribes voice notes using `SpeechRecognition` and scans transcriptions for vishing keywords and bank fraud patterns.
+* **Forensic Visual Auditing (Pillar 5)**:
+  - **OCR Engine**: `pytesseract` extracts text from image screenshots for context analysis.
+  - **Metadata Audit**: Deep EXIF extraction to identify "Software" signatures from Generative AI tools (Stable Diffusion, Midjourney, etc.).
+  - **Texture Analysis**: OpenCV-based Laplacian Variance testing to detect synthetic smoothing common in AI-generated imagery.
+  - **Integrity Scoring**: A weighted fusion of metadata trust, texture naturalness, and AI signature detection.
+
+* **Gamification & Academy (Pillar 6)**:
+  - **GamificationService**: Logic engine for awarding XP, calculating levels (XP/100 + 1), and managing badge milestones (e.g., "Phishing Hunter").
+  - **Permanent Persistence**: Full state synchronization between the educational modules (PhishSim, Scenarios) and the MySQL `users` table.
+
 * **Asynchronous Workers**:
   - **Celery & Redis**: Offloads resource-intensive AI inference and file processing to background workers, ensuring a non-blocking UI for students.
 

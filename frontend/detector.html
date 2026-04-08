@@ -33,6 +33,7 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="detector.html" class="active">Detector</a></li>
+                <li><a href="academy.html">Academy</a></li>
                 <li><a href="education.html">Education</a></li>
                 <li><a href="history.html">My Scans</a></li>
                 <li><a href="quiz.html">Scam Quiz</a></li>
@@ -90,7 +91,8 @@
                     <p>Upload files or paste text to analyze for fraudulent indicators.</p>
                 </div>
 
-                <div class="detector-container">
+                    <div class="detector-container">
+                        <!-- Lab Content (Tabs, Inputs, Results) -->
                     <div class="tabs-header">
                         <button class="tab-btn active" onclick="switchTab('text-tab')">
                             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>
@@ -111,11 +113,7 @@
                             Image Scan
                             <span class="lock-icon" style="display: none; margin-left: auto;">🔒</span>
                         </button>
-                        <button class="tab-btn" onclick="switchTab('audio-tab')">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" /></svg>
-                            Audio Scan
-                            <span class="lock-icon" style="display: none; margin-left: auto;">🔒</span>
-                        </button>
+
                     </div>
 
                     <!-- Tab Contents -->
@@ -135,9 +133,32 @@
 
                     <div id="pdf-tab" class="tab-content">
                         <div class="input-group">
-                            <div style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;" onclick="document.getElementById('pdfInput').click()">
-                                <p>Click to upload PDF or drop here</p>
-                                <input type="file" id="pdfInput" accept=".pdf" style="display:none">
+                            <div class="file-drop-zone" id="pdfDropZone" style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer; position: relative;">
+                                <div id="pdfDropPrompt">
+                                    <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin-bottom: 10px; opacity: 0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                                    <p>Click to upload PDF or drop here</p>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted);">(Deep Recursive Link Scanning Enabled)</p>
+                                </div>
+
+                                <!-- PDF Forensic Preview Hub -->
+                                <div id="pdfPreviewWrapper" class="forensic-lab-preview hidden" style="animation: slideInUp 0.4s ease-out;">
+                                    <div class="preview-content" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--primary); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px;">
+                                        <div class="doc-icon" style="background: var(--primary-glow); padding: 12px; border-radius: 10px; color: var(--primary);">
+                                            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.707 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        </div>
+                                        <div style="text-align: left; flex: 1; min-width: 0;">
+                                            <div id="pdfFileName" style="font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">document.pdf</div>
+                                            <div id="pdfFileSize" style="font-size: 0.75rem; color: var(--primary);">0.0 MB // EVIDENCE STAGED</div>
+                                        </div>
+                                        <div class="preview-controls">
+                                            <button id="btn-clear-pdf" class="btn-clear-evidence" title="Clear Evidence" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); padding: 6px; border-radius: 6px; cursor: pointer;">
+                                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="file" id="pdfInput" accept=".pdf" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
                             </div>
                         </div>
                         <button id="btn-pdf-scan" class="btn btn-primary w-full">Analyze PDF</button>
@@ -145,26 +166,34 @@
 
                     <div id="image-tab" class="tab-content">
                         <div class="input-group">
-                            <div style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;" onclick="document.getElementById('imageInput').click()">
-                                <p>Click to upload Image or drop here</p>
-                                <input type="file" id="imageInput" accept="image/*" style="display:none">
+                            <div class="file-drop-zone" id="imageDropZone" style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer; position: relative;">
+                                <input type="file" id="imageFileInput" accept="image/*" class="file-input-hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                                
+                                <div id="imagePreviewWrapper" style="display: none; position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--primary); margin-bottom: 15px;">
+                                    <div style="position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--primary);">
+                                        <div style="width: 8px; height: 8px; background: var(--primary); border-radius: 50%; border: 2px solid rgba(0, 122, 255, 0.4); box-shadow: 0 0 10px var(--primary); animation: pulse 1.5s infinite;"></div>
+                                        <span style="font-size: 0.65rem; color: var(--primary); font-family: monospace; font-weight: 700; letter-spacing: 1px;">EVIDENCE_FEED//LIVE</span>
+                                    </div>
+                                    <img id="imagePreview" src="" alt="Evidence Preview" style="width: 100%; max-height: 300px; object-fit: contain; display: block;">
+                                    <button id="btn-clear-image" type="button" style="position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(239, 68, 68, 0.8); border: none; color: white; padding: 5px; border-radius: 50%; cursor: pointer;">
+                                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                </div>
+
+                                <div id="dropZonePrompt">
+                                    <svg class="file-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 48px; height: 48px; color: var(--primary); margin-bottom: 15px; opacity: 0.7;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                    </svg>
+                                    <p class="file-text-primary">Click to upload Image or drop here</p>
+                                    <p class="file-text-secondary" style="font-size: 0.8rem; color: var(--text-muted);">OCR & Forensic Deep-Audit Enabled</p>
+                                </div>
+                                <p id="imageFileNameDisplay" style="display: none; margin-top: 10px;">Selected: <span></span></p>
                             </div>
                         </div>
                         <button id="btn-image-scan" class="btn btn-primary w-full">Analyze Image</button>
                     </div>
 
-                    <div id="audio-tab" class="tab-content">
-                        <div class="input-group">
-                            <div style="border: 2px dashed var(--glass-border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;" onclick="document.getElementById('audioInput').click()">
-                                <div style="font-size: 2rem; margin-bottom: 15px;">🎙️</div>
-                                <p>Click to upload Audio or drop here</p>
-                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Supports MP3, WAV, M4A (Max 10MB)</p>
-                                <input type="file" id="audioInput" accept="audio/*" style="display:none" onchange="document.getElementById('audio-file-status').textContent = this.files[0].name">
-                                <p id="audio-file-status" style="margin-top: 15px; font-weight: 700; color: var(--secondary);"></p>
-                            </div>
-                        </div>
-                        <button id="btn-audio-scan" class="btn btn-primary w-full">Analyze Recording</button>
-                    </div>
+
 
                     <!-- Result Area -->
                     <div id="result-container" style="display: none; margin-top: 40px; animation: fadeInUp 0.8s ease forwards;">

@@ -20,120 +20,145 @@ const Gamification = {
     state: {
         xp: 0,
         level: 1,
+        rank: "Cyber Scout",
         badges: [],
-        completedModules: []
+        next_level_xp: 100,
+        progress_percent: 0
     },
 
-    init() {
+    async init() {
         const isLoggedIn = window.api && window.api.auth && window.api.auth.isLoggedIn();
         if (!isLoggedIn) {
             console.log("Gamification initializing in Guest Mode");
-            // Only hide the standalone legacy badge if it exists
-            document.querySelectorAll('.user-stats-badge').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('[data-gamif]').forEach(el => el.style.display = 'none');
             return;
         }
-        this.loadState();
+        await this.syncWithBackend();
         this.updateUI();
-        console.log("Gamification initialized:", this.state);
+        this.setupAcademyClick();
+        console.log("Cyber-Academy initialized:", this.state);
     },
 
-    loadState() {
-        const saved = localStorage.getItem('cs_gamification');
-        if (saved) {
-            this.state = JSON.parse(saved);
+    setupAcademyClick() {
+        const badgeLogo = document.getElementById('academy-badge-logo');
+        if (badgeLogo) {
+            badgeLogo.style.cursor = 'pointer';
+            badgeLogo.addEventListener('click', () => {
+                console.log("Academy Badge Clicked! Celebrating...");
+                this.celebrate();
+            });
         }
     },
 
-    saveState() {
-        localStorage.setItem('cs_gamification', JSON.stringify(this.state));
-        this.updateUI();
+    async syncWithBackend() {
+        try {
+            const profile = await window.api.gamification.getProfile();
+            
+            // Persist notification state in localStorage to prevent repeat toasts on page navigation
+            const storedLevel = localStorage.getItem('cyberShield_lastLevel');
+            const storedBadgeCount = localStorage.getItem('cyberShield_lastBadgeCount');
+            
+            // Initialization: If first time, don't show toast for current progress
+            const lastLevel = storedLevel !== null ? parseInt(storedLevel) : profile.level;
+            const lastBadgeCount = storedBadgeCount !== null ? parseInt(storedBadgeCount) : (profile.badges ? profile.badges.length : 0);
+
+            this.state = {
+                xp: profile.xp,
+                level: profile.level,
+                rank: profile.rank,
+                badges: profile.badges,
+                next_level_xp: profile.next_level_xp,
+                progress_percent: profile.progress_percent
+            };
+
+            // Trigger celebrations only for new achievements
+            if (this.state.level > lastLevel) {
+                this.showToast(`LEVEL UP! You are now a ${this.state.rank}`, "level-up");
+                this.celebrate();
+            } else if (this.state.badges.length > lastBadgeCount) {
+                const newBadge = this.state.badges[this.state.badges.length - 1];
+                this.showToast(`NEW BADGE: ${newBadge} Unlocked!`, "badge");
+                this.celebrate();
+            }
+
+            // Sync localStorage for next view
+            localStorage.setItem('cyberShield_lastLevel', this.state.level);
+            localStorage.setItem('cyberShield_lastBadgeCount', this.state.badges.length);
+
+            this.updateUI();
+        } catch (error) {
+            console.error("Academy Sync Failed:", error);
+        }
     },
 
-    addXp(amount, reason = "Activity completed") {
-        this.state.xp += amount;
-        this.checkLevelUp();
-        this.saveState();
+    async addXp(amount, reason = "Activity completed") {
+        try {
+            // Persist the educational reward to the backend database
+            if (window.api && window.api.awareness && window.api.awareness.reward) {
+                await window.api.awareness.reward(amount, reason);
+            }
+        } catch (error) {
+            console.error("Academy Persistence Failed:", error);
+        }
+        
+        // Sync the local state with the newly updated backend profile
+        await this.syncWithBackend();
         this.showToast(`+${amount} XP: ${reason}`, "xp");
     },
 
-    checkLevelUp() {
-        const currentLevel = this.state.level;
-        const newLevel = GAMIF_CONFIG.levels.reduce((prev, curr) => {
-            return this.state.xp >= curr.minXp ? curr : prev;
-        }, GAMIF_CONFIG.levels[0]);
-
-        if (newLevel.level > currentLevel) {
-            this.state.level = newLevel.level;
-            this.showToast(`LEVEL UP! You are now a ${newLevel.title}`, "level-up");
-        }
-    },
-
-    getCurrentLevelInfo() {
-        return GAMIF_CONFIG.levels.find(l => l.level === this.state.level);
-    },
-
-    getNextLevelInfo() {
-        return GAMIF_CONFIG.levels.find(l => l.level === this.state.level + 1) || null;
-    },
-
-    completeModule(moduleId) {
-        if (!this.state.completedModules.includes(moduleId)) {
-            this.state.completedModules.push(moduleId);
-            this.addXp(30, "Education Module Mastery");
-            this.saveState();
-            this.checkLearningPathCompletion();
-        }
-    },
-
-    checkLearningPathCompletion() {
-        const paths = {
-            'phishing-101': [1, 2, 3],
-            'financial-fraud': [4, 5]
-        };
-
-        for (const [pathId, moduleIds] of Object.entries(paths)) {
-            const isDone = moduleIds.every(id => this.state.completedModules.includes(id));
-            if (isDone && !this.state.badges.includes(pathId)) {
-                this.addBadge(pathId, `Certified in ${pathId}`);
-                this.addXp(100, `Path Mastery: ${pathId}`);
-            }
-        }
-    },
-
     updateUI() {
-        // Update all elements with [data-gamif]
         const xpElements = document.querySelectorAll('[data-gamif="xp"]');
         const levelElements = document.querySelectorAll('[data-gamif="level"]');
         const titleElements = document.querySelectorAll('[data-gamif="title"]');
         const progressElements = document.querySelectorAll('[data-gamif="progress"]');
+        const badgeGrid = document.getElementById('academy-badges');
 
-        const levelInfo = this.getCurrentLevelInfo();
-        const nextLevel = this.getNextLevelInfo();
+        xpElements.forEach(el => el.textContent = this.state.xp);
+        levelElements.forEach(el => el.textContent = this.state.level);
+        titleElements.forEach(el => el.textContent = this.state.rank);
 
-        xpElements.forEach(el => {
-            el.textContent = this.state.xp;
-            el.style.display = ''; 
-        });
-        levelElements.forEach(el => {
-            el.textContent = this.state.level;
-            el.style.display = '';
-        });
-        titleElements.forEach(el => {
-            el.textContent = levelInfo.title;
-            el.style.display = '';
-        });
-
-        if (progressElements.length > 0 && nextLevel) {
-            const currentLevelXp = levelInfo.minXp;
-            const neededXp = nextLevel.minXp - currentLevelXp;
-            const progressXp = this.state.xp - currentLevelXp;
-            const percent = Math.min(100, (progressXp / neededXp) * 100);
-            
+        if (progressElements.length > 0) {
             progressElements.forEach(el => {
-                el.style.width = `${percent}%`;
-                el.style.display = '';
+                el.style.width = `${this.state.progress_percent}%`;
             });
         }
+
+        if (badgeGrid) {
+            this.renderBadgeGrid(badgeGrid);
+        }
+
+        // Dedicated Academy Hub Elements
+        const xpToNextEl = document.getElementById('xp-to-next');
+        const badgeTotalEl = document.getElementById('badge-total');
+
+        if (xpToNextEl) {
+            xpToNextEl.textContent = this.state.next_level_xp - this.state.xp || 0;
+        }
+        if (badgeTotalEl) {
+            badgeTotalEl.textContent = `${this.state.badges.length} Badges Earned`;
+        }
+    },
+
+    renderBadgeGrid(container) {
+        const badgeIcons = {
+            "First Response": "🛡️",
+            "Phishing Hunter": "🎣",
+            "Deep-Fake Detective": "📸",
+            "Forensic Analyst": "📄",
+            "Shield of Trust": "🛡️✨"
+        };
+
+        if (!this.state.badges || this.state.badges.length === 0) {
+            container.innerHTML = '<p style="font-size: 0.7rem; color: var(--text-muted); font-style: italic;">No badges earned yet. Start scanning to build your dossier!</p>';
+            return;
+        }
+
+        container.innerHTML = this.state.badges.map(badge => `
+            <div class="academy-badge-item" title="${badge}" style="background: var(--primary-glow); padding: 8px; border-radius: 8px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid var(--primary); backdrop-filter: blur(4px);">
+                ${badgeIcons[badge] || '🏅'}
+                <div style="position: absolute; bottom: -4px; right: -4px; background: var(--success); width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--bg-card); box-shadow: 0 0 5px var(--success);"></div>
+            </div>
+        `).join('');
     },
 
     showToast(message, type = "default") {
@@ -151,8 +176,6 @@ const Gamification = {
         `;
 
         container.appendChild(toast);
-
-        // Animation
         setTimeout(() => toast.classList.add('show'), 100);
         setTimeout(() => {
             toast.classList.remove('show');
@@ -165,6 +188,33 @@ const Gamification = {
         container.id = 'toast-container';
         document.body.appendChild(container);
         return container;
+    },
+
+    celebrate() {
+        const container = document.createElement('div');
+        container.className = 'confetti-container';
+        document.body.appendChild(container);
+
+        // Get brand colors from CSS variables
+        const primary = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#6366f1';
+        const secondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim() || '#a855f7';
+        const success = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#10b981';
+        const gold = getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#f59e0b';
+        const colors = [primary, secondary, success, gold];
+        
+        for (let i = 0; i < 50; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + 'vw';
+            piece.style.animationDelay = Math.random() * 2 + 's';
+            piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            container.appendChild(piece);
+        }
+
+        setTimeout(() => {
+            container.classList.add('fade-out');
+            setTimeout(() => container.remove(), 1000);
+        }, 5000);
     }
 };
 

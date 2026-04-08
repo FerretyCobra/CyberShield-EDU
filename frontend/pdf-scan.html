@@ -162,14 +162,34 @@
                             <!-- Drag and Drop Zone -->
                             <div class="file-drop-zone" id="pdfDropZone">
                                 <input type="file" id="pdfFileInput" class="file-input-hidden" accept="application/pdf">
-                                <svg class="file-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                                </svg>
-                                <p class="file-text-primary">Click to upload or drag and drop</p>
-                                <p class="file-text-secondary">PDF files only (Max 10MB)</p>
-                                <p id="pdfFileNameDisplay">Selected: <span></span></p>
+                                
+                                <div id="pdfDropPrompt">
+                                    <svg class="file-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                                    </svg>
+                                    <p class="file-text-primary">Click to upload or drag and drop</p>
+                                    <p class="file-text-secondary">PDF files only (Max 10MB)</p>
+                                </div>
+
+                                <!-- PDF Forensic Preview Hub -->
+                                <div id="pdfPreviewWrapper" class="forensic-lab-preview hidden" style="animation: slideInUp 0.4s ease-out;">
+                                    <div class="preview-content" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--primary); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px;">
+                                        <div class="doc-icon" style="background: var(--primary-glow); padding: 12px; border-radius: 10px; color: var(--primary);">
+                                            <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.707 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                        </div>
+                                        <div style="text-align: left; flex: 1; min-width: 0;">
+                                            <div id="pdfFileName" style="font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">document.pdf</div>
+                                            <div id="pdfFileSize" style="font-size: 0.75rem; color: var(--primary);">0.0 MB // EVIDENCE STAGED</div>
+                                        </div>
+                                        <div class="preview-controls">
+                                            <button id="btn-clear-pdf" class="btn-clear-evidence" title="Clear Evidence" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); padding: 6px; border-radius: 6px; cursor: pointer;">
+                                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <button id="btn-pdf-scan" class="btn-primary" style="width: 100%;">
@@ -187,7 +207,7 @@
                     </div>
 
                     <!-- Result Container (Hidden by default) -->
-                    <div id="pdf-result-container" class="result-container hidden uppercase">
+                    <div id="result-container" class="result-container hidden">
                         <!-- Filled by JS -->
                     </div>
                 </div>

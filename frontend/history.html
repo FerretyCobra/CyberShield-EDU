@@ -118,6 +118,7 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="detector.html">Detector</a></li>
+                <li><a href="academy.html">Academy</a></li>
                 <li><a href="education.html">Education</a></li>
                 <li><a href="history.html" class="active">My Scans</a></li>
                 <li><a href="quiz.html">Scam Quiz</a></li>
@@ -337,11 +338,26 @@
                 renderList(allHistory);
             } catch (err) {
                 console.error("History fetch error:", err);
+                
+                // Smart Session Recovery
+                if (err.message.includes('status: 401')) {
+                    list.innerHTML = `
+                        <div style="text-align: center; padding: 4rem; color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; background: rgba(245, 158, 11, 0.05);">
+                            <svg style="width: 3rem; margin-bottom: 1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            <p style="font-weight: 600;">Session Expired</p>
+                            <p style="font-size: 0.9rem; margin-top: 5px;">Your security session has timed out. Redirecting to login...</p>
+                        </div>
+                    `;
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    return;
+                }
+
                 list.innerHTML = `
                     <div style="text-align: center; padding: 4rem; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; background: rgba(239, 68, 68, 0.05);">
                         <svg style="width: 3rem; margin-bottom: 1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                        <p style="font-weight: 600;">Unable to connect to security database.</p>
-                        <p style="font-size: 0.9rem; margin-top: 5px;">This might be due to a temporary network issue or server maintenance.</p>
+                        <p style="font-weight: 600;">Connection Diagnostic Failed</p>
+                        <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">Diagnostic Info: ${err.message}</p>
+                        <p style="font-size: 0.9rem;">This might be due to a temporary network issue or server maintenance.</p>
                         <button onclick="location.reload()" class="btn btn-ghost" style="margin-top: 1.5rem; font-size: 0.8rem;">Try Again</button>
                     </div>
                 `;

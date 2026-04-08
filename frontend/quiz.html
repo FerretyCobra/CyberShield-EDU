@@ -171,6 +171,7 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="detector.html">Detector</a></li>
+                <li><a href="academy.html">Academy</a></li>
                 <li><a href="education.html">Education</a></li>
                 <li><a href="history.html">My Scans</a></li>
                 <li><a href="quiz.html" class="active">Scam Quiz</a></li>
@@ -322,14 +323,11 @@
                 document.getElementById('finalScore').style.display = 'block';
                 document.getElementById('finalScoreVal').textContent = score;
                 
-                // Award Gamification Points
+                // Award Gamification Points (Now persisted via the new backend engine)
                 if (window.Gamification) {
                     const xp = score * 15;
                     window.Gamification.addXp(xp, `Quiz Score: ${score}/5`);
                 }
-
-                // Award XP on backend
-                window.api.quiz.submit().catch(console.error);
             }
         }
 

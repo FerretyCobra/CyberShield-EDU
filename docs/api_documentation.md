@@ -41,16 +41,26 @@ Secure access control for student and admin sessions.
 ## 🎮 Gamification & Progress
 Endpoints for tracking student security mastery.
 
-### 3. Get User Stats
-**Endpoint:** `GET /gamification/stats`
+### 3. Get Student Profile
+**Endpoint:** `GET /gamification/profile`
 **Headers:** `Authorization: Bearer <token>`
-**Response:**
+**Response (200 OK):**
 ```json
 {
+  "username": "student_jdoe",
+  "email": "jdoe@university.edu",
   "xp": 340,
   "level": 4,
-  "badges": ["Phishing Expert", "First Scan"],
-  "rank": "Guardian"
+  "rank": "Forensic Guardian",
+  "badges": ["First Response", "Phishing Hunter"],
+  "stats": {
+    "total_scans": 15,
+    "url_scans": 10,
+    "image_scans": 3,
+    "pdf_scans": 2
+  },
+  "next_level_xp": 400,
+  "progress_percent": 85.0
 }
 ```
 
@@ -82,20 +92,29 @@ ML-powered analysis for disparate threat vectors.
   "confidence": 0.98,
   "reasoning": ["Detected high urgency language", "Suspicious URL"]
 }
-```
-
-### 6. Analyze Audio (Vishing)
-**Endpoint:** `POST /api/v1/detect/audio`
-**Description:** Scans voice notes for voice-phishing (vishing) strategies.
-**Request Body:** `multipart/form-data` with `file`.
-**Response:**
+```### 6. Forensic Image Audit
+**Endpoint:** `POST /api/v1/detect/image`
+**Description:** Performs deep forensic analysis on screenshots or photo evidence.
+**Form Data:** `file` (Image binary)
+**Response (200 OK):**
 ```json
 {
   "prediction": "scam",
-  "confidence": 0.95,
-  "transcription": "This is an urgent call regarding your debt..."
+  "confidence": 0.92,
+  "reasoning": ["AI Texture detected (Suspiciously Smooth)", "WhatsApp origin identified"],
+  "forensic_report": {
+    "integrity_score": 42.5,
+    "metadata_trust": "low",
+    "texture_analysis": "Suspiciously Smooth",
+    "is_synthetic": true
+  },
+  "url_analysis": [
+    { "url": "http://scam-link.tk", "prediction": "scam", "score": 0.98 }
+  ]
 }
 ```
+
+
 
 ---
 

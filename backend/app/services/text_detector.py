@@ -2,26 +2,42 @@ from transformers import pipeline
 from app.utils.logger import logger
 from app.utils.text_cleaner import clean_text, extract_metadata
 from app.config import settings
+from app.services.pattern_service import pattern_service
 import torch
+import os
+
 
 class TextDetectorService:
     def __init__(self):
         self._classifier = None
-        self.scam_keywords = settings.SCAM_KEYWORDS
 
-    @property
-    def classifier(self):
+
+    def load_model(self):
+        """Explicitly load the model during startup to avoid first-run latency."""
         if self._classifier is None:
-            logger.info("Initializing TextDetectorService with Multilingual DistilBERT...")
+            # Path to the fine-tuned model
+            local_model_path = os.path.join(os.path.dirname(__file__), "..", "ai_models", "scam_detector_v1")
+            
+            if os.path.exists(local_model_path):
+                logger.info(f"🚀 INITIALIZING SPECIALIZED STUDENT BRAIN (v1) from {local_model_path}")
+                model_to_load = local_model_path
+            else:
+                logger.info("Initializing fallback: Multilingual DistilBERT (Zero-Shot)...")
+                model_to_load = "distilbert-base-multilingual-cased"
+
             device = 0 if torch.cuda.is_available() else -1
             self._classifier = pipeline(
                 "text-classification", 
-                model="distilbert-base-multilingual-cased",
+                model=model_to_load,
                 device=device,
                 truncation=True,
                 max_length=512
             )
         return self._classifier
+
+    @property
+    def classifier(self):
+        return self.load_model()
 
     async def analyze(self, raw_text: str):
         cleaned = clean_text(raw_text)
@@ -36,28 +52,25 @@ class TextDetectorService:
         ai_label = ai_result['label']
         ai_score = ai_result['score']
         
-        # 2. Heuristic Analysis & Highlighting
-        keyword_hits = []
+        # 2. Dynamic Pattern Analysis (Pillar 2)
+        pattern_data = pattern_service.analyze_text(cleaned)
+        keyword_hits = pattern_data["matches"]
         reasoning = []
-        
-        for kw in self.scam_keywords:
-            if kw in cleaned:
-                keyword_hits.append(kw)
         
         # 3. Decision Logic & Reasoning
         is_suspicious = False
         
-        if ai_label == "NEGATIVE" and ai_score > 0.7:
+        if ai_result['score'] > 0.6: # Moderate confidence baseline
             is_suspicious = True
-            reasoning.append(f"AI Model detected high scam-like sentiment (Confidence: {ai_score:.2f})")
+            reasoning.append(f"AI Model detected suspicious sentiment (Confidence: {ai_result['score']:.2f})")
         
         if len(keyword_hits) > 0:
-            if len(keyword_hits) >= 2:
-                is_suspicious = True
-            reasoning.append(f"Detected suspicious keywords: {', '.join(keyword_hits)}")
+            is_suspicious = True
+            reasoning.append(f"Detected heuristic threat patterns: {', '.join(keyword_hits)}")
             
         if metadata.get("has_link") and is_suspicious:
-            reasoning.append("Message contains a suspicious link combined with scam patterns")
+            reasoning.append("Message contains a suspicious link combined with threat patterns")
+
             
         # 4. Context-Aware social engineering detection
         context_flag = self._check_context_conflicts(cleaned)
@@ -81,8 +94,22 @@ class TextDetectorService:
             "reasoning": reasoning,
             "highlights": keyword_hits,
             "metadata": metadata,
+            "insights": {
+                "sentiment": ai_label,
+                "complexity": self._calculate_complexity(safe_text),
+                "is_context_flagged": bool(context_flag)
+            },
             "recommendation": self._get_recommendation(final_prediction, keyword_hits)
         }
+
+    def _calculate_complexity(self, text: str) -> str:
+        """Rough heuristic for linguistic complexity/sophistication."""
+        words = text.split()
+        if not words: return "N/A"
+        avg_len = sum(len(w) for w in words) / len(words)
+        if avg_len > 6: return "High (Professional/Sophisticated)"
+        if avg_len > 4: return "Medium (Standard)"
+        return "Low (Casual/Slang)"
 
     def _check_context_conflicts(self, text: str) -> str:
         """Detects if a role (e.g. Professor) is performing an unusual action (e.g. asking for OTP)."""

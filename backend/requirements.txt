@@ -23,3 +23,8 @@ slowapi
 python-jose[cryptography]
 passlib[bcrypt]
 mysql-connector-python
+pytest
+pytest-asyncio
+alembic
+datasets
+accelerate

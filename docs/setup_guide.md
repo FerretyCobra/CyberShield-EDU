@@ -4,11 +4,11 @@ Follow these steps to set up the full CyberShield-EDU platform on a new Windows 
 
 ## 1. Prerequisites
 Ensure the following are installed:
-- **Python 3.10 or higher**: [Download here](https://www.python.org/downloads/)
-- **XAMPP**: For MySQL database. [Download here](https://www.apachefriends.org/index.html)
-- **Redis for Windows**: Essential for background tasks. [Download here](https://github.com/tporadowski/redis/releases)
-- **Git** (Optional): For cloning the repository.
-- **Tesseract OCR**: Required for the Image Scanner module. [Download here](https://github.com/UB-Mannheim/tesseract/wiki).
+- **Python 3.10+**: [Download here](https://www.python.org/downloads/)
+- **XAMPP / MySQL**: For persistent data storage.
+- **Tesseract OCR Engine**: Crucial for image forensics. [Download for Windows](https://github.com/UB-Mannheim/tesseract/wiki).
+- **OpenCV & NumPy**: Automatically installed via `pip`, but requires C++ Redistributable on some Windows versions.
+- **Redis for Windows**: For background processing. [Download here](https://github.com/tporadowski/redis/releases).
 
 ---
 
@@ -37,15 +37,21 @@ Ensure the following are installed:
     ```bash
     pip install -r requirements.txt
     ```
+    *Note: This will install `opencv-python`, `numpy`, `pytesseract`, and `fastapi` among others.*
 5.  **Configure Environment Variables**:
     Create a file named `.env` in the `backend` folder with the following content:
     ```env
+    # Backend Environment Variables
     DEBUG=True
     APP_NAME="CyberShield EDU"
+    API_V1_STR="/api/v1"
+    ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8081,http://127.0.0.1:8081
     SECRET_KEY="cyeber-shield-dev-secret-!@#"
-    DATABASE_URL=mysql+mysqlconnector://root@localhost/cybershield
+
+    # XAMPP MySQL Configuration
+    DATABASE_URL=mysql+mysqlconnector://root@127.0.0.1/cybershield
     REDIS_URL=redis://localhost:6379/0
-    URLSCAN_API_KEY="your-api-key-here"
+    URLSCAN_API_KEY=""
     ```
 6.  **Download AI Models**:
     Upon first run, the system will automatically download the `distilbert-base-multilingual-cased` model (~250MB). Ensure you have a stable internet connection.
@@ -90,5 +96,5 @@ The project primarily uses the premium Vanilla implementation.
 ---
 
 ## 6. Verification
-- **Audio Scan**: Visit `audio-scan.html` and upload a mock .wav file to trigger the vishing analysis.
+
 - **Developer API**: Use Postman to send a request to `http://localhost:8000/api/v1/public/detect/text` with an `X-API-Key` header.

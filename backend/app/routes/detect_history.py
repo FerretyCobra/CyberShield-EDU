@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from app.database import get_db
 from app.models.schema import ScanRecord, User
 from app.utils.auth import get_current_user
@@ -12,10 +12,10 @@ router = APIRouter()
 class ScanHistoryItem(BaseModel):
     id: int
     scan_type: str
-    input_data: str
+    input_data: Optional[str] = "No data recorded"
     prediction: str
-    confidence: float
-    reasoning: list
+    confidence: Optional[float] = 0.0
+    reasoning: Optional[list] = []
     created_at: datetime
 
     class Config:
@@ -32,8 +32,18 @@ async def get_scan_history(
     if not current_user:
         raise HTTPException(status_code=401, detail="Authentication required")
     
+    user_id = current_user.get("id")
+    if not user_id:
+        # Fallback to lookup by username if id is missing in token
+        user = db.query(User).filter(User.username == current_user.get("sub")).first()
+        if user:
+            user_id = user.id
+            
+    if not user_id:
+         raise HTTPException(status_code=404, detail="User not found")
+
     history = db.query(ScanRecord).filter(
-        ScanRecord.user_id == current_user.get("id")
+        ScanRecord.user_id == user_id
     ).order_by(ScanRecord.created_at.desc()).all()
     
     return history

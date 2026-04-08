@@ -1,3 +1,4 @@
+import os
 import pytesseract
 from PIL import Image, ImageEnhance, ImageOps
 import io
@@ -7,6 +8,32 @@ import re
 from app.utils.logger import logger
 from app.services.text_detector import text_detector
 from app.services.url_detector import url_detector
+
+# --- Tesseract Self-Healing Path Detection ---
+def configure_tesseract():
+    common_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+        os.path.join(os.environ.get("LOCALAPPDATA", ""), "Tesseract-OCR", "tesseract.exe")
+    ]
+    
+    for path in common_paths:
+        if os.path.exists(path):
+            pytesseract.pytesseract.tesseract_cmd = path
+            logger.info(f"Forensic Component Calibrated: Tesseract found at {path}")
+            return True
+            
+    # Fallback: check if 'tesseract' is already in PATH
+    try:
+        import subprocess
+        subprocess.run(["tesseract", "--version"], capture_output=True)
+        return True
+    except:
+        logger.warning("Forensic Pulse Lost: Tesseract OCR engine not found in common Windows paths or system PATH.")
+        return False
+
+# Initialize Engine
+TESSERACT_ONLINE = configure_tesseract()
 
 class ImageOCRService:
     def __init__(self):
@@ -53,6 +80,20 @@ class ImageOCRService:
     async def analyze(self, image_bytes: bytes, filename: str):
         logger.info(f"Analyzing Image with Advanced Vision: {filename}")
         
+        # 0. Health Check for OCR Engine
+        if not TESSERACT_ONLINE:
+            return {
+                "prediction": "error",
+                "confidence": 0.0,
+                "recommendation": "Forensic OCR Engine (Tesseract) is not detected on your system.",
+                "reasoning": [
+                    "CRITICAL: Visual Audit Engine is currently OFFLINE.",
+                    "RESOLUTION: Please download and install Tesseract for Windows.",
+                    "DOWNLOAD LINK: https://github.com/UB-Mannheim/tesseract/wiki"
+                ],
+                "metadata": {"filename": filename, "error_type": "prerequisite_missing"}
+            }
+
         reasoning = []
         risk_score = 0.0
         ai_analysis = None
@@ -129,26 +170,119 @@ class ImageOCRService:
                     risk_score += 0.4
                     reasoning.append(f"Phishing link found in screenshot text: {url}")
 
-        except Exception as e:
-            logger.error(f"Advanced Vision Analysis error: {str(e)}")
-            return {"prediction": "error", "message": f"Vision processing failed: {str(e)}"}
+            # 8. Forensic Integrity Calculation
+            exif_data = self._get_exif_metadata(image_bytes)
+            noise_data = self._calculate_noise_integrity(img_cv)
+            
+            # Weighted Integrity Score
+            integrity_score = (
+                (0.4 * (1.0 if exif_data.get("trust_level") == "high" else 0.5)) +
+                (0.4 * noise_data["score"]) +
+                (0.2 * (1.0 if not exif_data.get("is_ai_gen") else 0.0))
+            )
 
-        risk_score = min(1.0, risk_score)
-        prediction = "scam" if risk_score >= 0.45 else "safe"
-        
-        return {
-            "prediction": prediction,
-            "confidence": float(1.0 - abs(0.45 - risk_score) * 2),
-            "scam_score": float(risk_score),
-            "reasoning": list(set(reasoning)),
-            "platform": platform if 'platform' in locals() else "Unknown",
-            "findings": {
-                "qr_code": qr_data,
-                "extracted_text_snippet": extracted_text[:300] if 'extracted_text' in locals() else "",
-                "urls": found_urls
-            },
-            "ai_analysis": ai_analysis,
-            "metadata": {"filename": filename}
-        }
+            risk_score = min(1.0, risk_score + (1.0 - integrity_score) * 0.5)
+            prediction = "scam" if risk_score >= 0.45 else "safe"
+            
+            return {
+                "prediction": prediction,
+                "confidence": round(risk_score, 2),
+                "ai_analysis": ai_analysis,
+                "forensic_report": {
+                    "integrity_score": round(integrity_score * 100, 1),
+                    "metadata_trust": exif_data.get("trust_level"),
+                    "texture_analysis": "Suspiciously Smooth" if noise_data["is_suspiciously_smooth"] else "Natural Texture",
+                    "is_synthetic": exif_data.get("is_ai_gen", False) or noise_data["is_suspiciously_smooth"]
+                },
+                "metadata": {
+                    "filename": filename,
+                    "forensics": {
+                        "exif": exif_data,
+                        "noise": noise_data,
+                        "platform_identified": platform if 'platform' in locals() else "Unknown",
+                        "qr_detected": bool(qr_data)
+                    }
+                }
+            }
+        except Exception as e:
+            logger.error(f"Image Forensic Audit Failed: {str(e)}")
+            return {
+                "prediction": "error",
+                "confidence": 0.0,
+                "reasoning": [f"Forensic engine encountered a technical blackout: {str(e)}"],
+                "metadata": {"filename": filename}
+            }
+
+    def _get_exif_metadata(self, image_bytes: bytes) -> dict:
+        """Extracts deep EXIF metadata to identify source and AI manipulation."""
+        try:
+            img = Image.open(io.BytesIO(image_bytes))
+            exif = img._getexif()
+            
+            # Common EXIF Tag IDs
+            TAGS = {
+                271: "make",
+                272: "model",
+                305: "software",
+                306: "datetime",
+                274: "orientation",
+                42033: "lens_model",
+                34855: "iso",
+                33434: "exposure_time"
+            }
+            
+            if not exif:
+                return {"status": "Suspicious: No Metadata Found", "trust_level": "low"}
+            
+            extracted = {TAGS.get(k, k): v for k, v in exif.items() if k in TAGS}
+            
+            # AI Signature Detection in Software/Model strings
+            ai_keywords = ["stable diffusion", "midjourney", "firefly", "dalle", "canva", "photoshop ai"]
+            software_str = str(extracted.get("software", "")).lower()
+            model_str = str(extracted.get("model", "")).lower()
+            
+            is_ai_gen = any(k in software_str or k in model_str for k in ai_keywords)
+            
+            return {
+                "tags": extracted,
+                "status": "AI Signature Detected" if is_ai_gen else "Standard Metadata",
+                "is_ai_gen": is_ai_gen,
+                "trust_level": "high" if "make" in extracted else "medium"
+            }
+        except:
+            return {"status": "Error reading EXIF", "trust_level": "low"}
+
+    def _calculate_noise_integrity(self, image_np) -> dict:
+        """Detects suspiciously uniform textures (AI skin) using Laplacian Variance."""
+        try:
+            if len(image_np.shape) == 3:
+                gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
+            else:
+                gray = image_np
+                
+            # Laplacian variance is a measure of image 'edginess' or 'sharpness'
+            # AI generated faces often have suspiciously smooth/low-variance patches
+            variance = cv2.Laplacian(gray, cv2.CV_64F).var()
+            
+            # Heuristic: Extremely low variance on high-res images can indicate synthetic smoothing
+            is_suspiciously_smooth = variance < 100.0 
+            
+            return {
+                "texture_variance": round(variance, 2),
+                "is_suspiciously_smooth": is_suspiciously_smooth,
+                "score": 1.0 if not is_suspiciously_smooth else 0.4
+            }
+        except:
+            return {"score": 0.5, "error": "Noise analysis failed"}
+
+    def _get_ocr_confidence(self, pil_img) -> float:
+        """Calculates average confidence of the OCR extraction."""
+        try:
+            data = pytesseract.image_to_data(pil_img, output_type=pytesseract.Output.DICT)
+            confidences = [int(c) for c in data['conf'] if int(c) != -1]
+            if not confidences: return 0.0
+            return sum(confidences) / len(confidences) / 100.0
+        except:
+            return 0.0
 
 image_ocr = ImageOCRService()

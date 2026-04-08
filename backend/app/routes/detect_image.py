@@ -21,8 +21,8 @@ async def detect_image(request: Request, file: UploadFile = File(...), current_u
     
     try:
         content = await file.read()
-        # Direct analysis for demo simplicity
-        result = await image_detector.analyze_screenshot(content)
+        # Perform deep forensic & OCR analysis
+        result = await image_detector.analyze(content, filename=file.filename)
         return result
     except Exception as e:
         logger.error(f"Image detection route failed: {str(e)}")

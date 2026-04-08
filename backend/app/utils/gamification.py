@@ -1,10 +1,9 @@
 from sqlalchemy.orm import Session
-from app.models.schema import User
+from app.models.schema import User, ScanRecord
 from app.utils.logger import logger
 
 class GamificationService:
-    @staticmethod
-    def award_xp(db: Session, user_id: int, amount: int):
+    def award_xp(self, db: Session, user_id: int, amount: int):
         """
         Awards XP to a user and handles leveling up.
         """
@@ -23,21 +22,52 @@ class GamificationService:
             if new_level > user.level:
                 logger.info(f"User {user.username} leveled up to {new_level}!")
                 user.level = new_level
-                # Could add level-up logic here (e.g. badges)
                 
             db.commit()
+            
+            # Milestone check
+            new_badges = self.check_milestones(db, user_id)
+            
             return {
                 "xp_gained": amount,
                 "total_xp": user.xp,
-                "current_level": user.level
+                "current_level": user.level,
+                "rank": self.get_rank_title(user.level),
+                "new_badges": new_badges
             }
         except Exception as e:
             logger.error(f"Error awarding XP: {str(e)}")
             db.rollback()
             return None
 
-    @staticmethod
-    def award_badge(db: Session, user_id: int, badge_name: str):
+    def get_rank_title(self, level: int) -> str:
+        """Pillar 6: Rank Hierarchy"""
+        if level <= 2: return "Cyber Scout"
+        if level <= 5: return "Forensic Guardian"
+        if level <= 10: return "Cyber Sentinel"
+        return "Grand Protector"
+
+    def check_milestones(self, db: Session, user_id: int) -> list:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user: return []
+
+        earned_now = []
+        
+        # 📊 Milestone 1: First Response
+        count_all = db.query(ScanRecord).filter(ScanRecord.user_id == user_id).count()
+        if count_all >= 1 and "First Response" not in user.badges:
+            if self.award_badge(db, user_id, "First Response"):
+                earned_now.append("First Response")
+
+        # Phishing Hunter (10 URL)
+        count_url = db.query(ScanRecord).filter(ScanRecord.user_id == user_id, ScanRecord.scan_type == "url").count()
+        if count_url >= 10 and "Phishing Hunter" not in user.badges:
+            if self.award_badge(db, user_id, "Phishing Hunter"):
+                earned_now.append("Phishing Hunter")
+
+        return earned_now
+
+    def award_badge(self, db: Session, user_id: int, badge_name: str):
         """
         Awards a badge to a user if they don't already have it.
         """
@@ -46,12 +76,13 @@ class GamificationService:
             
         try:
             user = db.query(User).filter(User.id == user_id).first()
-            if not user:
-                return
+            if not user or not user.badges:
+                # Initialize empty badges if None
+                if user and user.badges is None:
+                    user.badges = []
                 
-            if badge_name not in user.badges:
-                # Need to handle JSON column properly
-                current_badges = list(user.badges) if user.badges else []
+            if user and badge_name not in user.badges:
+                current_badges = list(user.badges)
                 current_badges.append(badge_name)
                 user.badges = current_badges
                 db.commit()

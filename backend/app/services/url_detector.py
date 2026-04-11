@@ -136,6 +136,7 @@ class URLDetectorService:
 
         risk_score = 0.0
         reasoning = []
+        score_details = {}
         trust_info = trust_service.check_domain(domain)
         
         if trust_info:
@@ -145,72 +146,73 @@ class URLDetectorService:
         # --- STATIC HEURISTICS (Pillar 2: Dynamic Pattern Engine) ---
         
         # 1. Pattern Engine Analysis (TLD, Domain, Path-Keywords)
-        pattern_data = pattern_service.analyze_url(url) # Updated to scan full URL
+        pattern_data = pattern_service.analyze_url(url) 
         if pattern_data["matches"]:
             risk_score += pattern_data["risk_score"]
-            reasoning.append(f"Dynamic Threat Match: Detected suspicious infrastructure or bait ({', '.join(pattern_data['matches'])})")
+            p_descriptions = [f"{m['value']} ({m['desc']})" for m in pattern_data["matches"]]
+            reasoning.append(f"Dynamic Threat Match: Detected suspicious infrastructure or bait ({', '.join(p_descriptions)})")
+            score_details["patterns"] = round(pattern_data["risk_score"] * 100, 1)
 
         # 2. Protocol check
         if parsed.scheme == 'http':
             risk_score += 0.1
             reasoning.append("Uses insecure HTTP protocol")
-
+            score_details["protocol"] = 10.0
 
         # 4. Shortener Check
         if any(shortener in domain for shortener in self.url_shorteners):
             risk_score += 0.2
-            reasoning.append("URL uses a known link shortener")
+            reasoning.append("URL uses a known link shortener (Obfuscation risk)")
+            score_details["obfuscation"] = 20.0
 
         # 5. Typosquatting Check
         typosquats = self.check_typosquatting(domain)
         if typosquats:
             risk_score += 0.4
             reasoning.append(f"Possible typosquatting detected for: {', '.join(typosquats)}")
+            score_details["typosquatting"] = 40.0
 
         # 6. Entropy Check (DGA)
         entropy = self.calculate_entropy(domain)
         if entropy > 4.0:
             risk_score += 0.25
             reasoning.append(f"High domain entropy detected ({entropy:.2f}), possible machine-generated domain")
+            score_details["entropy"] = 25.0
 
         # 7. Advanced: Homoglyph Attack
         if self.check_homoglyphs(domain):
             risk_score += 0.6
             reasoning.append("CRITICAL: Domain uses visually deceptive foreign characters (Homoglyph Attack)")
+            score_details["homoglyph"] = 60.0
             
         # 8. Advanced: IP Masking
         if self.check_ip_masking(domain):
             risk_score += 0.5
             reasoning.append("CRITICAL: URL hides destination using raw IP digits instead of a registered domain name")
+            score_details["ip_masking"] = 50.0
             
         # 9. Advanced: Subdomain Abuse
         if self.check_subdomain_abuse(domain):
             risk_score += 0.3
             reasoning.append("Deep subdomain nesting detected. Often used to bury the true root domain name.")
-
-        # Trust Factor Override
-        is_trusted = any(domain.endswith(trust) for trust in self.trusted_domains)
-        if is_trusted:
-            risk_score = max(0, risk_score - 0.5)
-            reasoning.append("Domain matches known trusted configuration")
-
+            score_details["subdomains"] = 30.0
 
         # --- EXTERNAL INTEL SCAN ---
         intel_result = await external_intel.check_url_reputation(url)
         if intel_result and intel_result["malicious"]:
             risk_score += 0.6
             reasoning.append(f"External Threat Intel (URLScan): URL flagged as malicious (Score: {intel_result['score']})")
+            score_details["external_intel"] = 60.0
         elif intel_result:
             reasoning.append("External Threat Intel: No immediate threats found in global databases")
 
         # --- DEEP SCAN AI & REDIRECT INTEGRATION ---
-        # Record the redirect chain even if we don't do a full deep scan (if possible)
-        # But for efficiency, we mostly do it during the Deep Scan phase for now.
         redirect_chain = [url]
         deep_scan_text = ""
         ai_label = "SAFE"
         ai_confidence = 0.0
         
+        is_trusted = any(domain.endswith(trust) for trust in self.trusted_domains)
         if not is_trusted and risk_score < 0.8:
             logger.info("Initializing Deep Scan with Redirect Tracking...")
             scan_data = await self.fetch_web_content(url)
@@ -226,47 +228,32 @@ class URLDetectorService:
                 if (".edu" in start_domain or ".gov" in start_domain) and not (".edu" in final_domain or ".gov" in final_domain):
                     risk_score += 0.35
                     reasoning.append(f"CRITICAL REDIRECT: Trusted origin ({start_domain}) jumped to an unverified domain ({final_domain})")
+                    score_details["redirect_risk"] = 35.0
                 
                 if len(redirect_chain) > 3:
                     risk_score += 0.2
                     reasoning.append(f"Suspiciously long redirect chain detected ({len(redirect_chain)} hops)")
+                    score_details["redirect_chain"] = 20.0
 
             if deep_scan_text and len(deep_scan_text) > 20: 
-                # Run the fetched webpage content through our DistilBERT model
                 ai_result = await text_detector.analyze(deep_scan_text)
-                
                 if ai_result["prediction"] == "scam":
                     ai_label = "SCAM"
                     ai_confidence = ai_result["confidence"]
                     risk_score += 0.5 
                     reasoning.append(f"DEEP SCAN: AI model detected scam-like intent in the webpage's content (Confidence: {ai_confidence*100:.1f}%)")
+                    score_details["content_ai"] = 50.0
                 else:
                     reasoning.append("DEEP SCAN: AI model analyzed webpage content and found no malicious text patterns")
 
         # --- FINAL SCORING & NORMALIZATION ---
-        # 1. Define raw vector strengths
-        weights = {
-            "heuristics": float(max(0.0, risk_score - (0.5 if ai_label == "SCAM" else 0.0))),
-            "content_ai": 0.6 if ai_label == "SCAM" else 0.0,
-            "external_intel": 0.6 if (intel_result and intel_result.get("malicious")) else 0.0
-        }
-        
-        # 2. Normalize so they sum to 1.0 max while preserving relative proportions
-        total_weight = sum(weights.values())
-        if total_weight > 1.0:
-            scale = 1.0 / total_weight
-            weights = {k: v * scale for k, v in weights.items()}
-        
         risk_score = min(1.0, risk_score)
         prediction = "scam" if risk_score >= 0.5 else "safe"
         
         # Calculate a final visual confidence
         confidence = float(1.0 - abs(0.5 - risk_score) * 2)
         if prediction == "scam":
-             if ai_label == "SCAM":
-                 confidence = max(confidence, ai_confidence)
-             else:
-                 confidence = min(0.99, confidence + (risk_score - 0.5))
+            confidence = max(confidence, ai_confidence) if ai_label == "SCAM" else min(0.99, confidence + (risk_score - 0.5))
 
         logger.info(f"URL Analysis Complete: {prediction.upper()} [{confidence*100:.1f}%] - Score: {risk_score}")
         
@@ -274,12 +261,12 @@ class URLDetectorService:
             "prediction": prediction,
             "confidence": float(confidence),
             "scam_score": float(risk_score),
-            "reasoning": reasoning,
+            "reasoning": list(set(reasoning)),
+            "score_explanation": score_details,
             "forensics": {
                 "domain": domain,
                 "geo_location": (forensic_data := await self._get_geo_and_asn(domain))["geo"],
                 "asn_info": forensic_data["asn"],
-                "risk_breakdown": weights,
                 "trust_info": trust_info
             },
             "metadata": {
@@ -297,14 +284,11 @@ class URLDetectorService:
         Fetches live GeoIP and ASN data for the domain.
         """
         import socket
+        import asyncio
         try:
-            # 1. Resolve domain to IP address
-            import asyncio
             loop = asyncio.get_event_loop()
             ip_address = await loop.run_in_executor(None, socket.gethostbyname, domain)
             
-            # 2. Query Real-time GeoIP/ASN API (ip-api.com free tier)
-            # Added countryCode for flags
             api_url = f"http://ip-api.com/json/{ip_address}?fields=status,message,country,countryCode,city,as,org"
             
             async with aiohttp.ClientSession() as session:
@@ -336,7 +320,6 @@ class URLDetectorService:
         except Exception as e:
             logger.warning(f"Forensic lookup failed for {domain}: {e}")
             
-        # Fallback to defaults
         return {
             "geo": {"country": "Unknown", "city": "Hidden", "ip": "N/A"},
             "asn": {"asn": "N/A", "isp": "Unknown ISP"}

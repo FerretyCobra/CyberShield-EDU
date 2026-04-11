@@ -136,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auth UI Update
     if (window.updateHeaderAuthUI) window.updateHeaderAuthUI();
 
-    initQuickTips();
     initScamTicker();
     initModals();
 
@@ -278,9 +277,10 @@ function renderScanResult(result, container) {
 
     // 2. Generate Technical Forensic Panel
     let forensicsHtml = '';
+    const forens = result.forensics || result.metadata?.forensics || {};
+    const insights = result.insights || {};
+
     if (result.forensics || result.insights || result.metadata?.forensics) {
-        const forens = result.forensics || result.metadata?.forensics || {};
-        const insights = result.insights || {};
         
         forensicsHtml = `
             <div class="insight-panel">
@@ -394,15 +394,36 @@ function renderScanResult(result, container) {
                     ${result.recommendation || (isScam ? "Immediate caution recommended." : "No malicious patterns identified.")}
                 </p>
 
-                ${(result.forensics?.trust_info || result.metadata?.forensics?.trust_info) ? `
-                    <div class="trust-context">
-                        <div class="trust-advisory-label">INSTITUTIONAL TRUST ADVISORY</div>
-                        <div class="trust-advisory-text">
-                            ${(result.forensics?.trust_info || result.metadata?.forensics?.trust_info).security_tips}
+                ${insights.impersonated_brand ? `
+                    <div class="impersonation-alert" style="display: flex; align-items: center; gap: 15px; background: rgba(239, 68, 68, 0.15); border: 2px solid var(--danger); padding: 15px; border-radius: 12px; margin-bottom: 2rem; animation: pulse 2s infinite;">
+                        <span style="font-size: 2rem;">👤⚠️</span>
+                        <div>
+                            <h4 style="margin: 0; color: #f87171; font-weight: 800;">IMPERSONATION DETECTED</h4>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">This message claims to be from <b>${insights.impersonated_brand}</b>, but the link points to an unrelated destination.</p>
                         </div>
                     </div>
                 ` : ''}
-                
+
+                <div class="scoring-breakdown" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                    <h4 style="margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Why this score? (Vector Analysis)</h4>
+                    <div class="analysis-grid" style="display: flex; flex-direction: column; gap: 12px;">
+                        ${result.score_explanation ? Object.entries(result.score_explanation).map(([factor, weight]) => `
+                            <div class="analysis-row" style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary);"></div>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: capitalize;">${factor.replace('_', ' ')}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex: 1; margin: 0 20px;">
+                                    <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+                                        <div style="width: ${Math.min(100, weight)}%; height: 100%; background: var(--primary); box-shadow: 0 0 8px var(--primary);"></div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--text-main); font-weight: bold; width: 35px; text-align: right;">${weight}%</span>
+                            </div>
+                        `).join('') : '<div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Heuristic pattern weight distribution active (Dynamic).</div>'}
+                    </div>
+                </div>
+
                 <div class="insights-list">${insightsHtml}</div>
 
                 <!--
@@ -571,31 +592,6 @@ function renderScanResult(result, container) {
 }
 
 
-
-// --- Interactive Features (Tips, Ticker, Modals) ---
-const QUICK_TIPS = [
-    "Always check the sender's email address for slight misspellings.",
-    "Be wary of 'urgent' requests for money or personal information.",
-    "Real companies won't ask for your password via email or SMS.",
-    "If an internship offer sounds too good to be true, it probably is.",
-    "Check for HTTPS and lock icons, but remember scammers use them too.",
-    "Don't click links in suspicious messages; go to the official site instead."
-];
-
-function initQuickTips() {
-    const tipEl = document.getElementById('quickTipText');
-    if (!tipEl) return;
-    
-    let currentTip = 0;
-    setInterval(() => {
-        tipEl.style.opacity = 0;
-        setTimeout(() => {
-            currentTip = (currentTip + 1) % QUICK_TIPS.length;
-            tipEl.textContent = QUICK_TIPS[currentTip];
-            tipEl.style.opacity = 1;
-        }, 500);
-    }, 8000);
-}
 
 async function initScamTicker() {
     const tickerEl = document.getElementById('scamTicker');
@@ -853,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setLoadingState(submitBtn, true, "Submitting Report...");
             
             try {
-                const baseUrl = window.api && window.api.base_url ? window.api.base_url : 'http://localhost:8001/api/v1';
+                const baseUrl = window.api && window.api.base_url ? window.api.base_url : 'http://localhost:8000/api/v1';
                 const response = await fetch(`${baseUrl}/report/reports`, {
                     method: 'POST',
                     body: formData

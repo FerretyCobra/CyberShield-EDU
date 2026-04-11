@@ -49,7 +49,7 @@ class PDFAnalyzerService:
                 author = metadata.get('Author', '').lower()
                 
                 if not author or author == "none":
-                    risk_score += 0.05
+                    risk_score += 0.5
                 else:
                     # Check Shield of Trust for author/domain
                     trust_info = trust_service.check_domain(author)
@@ -159,7 +159,7 @@ class PDFAnalyzerService:
 
                 # 8. Structural Anomalies
                 page_count = len(pdf.pages)
-                if page_count > 50:
+                if page_count > 10:
                     risk_score += 0.1
                     reasoning.append(f"Unusually large document ({page_count} pages)")
 

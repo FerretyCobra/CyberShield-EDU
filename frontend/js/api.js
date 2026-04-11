@@ -1,7 +1,7 @@
 // api.js - Vanilla JS wrapper for FastAPI backend
 
-const API_BASE_URL = 'http://localhost:8001/api/v1';
-const ROOT_API_URL = 'http://localhost:8001';
+const API_BASE_URL = 'http://localhost:8000/api/v1';
+const ROOT_API_URL = 'http://localhost:8000';
 
 /**
  * Helper to get the auth token from localStorage.

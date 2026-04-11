@@ -74,14 +74,25 @@ class PatternService:
         # Keyword matching
         for k in self.patterns["keyword"]:
             if k["value"].lower() in text_lower:
-                matches.append(k["value"])
+                matches.append({
+                    "type": "keyword",
+                    "value": k["value"],
+                    "desc": k["desc"],
+                    "risk": k["risk"]
+                })
                 total_risk += k["risk"]
 
         # Regex matching
         for r in self.patterns["regex"]:
             try:
                 if re.search(r["value"], text, re.IGNORECASE):
-                    matches.append(f"REGEX:{r['desc'] or r['value']}")
+                    match_desc = r["desc"] or r["value"]
+                    matches.append({
+                        "type": "regex",
+                        "value": r["value"],
+                        "desc": match_desc,
+                        "risk": r["risk"]
+                    })
                     total_risk += r["risk"]
             except re.error:
                 continue
@@ -111,13 +122,23 @@ class PatternService:
         # 1. TLD matching
         for t in self.patterns["tld"]:
             if domain.endswith(t["value"]):
-                matches.append(f"TLD:{t['value']}")
+                matches.append({
+                    "type": "tld",
+                    "value": t["value"],
+                    "desc": t["desc"],
+                    "risk": t["risk"]
+                })
                 total_risk += t["risk"]
 
         # 2. Blacklisted domains
         for d in self.patterns["domain"]:
             if d["value"].lower() in domain:
-                matches.append(f"DOMAIN:{d['value']}")
+                matches.append({
+                    "type": "domain",
+                    "value": d["value"],
+                    "desc": d["desc"],
+                    "risk": d["risk"]
+                })
                 total_risk += d["risk"]
         
         # 3. Path & Domain Keywords (The "Bait" Shield)
@@ -125,7 +146,12 @@ class PatternService:
         for k in self.patterns["keyword"]:
             kw = k["value"].lower()
             if kw in full_path:
-                matches.append(f"BAIT:{kw}")
+                matches.append({
+                    "type": "bait",
+                    "value": kw,
+                    "desc": k["desc"],
+                    "risk": k["risk"]
+                })
                 total_risk += k["risk"]
                 
         return {"matches": matches, "risk_score": total_risk}

@@ -2,9 +2,11 @@ from transformers import pipeline
 from app.utils.logger import logger
 from app.utils.text_cleaner import clean_text, extract_metadata
 from app.config import settings
+from app.services.trust_service import trust_service
 from app.services.pattern_service import pattern_service
 import torch
 import os
+import re
 
 
 class TextDetectorService:
@@ -44,7 +46,6 @@ class TextDetectorService:
         metadata = extract_metadata(raw_text)
         
         # Prevent massive payloads from destroying RAM before it even hits the tokenizer
-        # Average English word is ~5 chars. 512 tokens is roughly ~2500 chars. We'll slice at 3000 to be safe.
         safe_text = cleaned[:3000]
         
         # 1. AI Analysis
@@ -54,52 +55,82 @@ class TextDetectorService:
         
         # 2. Dynamic Pattern Analysis (Pillar 2)
         pattern_data = pattern_service.analyze_text(cleaned)
-        keyword_hits = pattern_data["matches"]
+        pattern_matches = pattern_data["matches"]
         reasoning = []
+        score_details = {}
         
         # 3. Decision Logic & Reasoning
         is_suspicious = False
         
-        if ai_result['score'] > 0.6: # Moderate confidence baseline
+        # AI Sentiment Analysis Breakdown
+        if ai_result['score'] > 0.6: 
             is_suspicious = True
-            reasoning.append(f"AI Model detected suspicious sentiment (Confidence: {ai_result['score']:.2f})")
-        
-        if len(keyword_hits) > 0:
+            sentiment_type = "Urgency/Pressure" if any(u in cleaned.lower() for u in ["urgent", "now", "immediately", "limited", "soon"]) else "Unexpected Reward" if any(r in cleaned.lower() for r in ["win", "award", "prize", "cash", "bonus"]) else "Suspicious"
+            reasoning.append(f"AI Model detected {sentiment_type} sentiment (Confidence: {ai_result['score']:.2f})")
+            score_details["ai_analysis"] = round(ai_result['score'] * 40, 1)
+
+        # Heuristic Pattern Analysis Breakdown
+        if pattern_matches:
             is_suspicious = True
-            reasoning.append(f"Detected heuristic threat patterns: {', '.join(keyword_hits)}")
+            p_descriptions = [f"{m['value']} ({m['desc']})" for m in pattern_matches]
+            reasoning.append(f"Detected heuristic threat patterns: {', '.join(p_descriptions)}")
+            score_details["patterns"] = round(pattern_data["risk_score"] * 100, 1)
             
+        # 4. Impersonation Check (Pillar 3 Synergy)
+        impersonated_brand = None
+        if metadata.get("has_link"):
+            # Use the first link found for impersonation check - matches both http and www
+            url_pattern = r'(?:https?://|www\.)(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
+            links = re.findall(url_pattern, raw_text)
+            if links:
+                from urllib.parse import urlparse
+                link_to_check = links[0]
+                if not link_to_check.startswith('http'):
+                    link_to_check = 'http://' + link_to_check
+                
+                source_domain = urlparse(link_to_check).netloc
+                impersonation_warning = trust_service.check_company_impersonation(cleaned, source_domain)
+                
+                if impersonation_warning:
+                    is_suspicious = True
+                    reasoning.append(impersonation_warning["reason"])
+                    score_details["impersonation"] = 40.0 # Increased weight
+                    impersonated_brand = impersonation_warning["brand"]
+
         if metadata.get("has_link") and is_suspicious:
             reasoning.append("Message contains a suspicious link combined with threat patterns")
-
             
-        # 4. Context-Aware social engineering detection
+        # 5. Context-Aware social engineering detection
         context_flag = self._check_context_conflicts(cleaned)
         if context_flag:
             is_suspicious = True
             reasoning.append(context_flag)
-            ai_score = max(ai_score, 0.95) # Boost confidence for explicit context matches
+            ai_score = max(ai_score, 0.95)
+            score_details["context"] = 20.0
             
         final_prediction = "scam" if is_suspicious else "safe"
         
-        # Adjust confidence
-        confidence = ai_score
-        if is_suspicious and len(keyword_hits) > 1:
-            confidence = min(0.99, confidence + 0.15)
+        # Adjust final confidence
+        confidence = float(ai_score)
+        if is_suspicious:
+            total_score = sum(score_details.values())
+            confidence = min(0.99, max(confidence, total_score / 100.0))
 
         logger.info(f"Analysis Complete: Label={final_prediction}, Confidence={confidence:.2f}")
         
         return {
             "prediction": final_prediction,
             "confidence": float(confidence),
-            "reasoning": reasoning,
-            "highlights": keyword_hits,
+            "reasoning": list(set(reasoning)),
+            "score_explanation": score_details,
             "metadata": metadata,
             "insights": {
                 "sentiment": ai_label,
                 "complexity": self._calculate_complexity(safe_text),
-                "is_context_flagged": bool(context_flag)
+                "is_context_flagged": bool(context_flag),
+                "impersonated_brand": impersonated_brand
             },
-            "recommendation": self._get_recommendation(final_prediction, keyword_hits)
+            "recommendation": self._get_recommendation(final_prediction, [m['value'] for m in pattern_matches])
         }
 
     def _calculate_complexity(self, text: str) -> str:

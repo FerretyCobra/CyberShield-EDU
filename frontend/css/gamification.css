@@ -165,39 +165,6 @@
     100% { transform: translateX(-100%); }
 }
 
-/* Quick Tips Section */
-.quick-tips-section {
-    padding: 40px 0 !important;
-}
-
-.tips-container {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding: 24px 32px !important;
-    background: linear-gradient(135deg, var(--primary-glow) 0%, var(--secondary) 10%) !important;
-}
-
-.tip-icon {
-    font-size: 32px;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-}
-
-.tip-label {
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: var(--primary);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-#quickTipText {
-    font-size: 1.1rem;
-    color: var(--text-main);
-    font-weight: 500;
-    margin-top: 4px;
-}
-
 /* Modals */
 .modal {
     display: none;

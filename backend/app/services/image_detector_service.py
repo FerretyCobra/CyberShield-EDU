@@ -41,6 +41,7 @@ class ImageDetectorService:
         risk_score = 0.0
         ai_analysis = None
         found_urls = []
+        score_details = {}
         
         try:
             # 1. Image Loading
@@ -69,7 +70,8 @@ class ImageDetectorService:
                 }
                 if ai_res["prediction"] == "scam":
                     risk_score += 0.4
-                    reasoning.extend([f"AI Content Alert: {r}" for r in ai_res["reasoning"]])
+                    reasoning.extend(ai_res["reasoning"])
+                    score_details["content_ai"] = 40.0
 
             # 5. URL Extraction from Image
             text_urls = re.findall(r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+', extracted_text)
@@ -83,6 +85,7 @@ class ImageDetectorService:
                 if url_res["prediction"] == "scam":
                     risk_score += 0.4
                     reasoning.append(f"Malicious link found in image: {url}")
+                    score_details["urls"] = (score_details.get("urls", 0) + 40.0)
 
             # 6. Metadata (EXIF) Forensics
             exif_data = self._get_exif_metadata(image_bytes)
@@ -91,26 +94,30 @@ class ImageDetectorService:
             noise_data = self._calculate_noise_integrity(img_cv)
 
             # 8. Weighted Integrity Calculation
-            # Higher score = more 'natural'. Lower score = more 'synthetic'.
             integrity_score = (
                 (0.4 * (1.0 if exif_data.get("trust_level") == "high" else 0.5)) +
                 (0.4 * noise_data["score"]) +
                 (0.2 * (1.0 if not exif_data.get("is_ai_gen") else 0.0))
             )
 
+            if integrity_score < 0.7:
+                score_details["forensics"] = round((1.0 - integrity_score) * 50, 1)
+
             risk_score = min(1.0, risk_score + (1.0 - integrity_score) * 0.5)
             prediction = "scam" if risk_score >= 0.45 else "safe"
             
             return {
                 "prediction": prediction,
-                "confidence": round(risk_score, 2),
-                "ai_analysis": ai_analysis,
+                "confidence": float(round(risk_score, 2)),
+                "scam_score": float(risk_score),
                 "reasoning": list(set(reasoning)),
+                "score_explanation": score_details,
+                "ai_analysis": ai_analysis,
                 "forensic_report": {
-                    "integrity_score": round(integrity_score * 100, 1),
+                    "integrity_score": float(round(integrity_score * 100, 1)),
                     "metadata_trust": exif_data.get("trust_level"),
-                    "texture_analysis": "Suspiciously Smooth" if noise_data["is_suspiciously_smooth"] else "Natural Texture",
-                    "is_synthetic": exif_data.get("is_ai_gen", False) or noise_data["is_suspiciously_smooth"]
+                    "texture_analysis": "Suspiciously Smooth" if bool(noise_data["is_suspiciously_smooth"]) else "Natural Texture",
+                    "is_synthetic": bool(exif_data.get("is_ai_gen", False) or noise_data["is_suspiciously_smooth"])
                 },
                 "metadata": {
                     "filename": filename,
@@ -128,8 +135,7 @@ class ImageDetectorService:
             return {
                 "prediction": "error",
                 "confidence": 0.0,
-                "reasoning": [f"Visual forensic engine blackout: {str(e)}"],
-                "metadata": {"filename": filename}
+                "reasoning": [f"Visual forensic engine blackout: {str(e)}"]
             }
 
     def _get_exif_metadata(self, image_bytes: bytes) -> dict:
@@ -137,24 +143,14 @@ class ImageDetectorService:
         try:
             img = Image.open(io.BytesIO(image_bytes))
             exif = img._getexif()
-            
             TAGS = {271: "make", 272: "model", 305: "software", 306: "datetime", 274: "orientation"}
-            
             if not exif:
                 return {"status": "Suspicious: No Metadata Found", "trust_level": "low", "is_ai_gen": False}
-            
             extracted = {TAGS.get(k, k): v for k, v in exif.items() if k in TAGS}
-            
-            # AI Signature Detection
-            ai_keywords = [
-                "stable diffusion", "midjourney", "firefly", "dalle", "civitai", "huggingface", 
-                "generative", "ai generated", "gan", "imagine", "adobe firefly"
-            ]
+            ai_keywords = ["stable diffusion", "midjourney", "firefly", "dalle", "civitai", "huggingface", "generative"]
             software_str = str(extracted.get("software", "")).lower()
             model_str = str(extracted.get("model", "")).lower()
-            
             is_ai_gen = any(k in software_str or k in model_str for k in ai_keywords)
-            
             return {
                 "tags": extracted,
                 "status": "AI Signature Detected" if is_ai_gen else "Natural Image Headers",
@@ -167,25 +163,18 @@ class ImageDetectorService:
     def _calculate_noise_integrity(self, image_np) -> dict:
         """Detects uniform textures (AI skin) using Laplacian Variance."""
         try:
-            if len(image_np.shape) == 3:
-                gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
-            else:
-                gray = image_np
-                
+            gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY) if len(image_np.shape) == 3 else image_np
             variance = cv2.Laplacian(gray, cv2.CV_64F).var()
-            # Heuristic: Extremely low texture variance can indicate synthetic smoothing
             is_suspiciously_smooth = variance < 120.0 
-            
             return {
-                "texture_variance": round(variance, 2),
-                "is_suspiciously_smooth": is_suspiciously_smooth,
-                "score": 1.0 if not is_suspiciously_smooth else 0.4
+                "texture_variance": float(round(variance, 2)),
+                "is_suspiciously_smooth": bool(is_suspiciously_smooth),
+                "score": float(1.0 if not is_suspiciously_smooth else 0.4)
             }
         except:
             return {"score": 0.5, "error": "Texture analysis failed"}
 
     async def analyze_screenshot(self, image_bytes: bytes):
-        """Mock/Legacy method for backward compatibility."""
         return await self.analyze(image_bytes)
 
 image_detector = ImageDetectorService()

@@ -157,7 +157,31 @@ class PDFAnalyzerService:
                             logger.warning("Recursive URL audit timed out - finishing report with available data.")
                             reasoning.append("Warning: Some internal links were slow to respond and were skipped for speed.")
 
-                # 8. Structural Anomalies
+                # 8. Multi-Modal Correlation
+                from app.services.correlation_service import correlation_service
+                
+                # Prepare findings for correlation
+                # Check for intents and categories from the AI Text Analysis
+                intents = ai_res.get("intents", []) if ai_analysis else []
+                categories = ai_res.get("categories", []) if ai_analysis else []
+                
+                # Add "Official" intent if Author was unverified but signature missing
+                if metadata.get('Author') and not trust_info:
+                    intents.append("OFFICIAL")
+
+                findings = {
+                    "intents": list(set(intents)),
+                    "categories": list(set(categories)),
+                    "platform": "Unknown", # PDFs are cross-platform
+                    "url_status": "suspicious" if any(u["prediction"] == "scam" for u in found_urls) else "safe",
+                    "metadata_trust": trust_info.get("trust_level", "medium") if trust_info else "low"
+                }
+                
+                correlation = correlation_service.evaluate(findings)
+                risk_score = min(1.0, risk_score + correlation["boost"])
+                reasoning.extend(correlation["reasons"])
+
+                # 9. Structural Anomalies
                 page_count = len(pdf.pages)
                 if page_count > 10:
                     risk_score += 0.1
@@ -173,14 +197,25 @@ class PDFAnalyzerService:
                 "message": f"Critical Forensic Error: {str(e)}"
             }
 
-        risk_score = min(1.0, risk_score)
-        prediction = "scam" if risk_score >= 0.45 else "safe"
-        
+        # New: Tri-state prediction logic from DB Config
+        from app.utils.config_helper import config_helper
+        thresholds = config_helper.get_thresholds()
+        low_t = thresholds.get("low", 0.3)
+        high_t = thresholds.get("high", 0.7)
+
+        if risk_score >= high_t:
+            prediction = "scam"
+        elif risk_score >= low_t:
+            prediction = "suspicious"
+        else:
+            prediction = "safe"
+            
         return {
             "prediction": prediction,
-            "confidence": float(1.0 - abs(0.45 - risk_score) * 2),
+            "confidence": float(risk_score),
             "scam_score": float(risk_score),
             "reasoning": list(set(reasoning)), # De-duplicate
+            "correlation_report": correlation,
             "ai_analysis": ai_analysis,
             "metadata": {
                 "filename": filename,

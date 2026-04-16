@@ -12,7 +12,7 @@ from slowapi import _rate_limit_exceeded_handler
 app = FastAPI(
     title=settings.APP_NAME,
     description="Backend for student scam detection platform",
-    version="0.1.0",
+    version="2.0.0",
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 app.state.limiter = limiter
@@ -66,7 +66,7 @@ app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["aut
 app.include_router(tasks.router, prefix=f"{settings.API_V1_STR}/tasks", tags=["tasks"])
 app.include_router(scam_report.router, prefix=f"{settings.API_V1_STR}/report", tags=["reporting"])
 app.include_router(public_api.router, prefix=f"{settings.API_V1_STR}/public", tags=["developer"])
-# app.include_router(explainer.router, prefix=f"{settings.API_V1_STR}/help", tags=["assistance"])
+# app.include_router(explainer.router, prefix=f"{settings.API_V1_STR}/help", tags=["assistance"]) # [PAUSED: High Resource Req]
 app.include_router(gamification.router, prefix=f"{settings.API_V1_STR}/gamification", tags=["gamification"])
 
 from app.services.awareness_service import awareness_service
@@ -81,7 +81,7 @@ Base.metadata.create_all(bind=engine)
 
 @app.get("/", tags=["Health"])
 async def root():
-    return {"message": "CyberShield EDU API is running", "version": "1.0.0"}
+    return {"message": "CyberShield EDU API is running", "version": "2.0.0"}
 
 @app.get("/awareness", tags=["Awareness"])
 async def get_awareness_content(db: Session = Depends(get_db)):

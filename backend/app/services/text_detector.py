@@ -108,13 +108,22 @@ class TextDetectorService:
             ai_score = max(ai_score, 0.95)
             score_details["context"] = 20.0
             
-        final_prediction = "scam" if is_suspicious else "safe"
+        # Adjust final confidence to represent 0-100% Scam Likelihood
+        total_score = sum(score_details.values()) / 100.0
+        confidence = max(float(ai_score) if final_prediction == "scam" else 0.0, total_score)
         
-        # Adjust final confidence
-        confidence = float(ai_score)
-        if is_suspicious:
-            total_score = sum(score_details.values())
-            confidence = min(0.99, max(confidence, total_score / 100.0))
+        # New: Tri-state prediction logic from DB Config
+        from app.utils.config_helper import config_helper
+        thresholds = config_helper.get_thresholds()
+        low_t = thresholds.get("low", 0.3)
+        high_t = thresholds.get("high", 0.7)
+
+        if confidence >= high_t:
+            final_prediction = "scam"
+        elif confidence >= low_t:
+            final_prediction = "suspicious"
+        else:
+            final_prediction = "safe"
 
         logger.info(f"Analysis Complete: Label={final_prediction}, Confidence={confidence:.2f}")
         

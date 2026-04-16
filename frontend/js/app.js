@@ -21,14 +21,14 @@ window.updateHeaderAuthUI = async function() {
     // If logged in but no user object in localStorage, try to fetch it
     if (isLoggedIn && !user) {
         try {
-            console.log("User data missing from localStorage, fetching from API...");
+            // console.log("User data missing from localStorage, fetching from API...");
             user = await window.api.auth.getMe();
         } catch (error) {
             console.error("Failed to recover user data:", error);
         }
     }
 
-    console.log("Header Update - LoggedIn:", isLoggedIn, "User:", user);
+    // console.log("Header Update - LoggedIn:", isLoggedIn, "User:", user);
 
     if (isLoggedIn && user) {
         if (authButtons) authButtons.style.display = 'none';
@@ -260,16 +260,44 @@ async function fetchExplanation(scanType, result) {
 function renderScanResult(result, container) {
     if (!container) return;
     
-    const isScam = result.prediction === 'scam';
+    const prediction = result.prediction.toLowerCase();
     const confidence = result.confidence; 
     const reasoning = result.reasoning || ["Pattern analysis complete."];
     
+    // Tiered color-coding: 0-30% Safe, 30-70% Suspicious, 70-100% Scam
+    let statusColor, statusLabel, statusText, statusDot, bgColor, borderAlpha;
+    
+    if (prediction === 'scam' || confidence >= 0.7) {
+        statusColor = 'var(--danger)';
+        statusLabel = 'THREAT DETECTED';
+        statusText = 'Fraudulent Content Flagged';
+        statusDot = '#ef4444';
+        bgColor = 'rgba(239, 68, 68, 0.1)';
+        borderAlpha = '0.3';
+    } else if (prediction === 'suspicious' || (confidence >= 0.3 && confidence < 0.7)) {
+        statusColor = 'var(--warning)';
+        statusLabel = 'CAUTION REQUIRED';
+        statusText = 'Suspicious Patterns Found';
+        statusDot = '#f59e0b';
+        bgColor = 'rgba(245, 158, 11, 0.1)';
+        borderAlpha = '0.25';
+    } else {
+        statusColor = 'var(--success)';
+        statusLabel = 'SYSTEMS CLEAR';
+        statusText = 'Identity & Safety Verified';
+        statusDot = '#22c55e';
+        bgColor = 'rgba(34, 197, 94, 0.05)';
+        borderAlpha = '0.2';
+    }
+
+    const isAlert = prediction === 'scam' || prediction === 'suspicious';
+    
     // 1. Generate standard insights
     const insightsHtml = reasoning.map(r => {
-        const isAlert = r.includes('ALERT') || r.includes('CRITICAL') || r.includes('Detected') || isScam;
+        const isWarning = r.includes('ALERT') || r.includes('CRITICAL') || r.includes('Detected') || isAlert;
         return `
-            <div class="insight-item" style="display: flex; gap: 12px; font-size: 0.9rem; color: var(--text-muted); padding: 10px; background: ${isAlert ? 'rgba(239, 68, 68, 0.05)' : 'rgba(34, 197, 94, 0.05)'}; border-radius: 10px; border: 1px solid var(--glass-border); margin-bottom: 8px;">
-                <div style="color: ${isAlert ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">${isAlert ? '!' : '✓'}</div>
+            <div class="insight-item" style="display: flex; gap: 12px; font-size: 0.9rem; color: var(--text-muted); padding: 10px; background: ${isWarning ? 'rgba(255, 150, 0, 0.05)' : 'rgba(34, 197, 94, 0.05)'}; border-radius: 10px; border: 1px solid var(--glass-border); margin-bottom: 8px;">
+                <div style="color: ${isWarning ? 'var(--warning)' : 'var(--success)'}; font-weight: bold;">${isWarning ? '!' : '✓'}</div>
                 <div>${r}</div>
             </div>
         `;
@@ -366,12 +394,12 @@ function renderScanResult(result, container) {
     }
 
     container.innerHTML = `
-        <div class="glass-card animateOnScroll animated" style="padding: 2rem; border-color: ${isScam ? 'rgba(239, 68, 68, 0.2)' : 'rgba(34, 197, 94, 0.2)'}; background: var(--bg-card);">
+        <div class="glass-card animateOnScroll animated" style="padding: 2rem; border-color: ${statusColor.replace('var(--', 'rgba(var(--').replace(')', ', ' + borderAlpha + ')')}; background: var(--bg-card); box-shadow: 0 10px 30px ${bgColor};">
             <div class="result-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
                 <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="status-indicator" style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.8rem; color: ${isScam ? 'var(--danger)' : 'var(--success)'};">
-                        <div class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor;"></div>
-                        <span>${isScam ? 'THREAT DETECTED' : 'SYSTEMS CLEAR'}</span>
+                    <div class="status-indicator" style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.8rem; color: ${statusColor};">
+                        <div class="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: ${statusDot}; box-shadow: 0 0 10px ${statusDot};"></div>
+                        <span>${statusLabel}</span>
                     </div>
                     
                     ${(result.forensics?.trust_info || result.metadata?.forensics?.trust_info) ? `
@@ -388,10 +416,10 @@ function renderScanResult(result, container) {
 
             <div class="result-body">
                 <h3 style="font-size: 1.5rem; color: var(--text-main); margin-bottom: 0.5rem;">
-                    ${isScam ? 'Fraudulent Content Flagged' : 'Identity & Safety Verified'}
+                    ${statusText}
                 </h3>
                 <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
-                    ${result.recommendation || (isScam ? "Immediate caution recommended." : "No malicious patterns identified.")}
+                    ${result.recommendation || (isAlert ? "Vigilance and thorough verification recommended." : "No malicious patterns identified.")}
                 </p>
 
                 ${insights.impersonated_brand ? `
@@ -481,6 +509,19 @@ function renderScanResult(result, container) {
                             </div>
                         ` : ''}
 
+                        ${result.correlation_report && result.correlation_report.reasons.length > 0 ? `
+                            <div class="correlation-logic" style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                                <div style="font-size: 0.7rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Correlation Intelligence</div>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    ${result.correlation_report.reasons.map(reason => `
+                                        <div style="font-size: 0.8rem; color: var(--text-main); background: rgba(56, 189, 248, 0.05); padding: 8px; border-radius: 6px; border-left: 2px solid var(--primary);">
+                                            ${reason}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
                         <details style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
                             <summary style="font-size: 0.75rem; color: var(--primary); cursor: pointer; list-style: none;">🔍 View Raw Metadata Inspector</summary>
                             <div style="margin-top: 10px; font-family: monospace; font-size: 0.7rem; color: var(--text-muted); max-height: 200px; overflow-y: auto;">
@@ -489,6 +530,7 @@ function renderScanResult(result, container) {
                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                             <td style="padding: 4px; color: var(--text-main); font-weight: bold;">${k}</td>
                                             <td style="padding: 4px; color: #38bdf8;">${v}</td>
+                                        </tr>
                                     `).join('') : '<tr><td>No tags found</td></tr>'}
                                 </table>
                             </div>
@@ -565,7 +607,7 @@ function renderScanResult(result, container) {
 
             <div class="result-footer" style="margin-top: 2rem; display: flex; gap: 12px;">
                 <button class="btn btn-ghost" onclick="location.reload()" style="flex: 1;">New Audit</button>
-                ${isScam ? `<button class="btn btn-primary" onclick="window.location.href='phish-sim.html'" style="flex: 1; background: var(--danger);">Take Quiz</button>` : ''}
+                ${isAlert ? `<button class="btn btn-primary" onclick="window.location.href='phish-sim.html'" style="flex: 1; background: ${prediction === 'scam' ? 'var(--danger)' : 'var(--warning)'}; border: none;">Take Quiz</button>` : ''}
             </div>
         </div>
     `;

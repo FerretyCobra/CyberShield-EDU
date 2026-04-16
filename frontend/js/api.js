@@ -242,16 +242,53 @@ const awarenessApi = {
     }
 };
 
-const adminApi = {
-    async getStats() {
+    async getThresholds() {
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/system/stats`, {
+            const response = await fetch(`${API_BASE_URL}/admin/config/thresholds`, {
                 headers: getHeaders()
             });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) throw new Error('Failed to fetch thresholds');
             return await response.json();
         } catch (error) {
-            console.error('Failed to fetch admin stats:', error);
+            console.error('getThresholds error:', error);
+            throw error;
+        }
+    },
+    async updateThresholds(low, high) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/config/thresholds`, {
+                method: 'PUT',
+                headers: getHeaders(),
+                body: JSON.stringify({ low, high })
+            });
+            if (!response.ok) throw new Error('Failed to update thresholds');
+            return await response.json();
+        } catch (error) {
+            console.error('updateThresholds error:', error);
+            throw error;
+        }
+    },
+    async getLogs() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/logs`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error('Failed to fetch logs');
+            return await response.json();
+        } catch (error) {
+            console.error('getLogs error:', error);
+            throw error;
+        }
+    },
+    async getUsers() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/users`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error('Failed to fetch users');
+            return await response.json();
+        } catch (error) {
+            console.error('getUsers error:', error);
             throw error;
         }
     },

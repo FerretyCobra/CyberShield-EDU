@@ -99,15 +99,14 @@ class ScamReport(Base):
     status = Column(String(20), default="pending") # pending, reviewed, resolved
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-class ApiKey(Base):
-    __tablename__ = "api_keys"
+class SystemConfig(Base):
+    """
+    Dynamic system configuration for analysis thresholds, weights, and maintenance mode.
+    """
+    __tablename__ = "system_config"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
-    key_hash = Column(String(255), unique=True, index=True)
-    name = Column(String(100))
-    uses_count = Column(Integer, default=0)
-    rate_limit = Column(Integer, default=1000) # Per 24 hours
-    last_reset = Column(DateTime(timezone=True), server_default=func.now())
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    key = Column(String(50), unique=True, index=True)
+    value = Column(JSON) # Stores numbers, strings, or structured config
+    description = Column(String(255), nullable=True)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

@@ -248,12 +248,28 @@ class URLDetectorService:
 
         # --- FINAL SCORING & NORMALIZATION ---
         risk_score = min(1.0, risk_score)
-        prediction = "scam" if risk_score >= 0.5 else "safe"
         
-        # Calculate a final visual confidence
-        confidence = float(1.0 - abs(0.5 - risk_score) * 2)
-        if prediction == "scam":
-            confidence = max(confidence, ai_confidence) if ai_label == "SCAM" else min(0.99, confidence + (risk_score - 0.5))
+        # New: Tri-state prediction logic from DB Config
+        from app.utils.config_helper import config_helper
+        thresholds = config_helper.get_thresholds()
+        low_t = thresholds.get("low", 0.3)
+        high_t = thresholds.get("high", 0.7)
+
+        if risk_score >= high_t:
+            prediction = "scam"
+        elif risk_score >= low_t:
+            prediction = "suspicious"
+        else:
+            prediction = "safe"
+        
+        # In the v2 implementation, 'confidence' represents 'Scam Likelihood' (0.0 to 1.0)
+        confidence = float(risk_score)
+        
+        # If the Deep Scan AI found a scam, ensure likelihood is at least 0.6
+        if ai_label == "SCAM":
+            confidence = max(confidence, ai_confidence, 0.6)
+            if confidence >= high_t: prediction = "scam"
+            elif prediction == "safe": prediction = "suspicious"
 
         logger.info(f"URL Analysis Complete: {prediction.upper()} [{confidence*100:.1f}%] - Score: {risk_score}")
         

@@ -31,21 +31,37 @@ class Settings(BaseModel):
             clean_origins = origins.replace("[", "").replace("]", "").replace("'", "").replace('"', "")
             self.ALLOWED_ORIGINS = [o.strip() for o in clean_origins.split(",") if o.strip()]
     
-    # Scam Detection Config
-    SCAM_KEYWORDS: list = [
+    # Scam Detection Config - Tiered for nuanced analysis
+    SCAM_KEYWORDS_HIGH: list = [
         "registration fee", "security deposit", "processing fee",
-        "whatsapp", "telegram", "pay for internship", "limited seats",
-        "congratulations", "selected", "immediate joining", "gpa boost",
-        "free certificate", "urgent payment"
+        "pay for internship", "urgent payment", "bank transfer",
+        "send money", "crypto payment", "fees jama", "jama karwaein",
+        "paise bhejein", "advans", "security jama"
     ]
+    SCAM_KEYWORDS_MEDIUM: list = [
+        "whatsapp", "telegram", "limited seats", "selected",
+        "immediate joining", "gpa boost", "congratulations",
+        "mubarak ho", "inam mila", "select ho gaye", "jeeti hai",
+        "inbox aayein", "jaldi karein"
+    ]
+    SCAM_KEYWORDS_CONTEXT: list = [
+        "internship", "job", "offer", "scholarship", "recruitment",
+        "career", "hiring", "student", "naukri", "mulazmat"
+    ]
+    
+    @property
+    def SCAM_KEYWORDS(self) -> list:
+        return self.SCAM_KEYWORDS_HIGH + self.SCAM_KEYWORDS_MEDIUM + self.SCAM_KEYWORDS_CONTEXT
     
     # URL Detection Config
     HIGH_RISK_TLDS: list = [".xyz", ".top", ".pw", ".zip", ".click", ".link", ".bid", ".loan"]
-    SUSPICIOUS_URL_KEYWORDS: list = [
-        "login", "verify", "secure", "account", "update", "banking", 
-        "internship", "job", "career", "scholarship", "free", "pay", 
-        "portal", "student", "auth"
-    ]
+    
+    SUSPICIOUS_URL_KEYWORDS_HIGH: list = ["login", "verify", "secure", "account", "update", "banking", "auth", "portal"]
+    SUSPICIOUS_URL_KEYWORDS_LOW: list = ["internship", "job", "career", "scholarship", "free", "pay", "student", "offer"]
+    
+    @property
+    def SUSPICIOUS_URL_KEYWORDS(self) -> list:
+        return self.SUSPICIOUS_URL_KEYWORDS_HIGH + self.SUSPICIOUS_URL_KEYWORDS_LOW
     TRUSTED_DOMAINS: list = [".edu", ".gov", ".ac.in", ".edu.in", "google.com", "microsoft.com", "github.com"]
     POPULAR_DOMAINS: list = ["google.com", "facebook.com", "amazon.com", "apple.com", "microsoft.com", "netflix.com", "github.com", "linkedin.com"]
 

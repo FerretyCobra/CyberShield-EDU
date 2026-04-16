@@ -2,10 +2,10 @@
 
 **An advanced, AI-powered cybersecurity protection platform designed specifically to help students detect and avoid online scams, phishing links, and fraudulent documents.**
 
-![CyberShield Overview](https://img.shields.io/badge/Status-Active-brightgreen)
+![CyberShield Overview](https://img.shields.io/badge/Status-v2.0.0--Stable-brightgreen)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
 ![ML](https://img.shields.io/badge/AI-Multilingual--NLP-FF9900)
-![API](https://img.shields.io/badge/Developer--API-v1.0-blueviolet)
+![API](https://img.shields.io/badge/Developer--API-v2.0.0-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 ---

@@ -63,24 +63,68 @@ class PatternService:
                 db.close()
 
     def analyze_text(self, text: str) -> dict:
-        """Runs text through keyword and regex patterns."""
+        """Runs text through keyword and regex patterns with tiered weight logic."""
         if not self.is_loaded: self.load_from_db()
         
         matches = []
         total_risk = 0.0
-        
         text_lower = text.lower()
         
+        has_context = False
+        has_high_risk = False
+
+        # Intent & Category tagging for correlation
+        intents = []
+        categories = []
+        
+        intent_map = {
+            "payment": "FINANCIAL", "transfer": "FINANCIAL", "upi": "FINANCIAL", "crypto": "FINANCIAL", "fee": "FINANCIAL",
+            "jama": "FINANCIAL", "paise": "FINANCIAL", "bhejein": "FINANCIAL", "bharta": "FINANCIAL",
+            "urgent": "URGENCY", "now": "URGENCY", "limited": "URGENCY", "immediately": "URGENCY",
+            "jaldi": "URGENCY", "fauran": "URGENCY", "shandaar": "URGENCY",
+            "official": "OFFICIAL", "letter": "OFFICIAL", "agreement": "OFFICIAL", "mubarak": "OFFICIAL",
+            "drop your": "DATA_HARVESTING", "write your": "DATA_HARVESTING", "comment your": "DATA_HARVESTING",
+            "in the comments": "DATA_HARVESTING", "gmail below": "DATA_HARVESTING", "whatsapp below": "DATA_HARVESTING"
+        }
+        category_map = {
+            "internship": "ACADEMIC", "scholarship": "ACADEMIC", "job": "PROFESSIONAL", "career": "PROFESSIONAL",
+            "naukri": "PROFESSIONAL", "mulazmat": "PROFESSIONAL"
+        }
+
         # Keyword matching
         for k in self.patterns["keyword"]:
-            if k["value"].lower() in text_lower:
+            val = k["value"].lower()
+            if val in text_lower:
+                risk = k["risk"]
+                
+                # Check for Intent tags
+                for key, tag in intent_map.items():
+                    if key in val: intents.append(tag)
+                # Check for Category tags
+                for key, tag in category_map.items():
+                    if key in val: categories.append(tag)
+
+                # Context words like 'internship' or 'offer' get reduced weight if seen alone
+                context_words = ["internship", "offer", "job", "scholarship", "career"]
+                is_context = any(cw in val for cw in context_words)
+                
+                if is_context:
+                    has_context = True
+                    risk = risk * 0.5 # Reduce context risk
+                else:
+                    has_high_risk = True
+
                 matches.append({
                     "type": "keyword",
                     "value": k["value"],
                     "desc": k["desc"],
-                    "risk": k["risk"]
+                    "risk": risk
                 })
-                total_risk += k["risk"]
+                total_risk += risk
+
+        # Combinatorial adjustment: If we ONLY have context words, cap the risk
+        if has_context and not has_high_risk:
+            total_risk = min(0.2, total_risk)
 
         # Regex matching
         for r in self.patterns["regex"]:
@@ -97,12 +141,17 @@ class PatternService:
             except re.error:
                 continue
                 
-        return {"matches": matches, "risk_score": total_risk}
+        return {
+            "matches": matches, 
+            "risk_score": total_risk,
+            "intents": list(set(intents)),
+            "categories": list(set(categories))
+        }
 
     def analyze_url(self, url: str) -> dict:
         """
         Runs full URL through TLD, domain, and keyword patterns.
-        Accepts full URL to catch path-based bait (e.g., /internship).
+        Implements tiered weighting to prevent 'internship' etc. from auto-flagging.
         """
         if not self.is_loaded: self.load_from_db()
         
@@ -142,17 +191,34 @@ class PatternService:
                 total_risk += d["risk"]
         
         # 3. Path & Domain Keywords (The "Bait" Shield)
-        # Catch keywords like 'free', 'internship', 'login'
+        # Tiered logic: Context keywords are less heavy than actual threats
+        context_words = ["internship", "offer", "job", "scholarship", "career", "hiring"]
+        has_context = False
+        has_threat = False
+
         for k in self.patterns["keyword"]:
             kw = k["value"].lower()
             if kw in full_path:
+                risk = k["risk"]
+                is_context = any(cw in kw for cw in context_words)
+                
+                if is_context:
+                    has_context = True
+                    risk = risk * 0.3 # Significantly reduce standalone context risk in URLs
+                else:
+                    has_threat = True
+
                 matches.append({
                     "type": "bait",
                     "value": kw,
                     "desc": k["desc"],
-                    "risk": k["risk"]
+                    "risk": risk
                 })
-                total_risk += k["risk"]
+                total_risk += risk
+        
+        # If ONLY context words are found in the URL, cap the bait risk at 0.15
+        if has_context and not has_threat and not any(m['type'] in ['tld', 'domain'] for m in matches):
+            total_risk = min(0.15, total_risk)
                 
         return {"matches": matches, "risk_score": total_risk}
 

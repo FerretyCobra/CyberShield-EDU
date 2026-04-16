@@ -93,7 +93,25 @@ class ImageDetectorService:
             # 7. Physical Texture/Noise Analysis
             noise_data = self._calculate_noise_integrity(img_cv)
 
-            # 8. Weighted Integrity Calculation
+            # 8. Multi-Modal Correlation
+            from app.services.correlation_service import correlation_service
+            
+            # Prepare findings for correlation
+            findings = {
+                "intents": ai_res.get("intents", []) if ai_analysis else [],
+                "categories": ai_res.get("categories", []) if ai_analysis else [],
+                "platform": platform,
+                "url_status": "suspicious" if any(u["prediction"] == "scam" for u in found_urls) else "safe",
+                "metadata_trust": exif_data.get("trust_level", "low")
+            }
+            
+            correlation = correlation_service.evaluate(findings)
+            
+            # Apply Boosts to Risk Score
+            risk_score = min(1.0, risk_score + correlation["boost"])
+            reasoning.extend(correlation["reasons"])
+
+            # 9. Weighted Integrity Calculation
             integrity_score = (
                 (0.4 * (1.0 if exif_data.get("trust_level") == "high" else 0.5)) +
                 (0.4 * noise_data["score"]) +
@@ -104,7 +122,19 @@ class ImageDetectorService:
                 score_details["forensics"] = round((1.0 - integrity_score) * 50, 1)
 
             risk_score = min(1.0, risk_score + (1.0 - integrity_score) * 0.5)
-            prediction = "scam" if risk_score >= 0.45 else "safe"
+            
+            # New: Tri-state prediction logic from DB Config
+            from app.utils.config_helper import config_helper
+            thresholds = config_helper.get_thresholds()
+            low_t = thresholds.get("low", 0.3)
+            high_t = thresholds.get("high", 0.7)
+
+            if risk_score >= high_t:
+                prediction = "scam"
+            elif risk_score >= low_t:
+                prediction = "suspicious"
+            else:
+                prediction = "safe"
             
             return {
                 "prediction": prediction,
@@ -112,6 +142,7 @@ class ImageDetectorService:
                 "scam_score": float(risk_score),
                 "reasoning": list(set(reasoning)),
                 "score_explanation": score_details,
+                "correlation_report": correlation,
                 "ai_analysis": ai_analysis,
                 "forensic_report": {
                     "integrity_score": float(round(integrity_score * 100, 1)),

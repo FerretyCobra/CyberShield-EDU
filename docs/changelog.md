@@ -139,8 +139,8 @@ PATCH — Bug fixes, configuration changes, documentation updates
 - **Future:** Will be activated when deployed on servers with adequate GPU resources
 
 ### Audio Vishing Detection
-- **Status:** 📋 PLANNED (placeholder pages created)
-- **Reason:** Requires speech-to-text integration (Whisper) not yet implemented
+- **Status:** ❌ REMOVED from platform
+- **Reason:** Feature was a research-only placeholder; navigation links removed in v2.0.0 final release to ensure a polished user experience.
 
 ---
 

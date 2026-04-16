@@ -39,8 +39,13 @@ function initPasswordGate() {
     });
 
     document.getElementById('btn-logout')?.addEventListener('click', () => {
+        // Clear all session markers
         localStorage.removeItem('admin_authenticated');
-        location.reload();
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        
+        // Return to login page as requested
+        window.location.href = 'login.html';
     });
 }
 
@@ -134,13 +139,29 @@ async function loadDashboardData() {
         console.error("Failed to load dashboard stats:", err);
     }
     loadScanLogs();
-    // loadUserTable(); // Keep mock for now or implement if backend supports
+    loadUserTable();
 }
 
 function updateStatsUI(stats) {
     document.getElementById('stat-total-scans').textContent = stats.total_scans.toLocaleString();
     document.getElementById('stat-scams-detected').textContent = stats.scams_detected.toLocaleString();
-    // Assuming active users is not in stats yet, we could mock or add to backend
+    document.getElementById('stat-active-users').textContent = stats.active_users.toLocaleString();
+    
+    // New Analytics
+    const growthEl = document.getElementById('stat-growth-indicators');
+    if (growthEl) {
+        growthEl.textContent = stats.growth_24h;
+        growthEl.style.color = stats.growth_24h.startsWith('+') ? 'var(--success)' : 'var(--danger)';
+    }
+
+    const rateEl = document.getElementById('stat-scam-rate');
+    if (rateEl) rateEl.textContent = `${stats.scam_rate} Blocked`;
+
+    const rulesEl = document.getElementById('stat-total-keywords');
+    if (rulesEl) rulesEl.textContent = `${stats.active_rules} Active Rules`;
+
+    const uptimeEl = document.getElementById('stat-system-uptime');
+    if (uptimeEl) uptimeEl.textContent = stats.uptime;
 }
 
 function updateCharts(stats) {
@@ -159,50 +180,46 @@ function updateCharts(stats) {
     }
 }
 
-function loadScanLogs() {
+async function loadScanLogs() {
     const tableBody = document.querySelector('#scan-table tbody');
     if (!tableBody) return;
 
-    const mockLogs = [
-        { time: '10:45 AM', type: 'Text', preview: 'Verify your account details...', result: 'Scam', confidence: '98%', status: 'scam' },
-        { time: '10:30 AM', type: 'URL', preview: 'http://secure-bank-login.ml', result: 'Scam', confidence: '85%', status: 'scam' },
-        { time: '09:12 AM', type: 'PDF', preview: 'invoice_2024.pdf', result: 'Safe', confidence: '99%', status: 'safe' },
-        { time: 'Yesterday', type: 'Image', preview: 'qr_code_whatsapp.png', result: 'Scam', confidence: '92%', status: 'scam' },
-        { time: 'Yesterday', type: 'Text', preview: 'Hello mom, I lost my phone...', result: 'Scam', confidence: '76%', status: 'scam' },
-    ];
-
-    tableBody.innerHTML = mockLogs.map(log => `
-        <tr>
-            <td>${log.time}</td>
-            <td><span class="badge">${log.type}</span></td>
-            <td style="font-family: monospace; color: var(--text-muted);">${log.preview}</td>
-            <td><span class="status-pill ${log.status}">${log.result}</span></td>
-            <td>${log.confidence}</td>
-            <td><button class="btn-ghost" style="padding: 4px 8px;">Details</button></td>
-        </tr>
-    `).join('');
+    try {
+        const data = await window.api.admin.getLogs();
+        tableBody.innerHTML = data.logs.map(log => `
+            <tr>
+                <td>${log.time}</td>
+                <td><span class="badge">${log.type}</span></td>
+                <td style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">${log.preview}</td>
+                <td><span class="status-pill ${log.status}">${log.prediction.toUpperCase()}</span></td>
+                <td>${log.confidence}</td>
+                <td><button class="btn-ghost" style="padding: 4px 8px;">View</button></td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center">Failed to load logs</td></tr>';
+    }
 }
 
-function loadUserTable() {
+async function loadUserTable() {
     const tableBody = document.querySelector('#user-list tbody');
     if (!tableBody) return;
 
-    const mockUsers = [
-        { name: 'Admin User', email: 'admin@cybershield.edu', role: 'Super Admin', joined: 'Jan 2024', status: 'Online', count: 142 },
-        { name: 'Sarah Chen', email: 'sarah.c@edu.pk', role: 'Auditor', joined: 'Feb 2024', status: 'Idle', count: 86 },
-        { name: 'John Doe', email: 'j.doe@example.com', role: 'User', joined: 'Mar 2024', status: 'Offline', count: 12 },
-    ];
-
-    tableBody.innerHTML = mockUsers.map(user => `
-        <tr>
-            <td><div style="font-weight:600">${user.name}</div></td>
-            <td style="color: var(--text-muted)">${user.email}</td>
-            <td><span class="badge">${user.role}</span></td>
-            <td>${user.joined}</td>
-            <td><span class="status-pill ${user.status === 'Online' ? 'safe' : 'pending'}">${user.status}</span></td>
-            <td>${user.count}</td>
-        </tr>
-    `).join('');
+    try {
+        const data = await window.api.admin.getUsers();
+        tableBody.innerHTML = data.users.map(user => `
+            <tr>
+                <td><div style="font-weight:600">${user.name}</div></td>
+                <td style="color: var(--text-muted)">${user.email}</td>
+                <td><span class="badge">${user.role}</span></td>
+                <td>${user.joined}</td>
+                <td><span class="status-pill safe">${user.status}</span></td>
+                <td>${user.count}</td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center">Failed to load users</td></tr>';
+    }
 }
 
 // --- AI Control ---
@@ -210,8 +227,38 @@ async function initAIControl() {
     const grid = document.getElementById('keywordGrid');
     const form = document.getElementById('addKeywordForm');
     const input = document.getElementById('newKeywordInput');
+    const thresholdSlider = document.getElementById('confidenceThreshold');
+    const thresholdValue = document.getElementById('thresholdValue');
 
     if (!grid) return;
+
+    // Load and set thresholds
+    try {
+        const thresholds = await window.api.admin.getThresholds();
+        if (thresholdSlider) {
+            thresholdSlider.value = thresholds.high * 100;
+            if (thresholdValue) thresholdValue.textContent = `${Math.round(thresholds.high * 100)}%`;
+        }
+    } catch (err) {
+        console.error("Failed to load thresholds");
+    }
+
+    thresholdSlider?.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (thresholdValue) thresholdValue.textContent = `${val}%`;
+    });
+
+    thresholdSlider?.addEventListener('change', async (e) => {
+        const val = e.target.value / 100;
+        try {
+            // Updating high threshold (Scam boundary)
+            // We'll keep low (Suspicious) at high - 0.4 for now or just fixed
+            await window.api.admin.updateThresholds(Math.max(0.1, val - 0.4), val);
+            console.log("Thresholds updated to:", val);
+        } catch (err) {
+            alert("Failed to save threshold");
+        }
+    });
 
     const loadKeywords = async () => {
         try {
@@ -232,9 +279,6 @@ async function initAIControl() {
     };
 
     window.removeKeyword = async (kw) => {
-        // Backend currently doesn't have a DELETE keyword endpoint in admin.py
-        // We might want to add it or just inform the user.
-        // For now, let's just alert.
         alert("Removing keywords is not yet implemented on the backend.");
     };
 

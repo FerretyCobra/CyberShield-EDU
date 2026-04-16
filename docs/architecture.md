@@ -51,11 +51,13 @@ Resource-intensive operations (PDF analysis with recursive URL scanning, image O
 - The UI never freezes waiting for a 30-second PDF scan.
 - Workers can be scaled horizontally by adding more Celery instances.
 
-### 1.5. Database-Driven Configuration
-Detection rules, scam keywords, threat patterns, and educational content are stored in the **MySQL database**, not hardcoded. This enables:
-- **Runtime Updates:** Administrators can add new keywords or patterns through the admin dashboard without any code changes or redeployment.
-- **Audit Trails:** Every pattern includes timestamps and `added_by` references for accountability.
-- **Memory Caching:** The Pattern Engine loads rules from the database into an in-memory cache for near-zero-latency lookups, with cache invalidation triggered by admin updates.
+### 1.5. Dynamic Correlation Engine
+CyberShield-EDU v2.1.0 introduces a **Multi-Modal Correlation Layer**. While individual services detect signs of a scam, the `CorrelationService` analyzes the *co-occurrence* of traits (e.g., an Academic Category + a Financial Intent). This prevents "Internship" keywords from flagging legitimate content while catching sophisticated "Comment Bait" or "Fee Scams."
+
+### 1.6. Database-Driven Configuration & Thresholds
+Detection rules, scam keywords, threat patterns, and **sensitivity thresholds** are stored in the database. 
+- **Dynamic Thresholding**: Administrators can adjust the `low` (Safe -> Suspicious) and `high` (Suspicious -> Scam) thresholds in real-time through the Admin Panel.
+- **Config Helper**: A `ConfigHelper` utility provides a sub-second cached interface to these settings, ensuring that high-traffic scan routes never incur database latency penalties.
 
 ---
 
@@ -80,10 +82,16 @@ graph TD
         TextDetector --> TrustService[🛡️ Pillar 3: Shield of Trust<br/>Impersonation Detection]
         URLDetector --> PatternEngine
         URLDetector --> ExternalIntel[🌐 External Intelligence<br/>URLScan.io API]
+        
         PDFAnalyzer -->|Recursive URL Scan| URLDetector
         PDFAnalyzer --> TextDetector
         ImageDetector --> TextDetector
         ImageDetector --> URLDetector
+
+        TextDetector --> Correlation[🧠 Correlation Engine<br/>Multi-Modal Logic]
+        URLDetector --> Correlation
+        PDFAnalyzer --> Correlation
+        ImageDetector --> Correlation
 
         Router --> GamifService[🎮 Pillar 8: Gamification Engine<br/>XP / Levels / Badges]
         Router --> AdminService[📊 Pillar 9: Admin Analytics]

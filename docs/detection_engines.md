@@ -87,8 +87,17 @@ Input text (up to 3000 chars)
                │
                ▼
 ┌─────────────────────────────────────────────┐
-│ Stage 6: Decision & Score Aggregation        │
-│ Threshold: final_score > 0.50 → "scam"      │
+│ Stage 6: Multi-Modal Correlation Engine      │
+│ Source: CorrelationService                   │
+│ Check: Behavioral patterns (Context+Intent)  │
+│ Logic: Boosts risk for dangerous combinations │
+└──────────────┬──────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────┐
+│ Stage 7: Decision & Dynamic Thresholding     │
+│ Source: SystemConfig (DB-driven limits)      │
+│ Threshold: Default: 0.3 (Susp), 0.7 (Scam)  │
 │ Output: prediction, confidence, reasoning[]  │
 └─────────────────────────────────────────────┘
 ```
@@ -982,4 +991,67 @@ Total pipeline depth: 6 layers deep from original input
 
 ---
 
-*This document reflects the detection engine implementations as of April 2026. Threshold values, penalty weights, and model configurations are subject to calibration as the platform evolves.*
+*This document reflects the detection engine implementations as of April 16, 2026 (v2.1.0). For API endpoints, see [api_documentation.md](./api_documentation.md).*
+
+---
+
+## 10. Multi-Modal Correlation Engine (v2.1.0 Upgrade)
+
+**File:** `backend/app/services/correlation_service.py`
+**Class:** `CorrelationService`
+
+The Correlation Engine is the "Brain" of CyberShield-EDU v2.1.0. It moves beyond simple additive risk scores (0.1 + 0.1) to **Behavioral Pattern Analysis**. It identifies the dangerous synergy between neutral-looking traits.
+
+### 10.1. Intent & Category Mapping
+The `PatternService` has been upgraded to tag findings with semantic labels:
+
+| Mapping | Type | Identified Patterns |
+|:---|:---|:---|
+| `FINANCIAL` | **Intent** | requests for fees, payments, crypto, bank transfers |
+| `URGENCY` | **Intent** | "Limited seats", "Apply now", "Last chance" |
+| `OFFICIAL` | **Intent** | Mimicking letters, agreements, or authority figures |
+| `DATA_HARVESTING` | **Intent** | "Drop your Gmail", "WhatsApp below" |
+| `ACADEMIC` | **Category** | Scholarships, Internships, GPA Boosts |
+| `PROFESSIONAL` | **Category** | Job offers, Recruitment, Hiring |
+
+### 10.2. Correlation Rule Table
+The engine applies non-linear boosts based on these combinations:
+
+| Pattern Name | Logic (Conditions) | Boost | Reason |
+|:---|:---|:---|:---|
+| **Academic Financial Fraud** | Intent: `FINANCIAL` + Cat: `ACADEMIC` | +0.40 | Universities rarely ask for crypto/fees for internships. |
+| **Social Redirection Scam** | Intent: `URGENCY` + Plat: `WhatsApp/Telegram` | +0.35 | Scammers move to encrypted apps to hide from filters. |
+| **Data Harvesting Bait** | Intent: `DATA_HARVESTING` | +0.30 | "Comment baiting" is a classic social media trap. |
+| **High-Risk Infrastructure** | Intent: `ACADEMIC` + URL: `suspicious` | +0.25 | Student offers on high-entropy domains are high risk. |
+
+### 10.3. Dynamic Thresholding (v2.1.0)
+Final predictions are no longer hardcoded. They are determined by the `SystemConfig` table in the database:
+- **`low_threshold`** (Default 0.3): Safe → Suspicious transition.
+- **`high_threshold`** (Default 0.7): Suspicious → Scam transition.
+
+---
+
+## 11. Localized & Transliterated Detection
+
+CyberShield-EDU v2.1.0 introduces optimized support for **Roman Urdu and Hindi** to protect South Asian student populations.
+
+### 11.1. Transliteration Logic
+The Pattern Engine performs "soft-matching" on transliterated terms. Because spelling varies (e.g., "karwayen" vs "karwaein"), we use a substring-match approach on normalized text.
+
+### 11.2. Intent Mapping for Regional Terms
+
+| Regional Term | Meaning | Mapped Intent |
+|:---|:---|:---|
+| `jama`, `paise`, `fees` | Deposit / Money / Fees | `FINANCIAL` |
+| `jaldi`, `fauran` | Quick / Immediately | `URGENCY` |
+| `mubarak ho` | Congratulations | `OFFICIAL` |
+| `select ho gaye` | You are selected | `OFFICIAL` |
+| `naukri`, `mulazmat` | Job / Work | `PROFESSIONAL` |
+
+### 11.3. Worked Example: Mixed-Language Scam
+> Text: *"Assalam o Alaikum, ap internship k liye select ho gaye hain, registration fees jama karwaein."*
+> 
+> 1. **Detection**: `internship` → `ACADEMIC` Category.
+> 2. **Detection**: `fees jama` → `FINANCIAL` Intent.
+> 3. **Correlation**: `ACADEMIC` + `FINANCIAL` = **Scam Match** (+0.40 score boost).
+> 4. **Verdict**: **SCAM** (The engine sees the *Academic* context and *Financial* intent, even though they are in different languages).

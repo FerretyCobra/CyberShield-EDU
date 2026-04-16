@@ -16,7 +16,30 @@ PATCH — Bug fixes, configuration changes, documentation updates
 
 ---
 
-## [v2.0.0] — April 2026 (Current Release)
+## [v2.1.0] — April 16, 2026
+
+### 🚀 New Features
+- **Multi-Modal Contextual Correlation Engine** — Moves beyond isolated scoring to behavioral pattern analysis.
+  - Linked findings (Context + Intent) now boost risk scores non-linearly.
+  - Correlation Intelligence section added to the UI for human-readable reasoning.
+- **Localized & Transliterated Detection** — optimized for South Asian student populations.
+  - Full support for **Roman Urdu and Hindi** detection (e.g., *"fees jama karwaein"*, *"select ho gaye"*).
+  - Transliterated intent mapping for financial and urgency markers.
+- **Social Engineering Defense Shields** — Specialized detection for modern platform tactics.
+  - **Comment Bait Shield** (LinkedIn/FB): Detects patterns like *"Drop your Gmail/WhatsApp below"* to harvest data.
+  - **Redirect Chain Forensics**: Improved detection of "Encrypted Redirection" to Telegram/WhatsApp.
+- **Dynamic System Configuration** — Real-time detection tuning via the Admin Dashboard.
+  - Configurable sensitivity thresholds (`low` and `high`) stored in the database.
+  - Sub-second cached configuration management via `ConfigHelper`.
+
+### 🔧 Improvements
+- **Admin Dashboard v2.1** — Added real-time category distribution charts and category-based analytics.
+- Integrated `CorrelationService` into all forensic pillars (Text, URL, Image, PDF).
+- Performance: Optimized `PatternService` with intent-based grouping for faster multi-vector matching.
+
+---
+
+## [v2.0.0] — April 2026
 
 ### 🚀 New Features
 - **Granular Score Breakdowns** — All detection engines now provide per-layer/per-component score attribution

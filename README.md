@@ -2,27 +2,32 @@
 
 **An advanced, AI-powered cybersecurity protection platform designed specifically to help students detect and avoid online scams, phishing links, and fraudulent documents.**
 
-![CyberShield Overview](https://img.shields.io/badge/Status-v2.0.0--Stable-brightgreen)
+![CyberShield Overview](https://img.shields.io/badge/Status-v2.1.0--Stable-brightgreen)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
 ![ML](https://img.shields.io/badge/AI-Multilingual--NLP-FF9900)
-![API](https://img.shields.io/badge/Developer--API-v2.0.0-blueviolet)
+![API](https://img.shields.io/badge/Developer--API-v2.1.0-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 ---
 
 ## 📌 Executive Summary
 
-Students globally are frequently targeted by sophisticated cyber scams involving fake internships, fraudulent scholarships, housing deposit theft, and phishing links. **CyberShield-EDU** provides a comprehensive, unified, and easy-to-use digital safety dashboard powered by Machine Learning and heuristic analysis. By proactively analyzing suspicious content at the source, CyberShield-EDU aims to elevate digital literacy and prevent financial and data loss among student populations.
+Students globally are frequently targeted by sophisticated cyber scams involving fake internships, fraudulent scholarships, housing deposit theft, and phishing links. **CyberShield-EDU** provides a comprehensive, unified, and easy-to-use digital safety dashboard powered by Machine Learning and multi-modal correlation logic. By proactively analyzing suspicious content at the source, CyberShield-EDU aims to elevate digital literacy and prevent financial and data loss among student populations.
 
-## ✨ Core Capabilities & Features
+## ✨ Core Capabilities & Features (v2.1.0)
 
-Our platform employs a multi-layered approach to threat detection, ensuring users are protected across various digital communication channels:
+Our platform employs a multi-layered, correlation-based approach to threat detection:
 
-### 1. 🌍 Multilingual & Context-Aware NLP
-Analyzes SMS, WhatsApp messages, or emails using an advanced **Multilingual DistilBERT** model. 
-- **Language Detection:** Scans threats in Hindi, Spanish, English, and more.
-- **Context Engine:** Detects "Social Engineering" (e.g., a "Professor" asking for an OTP).
-- **Sentiment Analysis:** Flags artificial urgency and psychological pressure.
+### 1. 🧠 Multi-Modal Contextual Correlation
+Unlike traditional scanners that treat risks in isolation, our **Correlation Engine** analyzes the *relationship* between findings:
+- **Pattern Matching**: Connects dots like "Official Offer" + "Unverified Payment Link" + "WhatsApp Redirect".
+- **Intent Analysis**: Semantically tags content (Financial, Urgency, Data Harvesting) to identify behavioral traps.
+- **Explainable AI**: Provides human-readable reasoning for every detection decision.
+
+### 2. 🌍 Localized & Transliterated Detection
+Optimized for South Asian student populations:
+- **Roman Urdu/Hindi Support**: Detects scams using regional phrases like *"fees jama karwaein"* or *"naukri offer"*.
+- **Localized Intent Mapping**: Correctly identifies financial and urgent intents in transliterated text.
 
 ### 3. 📸 Deep Forensic Metadata Engine (Pillar 5)
 Analyzes underlying technical vectors of digital artifacts to identify synthetic or manipulated content.

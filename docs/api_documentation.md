@@ -780,7 +780,7 @@ Returns the 5 most recent scam reports for the community ticker.
 
 ### 8.1. System Statistics
 
-Returns real-time platform analytics including scan volumes, threat detection rates, and trend data.
+Returns real-time platform analytics including scan volumes, threat detection rates, and category distribution.
 
 | Property | Value |
 |:---|:---|
@@ -796,8 +796,43 @@ Returns real-time platform analytics including scan volumes, threat detection ra
     "active_models": 4,
     "active_rules": 42,
     "system_status": "operational",
-    "trend_data": [
-        {"date": "2026-04-05", "count": 45},
+    "categories": {
+        "Academic": 120,
+        "Financial": 85,
+        "Urgency": 150
+    }
+}
+```
+
+### 8.2. Security Thresholds (Dynamic Sensitivity)
+
+Retrieve or update the system-wide scoring thresholds for safe, suspicious, and scam classifications.
+
+| Property | Value |
+|:---|:---|
+| **Endpoint** | `GET/PUT /api/v1/admin/config/thresholds` |
+| **Auth Required** | Yes (Admin Only) |
+
+**Update Request (PUT):**
+```json
+{
+    "low_threshold": 0.35,
+    "high_threshold": 0.75
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "status": "success",
+    "updated": {
+        "low": 0.35,
+        "high": 0.75
+    }
+}
+```
+
+### 8.3. Keyword Management (Pillar 2)
         {"date": "2026-04-06", "count": 62},
         {"date": "2026-04-07", "count": 58}
     ],

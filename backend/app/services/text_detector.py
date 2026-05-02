@@ -110,7 +110,7 @@ class TextDetectorService:
             
         # Adjust final confidence to represent 0-100% Scam Likelihood
         total_score = sum(score_details.values()) / 100.0
-        confidence = max(float(ai_score) if final_prediction == "scam" else 0.0, total_score)
+        confidence = max(float(ai_score) if ai_label == "LABEL_1" else 0.0, total_score)
         
         # New: Tri-state prediction logic from DB Config
         from app.utils.config_helper import config_helper

@@ -242,6 +242,19 @@ const awarenessApi = {
     }
 };
 
+const adminApi = {
+    async getStats() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/system/stats`, {
+                headers: getHeaders()
+            });
+            if (!response.ok) throw new Error('Failed to fetch stats');
+            return await response.json();
+        } catch (error) {
+            console.error('getStats error:', error);
+            throw error;
+        }
+    },
     async getThresholds() {
         try {
             const response = await fetch(`${API_BASE_URL}/admin/config/thresholds`, {

@@ -22,6 +22,7 @@ const Gamification = {
         level: 1,
         rank: "Cyber Scout",
         badges: [],
+        completedModules: [],
         next_level_xp: 100,
         progress_percent: 0
     },
@@ -67,6 +68,7 @@ const Gamification = {
                 level: profile.level,
                 rank: profile.rank,
                 badges: profile.badges,
+                completedModules: JSON.parse(localStorage.getItem('cyberShield_completedModules') || '[]'),
                 next_level_xp: profile.next_level_xp,
                 progress_percent: profile.progress_percent
             };
@@ -104,6 +106,17 @@ const Gamification = {
         // Sync the local state with the newly updated backend profile
         await this.syncWithBackend();
         this.showToast(`+${amount} XP: ${reason}`, "xp");
+    },
+
+    async completeModule(moduleId) {
+        let completed = JSON.parse(localStorage.getItem('cyberShield_completedModules') || '[]');
+        if (!completed.includes(moduleId)) {
+            completed.push(moduleId);
+            localStorage.setItem('cyberShield_completedModules', JSON.stringify(completed));
+            this.state.completedModules = completed;
+            await this.addXp(30, "Knowledge Module Mastered");
+            this.celebrate();
+        }
     },
 
     updateUI() {

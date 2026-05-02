@@ -87,19 +87,6 @@ CREATE TABLE IF NOT EXISTS scam_reports (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- 8. API Keys Table (Aligned with app.models.schema.ApiKey)
-CREATE TABLE IF NOT EXISTS api_keys (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    key_hash VARCHAR(255) UNIQUE NOT NULL,
-    name VARCHAR(100),
-    uses_count INT DEFAULT 0,
-    rate_limit INT DEFAULT 1000,
-    last_reset TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
 
 -- ==========================================
 -- SEED DATA

@@ -2,170 +2,209 @@
 
 **An advanced, AI-powered cybersecurity protection platform designed specifically to help students detect and avoid online scams, phishing links, and fraudulent documents.**
 
-![CyberShield Overview](https://img.shields.io/badge/Status-v2.1.0--Stable-brightgreen)
+![Status](https://img.shields.io/badge/Status-v2.0.0--Stable-brightgreen)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688)
 ![ML](https://img.shields.io/badge/AI-Multilingual--NLP-FF9900)
-![API](https://img.shields.io/badge/Developer--API-v2.1.0-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 ---
 
 ## 📌 Executive Summary
 
-Students globally are frequently targeted by sophisticated cyber scams involving fake internships, fraudulent scholarships, housing deposit theft, and phishing links. **CyberShield-EDU** provides a comprehensive, unified, and easy-to-use digital safety dashboard powered by Machine Learning and multi-modal correlation logic. By proactively analyzing suspicious content at the source, CyberShield-EDU aims to elevate digital literacy and prevent financial and data loss among student populations.
+Students are frequently targeted by sophisticated cyber scams involving fake internships, fraudulent scholarships, and phishing links. **CyberShield-EDU** provides a unified, AI-powered digital safety dashboard. It analyzes suspicious content across four media types — text, URLs, PDFs, and images — using a layered detection architecture that combines machine learning, heuristic pattern matching, external threat intelligence, and multi-modal correlation logic. Beyond detection, the platform includes a gamified security academy, phishing simulations, community scam reporting, and a real-time admin dashboard.
 
-## ✨ Core Capabilities & Features (v2.1.0)
+---
 
-Our platform employs a multi-layered, correlation-based approach to threat detection:
+## ✨ Core Capabilities & Features (v2.0.0)
 
-### 1. 🧠 Multi-Modal Contextual Correlation
-Unlike traditional scanners that treat risks in isolation, our **Correlation Engine** analyzes the *relationship* between findings:
-- **Pattern Matching**: Connects dots like "Official Offer" + "Unverified Payment Link" + "WhatsApp Redirect".
-- **Intent Analysis**: Semantically tags content (Financial, Urgency, Data Harvesting) to identify behavioral traps.
-- **Explainable AI**: Provides human-readable reasoning for every detection decision.
+### 1. 🧠 Multi-Modal Scam Detection
+Four independent detection engines, each with a dedicated API endpoint:
+- **Text Engine** — Fine-tuned `scam_detector_v1` model (with `distilbert-base-multilingual-cased` as fallback). Detects urgency/pressure, unexpected reward, and impersonation patterns.
+- **URL Engine** — 9-layer heuristic analysis: typosquatting (Levenshtein distance), Shannon entropy (DGA detection), homoglyph attacks, IP masking, subdomain abuse, redirect chain tracking, and AI-powered deep content scan.
+- **PDF Engine** — Forensic audit: encryption detection, ghost link extraction (hidden annotations), recursive URL scanning, metadata inspection, and digital signature verification.
+- **Image Engine** — OCR text extraction via Tesseract, EXIF AI-signature detection (Stable Diffusion, MidJourney, DALL-E, etc.), and Laplacian Variance texture analysis for synthetic image detection.
 
-### 2. 🌍 Localized & Transliterated Detection
-Optimized for South Asian student populations:
-- **Roman Urdu/Hindi Support**: Detects scams using regional phrases like *"fees jama karwaein"* or *"naukri offer"*.
-- **Localized Intent Mapping**: Correctly identifies financial and urgent intents in transliterated text.
+### 2. 🌍 Bilingual Detection (English + Roman Urdu/Hindi)
+Scam keywords and intent maps cover both English and regional transliterations:
+- English: `"registration fee"`, `"send money"`, `"security deposit"`
+- Roman Urdu/Hindi: `"fees jama karwaein"`, `"paise bhejein"`, `"jaldi karein"`, `"mubarak ho"`, `"select ho gaye"`
 
-### 3. 📸 Deep Forensic Metadata Engine (Pillar 5)
-Analyzes underlying technical vectors of digital artifacts to identify synthetic or manipulated content.
-- **AI Signature Detection:** Scans EXIF data for markers from Stable Diffusion, Midjourney, and DALL-E.
-- **Physical Texture Analysis:** Uses Laplacian Variance to detect suspiciously smooth (AI-generated) image regions.
-- **Metadata Auditing:** Validates camera make, model, and software history to ensure artifact integrity.
-- **OCR & URL Integration:** Extracts and analyzes embedded text and links within forensic signatures.
+### 3. 🔗 Multi-Modal Correlation Engine
+The `CorrelationService` detects compound threat patterns that no single engine catches alone:
+- **Academic Financial Fraud** — Financial intent + Academic category → +0.40 boost
+- **Social Redirection Scam** — Urgency + WhatsApp/Telegram platform → +0.35 boost
+- **Unverified Official Document** — Low metadata trust + Official intent → +0.30 boost
+- **Data Harvesting Bait** — Detected "drop your Gmail/WhatsApp" patterns → +0.30 boost
+- **High-Risk Link Infrastructure** — Suspicious URL + Academic context → +0.25 boost
 
-### 4. 🔗 URL Phishing Scanner
-Proactively checks raw URLs for malicious intent:
-- **Typosquatting Check:** Detects impersonated brands (e.g., `paypa1.com`).
-- **Domain Analysis:** Flags suspicious TLDs and entropy levels.
-- **Recursive Scan:** Integrates with the PDF analyzer to check embedded links.
+### 4. 🛡️ Shield of Trust (Whitelist Engine)
+- **Domain Trust Registry** — Verified providers database grants a **-0.50 risk score** offset to known institutions and career portals.
+- **Company Impersonation Detection** — Detects if text claims to be from Amazon, PayPal, Google, Microsoft etc. while the embedded link points to an unrelated domain.
 
-### 5. 📄 PDF Forensic Analysis (Pillar 7)
-Extracts and analyzes threats buried within document layers.
-- **Metadata Inspection:** Audits author info, creation software, and hidden timestamps.
-- **Recursive URL Extraction:** Automatically pulls links from PDF pages and runs them through the URL scanner.
-- **Content Auditing:** Scans for suspicious scripts or embedded objects within document streams.
+### 5. 🎓 Gamified Security Academy
+- **XP & Leveling** — Earn XP through scans (10–15 XP each) and quiz completion (50 XP). `level = floor(XP / 100) + 1`.
+- **Rank Hierarchy** — Cyber Scout → Forensic Guardian → Cyber Sentinel → Grand Protector.
+- **Badges** — First Response (1st scan), Phishing Hunter (10 URL scans).
+- **Interactive Quizzes** — "Spot the Scam" modules from the forensic quiz library.
 
-### 6. 📸 Image OCR Scanner
-Scans screenshots of DMs or Instagram/WhatsApp chats.
-- Uses **Optical Character Recognition** to extract text from images.
-- Feeds extracted data directly into the Multilingual AI engine.
+### 6. 📊 Admin Command Center
+- Real-time platform analytics: total scans, scam rate, 7-day trend data, scan type distribution.
+- Live keyword and threat-pattern management with hot-reload (no restart required).
+- **Dynamic Thresholds** — Adjustable `safe/suspicious/scam` cutoff points stored in the DB.
 
-### 7. 🎓 Educational Academy & Gamification (Pillar 6)
-Prevention is better than cure. The platform includes a persistent, gamified learning center:
-- **Interactive Quizzes:** "Spot the Scam" modules that award XP upon completion.
-- **Academy Dossier:** Persistent user profiles tracking level, rank (Cyber Scout to Grand Protector), and earned badges.
-- **State Persistence:** Secure database synchronization of XP and rewards across all educational modules.
+### 7. 🌐 Community Scam Reporting
+- Anonymous or identified scam reports with file evidence upload.
+- Live "Scam Ticker" on the homepage displaying recent community reports.
+- Rate-limited (3/minute) to prevent abuse.
 
-### 8. ⚙️ User Settings & Gamification
-Personalized experience with persistent progress.
-- **Profile Management**: View your role, email, and security stats.
-- **XP & Leveling System**: Track your security mastery through scans and learning.
-- **Theme Engine**: Seamless toggle between premium Light and Dark modes.
-
-### 9. 🛡️ Reliability & Migration Suite
-Engineered for stability and long-term maintenance.
-- **Alembic Migrations**: Fully automated database schema evolution.
-- **Pytest Suite**: Comprehensive unit testing for all detection logic.
-- **Singleton AI Loading**: Optimized model pre-loading for sub-second latency.
-- **Git History Optimization**: Purged large binary artifacts for lightweight repository cloning.
-
-
-### 10. 📊 Admin & Analytics Dashboard
-For university IT administrators and researchers:
-- Real-time threat analytics and scan statistics.
-- Interactive charts and dynamic threat-signature management.
-- **User Management**: Monitor user progress and engagement.
+### 8. 🔌 Browser Extension
+- Chrome Manifest V3 extension for real-time text analysis directly from the browser.
 
 ---
 
 ## 🏗️ System Architecture
 
-CyberShield-EDU is engineered with a modern, decoupled frontend-backend architecture to ensure scalability, responsiveness, and clean separation of concerns.
+CyberShield-EDU uses a decoupled frontend-backend architecture:
 
-- **Frontend Configuration:** The primary client interface is a premium Vanilla HTML/JS/CSS implementation located in `frontend`. It features a sleek, Glassmorphism-inspired UI with full responsive support and a multi-theme system. It communicates securely with the backend via RESTful APIs.
-- **Backend Configuration:** A high-performance Python server built on the FastAPI framework. It handles asynchronous requests, orchestrates machine learning inference using Hugging Face Transformers, validates schemas with Pydantic, and generates automated OpenAPI documentation.
-
-For a deep dive, see the [Architecture Overview](./docs/architecture.md).
-
----
-
-## 🚀 Quick Start Guide
-
-Follow these steps to get a local instance of CyberShield-EDU running on your machine.
-
-### 1. Prerequisites
-Ensure you have the following installed on your system:
-- **Python 3.10+** (Required for the FastAPI backend and AI models)
-- **XAMPP / MySQL**: For persistent data storage.
-- **Tesseract OCR engine**: Crucial for the Image Scanner module.
-- **Pytest**: For running the reliability suite.
-
-
-### 2. Setup the Backend Environment
-1.  **Database**: Start MySQL in XAMPP and import `backend/setup_xampp.sql`.
-2.  **Environment**: Create and activate a virtual environment in the `backend` folder.
-3.  **Install**: `pip install -r requirements.txt`.
-4.  **Configure**: Create a `.env` file (see `docs/setup_guide.md` for template).
-5.  **Run**: `python main.py` (Server starts on port 8000).
-
-### 3. Setup the Frontend Environment
-The frontend is integrated and served via the internal server, or can be served independently:
-```bash
-# To serve independently:
-cd frontend
-python -m http.server 8081
 ```
-*Access the platform at `http://localhost:8081`.*
+Frontend (Vanilla HTML/JS/CSS)  ←→  FastAPI Backend (Python)
+         19 HTML Pages                    ↓
+         4 JS Modules              MySQL Database (SQLAlchemy)
+         Chrome Extension                 ↓
+                                   Celery + Redis (Async Tasks)
+                                         ↓
+                                  AI Models (HuggingFace)
+```
+
+For a full deep-dive, see [Architecture Overview](./docs/architecture.md).
 
 ---
 
-## � Project Structure
+## 🚀 Quick Start
 
-```text
+### Prerequisites
+- **Python 3.10+**
+- **MySQL / XAMPP** — Database backend
+- **Redis** — Celery message broker (for PDF/Image background tasks)
+- **Tesseract OCR** — Required for image scanning (`C:\Program Files\Tesseract-OCR\`)
+
+### Backend Setup
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate          # Windows
+pip install -r requirements.txt
+# Create .env file (see docs/setup_guide.md for template)
+python main.py                 # Starts on http://localhost:8000
+```
+
+### Start Celery Worker (required for PDF/Image scans)
+```bash
+cd backend
+celery -A app.celery_app worker --loglevel=info -P solo
+```
+
+### Frontend
+```bash
+cd frontend
+python -m http.server 5500
+# Access at http://localhost:5500
+```
+
+### Database Initialization
+```sql
+-- Import the setup script in phpMyAdmin or MySQL CLI:
+SOURCE backend/setup_xampp.sql;
+```
+
+Tables are also auto-created on first startup via `Base.metadata.create_all()`.
+
+---
+
+## 📁 Project Structure
+
+```
 CyberShield-EDU/
-├── backend/                  # FastAPI Python Server & ML Logic
-│   ├── app/                  # Main application code (routes, models, utils)
-│   ├── venv/                 # Local Python environment
-│   └── requirements.txt      # Python dependencies
-├── frontend/                 # Premium Vanilla JS Implementation
-├── docs/                     # Comprehensive Project Documentation
-├── data/                     # Static JSON datasets (e.g., educational info)
-└── README.md                 # Project Overview (You are here)
+├── backend/
+│   ├── app/
+│   │   ├── ai_models/scam_detector_v1/   # Fine-tuned NLP model
+│   │   ├── api/                          # (Reserved)
+│   │   ├── models/schema.py              # 9 SQLAlchemy table definitions
+│   │   ├── routes/                       # 15 FastAPI route modules
+│   │   ├── services/                     # 13 detection & support services
+│   │   ├── utils/                        # Auth, gamification, limiter, logger
+│   │   ├── config.py                     # Centralized settings (env + defaults)
+│   │   ├── database.py                   # SQLAlchemy engine & session
+│   │   ├── main.py                       # FastAPI app entry point
+│   │   ├── celery_app.py                 # Celery + Redis configuration
+│   │   └── tasks.py                      # Background task definitions
+│   ├── requirements.txt
+│   └── setup_xampp.sql
+├── frontend/
+│   ├── *.html                            # 19 application pages
+│   ├── js/                              # app.js, api.js, admin.js, gamification.js
+│   └── css/                             # main.css, gamification.css
+├── extension/
+│   ├── manifest.json                    # Chrome MV3 manifest
+│   ├── popup.html
+│   └── popup.js
+├── docs/                                # 15 documentation files
+├── alembic/                             # Database migrations
+└── tests/
 ```
 
 ---
 
 ## 🛠️ Technology Stack
 
-CyberShield-EDU leverages industry-standard open-source technologies:
-
-### Client-Side (Frontend)
-- **Primary:** Vanilla JavaScript, HTML5, CSS3, Google Fonts.
-
-### Server-Side (Backend)
-- **Framework:** Python 3, FastAPI, Pydantic, Uvicorn, SQLAlchemy.
-- **Database Evolution:** Alembic Migrations.
-- **AI & Data Processing Engine:**
-  - `distilbert-base-multilingual-cased` (Singleton NLP Inference)
-  - `pytesseract` (OCR Engine)
-  - `opencv-python` & `numpy` (Advanced Forensic Texture Analysis)
-  - `pdfplumber` (PDF Metadata extraction)
-  - `SQLAlchemy` & `MySQL` (Permanent Data Storage)
-  - `Pytest` (Automated Verification)
-
+| Category | Technology |
+|---|---|
+| Backend Framework | FastAPI + Uvicorn (ASGI) |
+| AI/NLP | HuggingFace Transformers, PyTorch (`scam_detector_v1` / DistilBERT) |
+| OCR | Tesseract (pytesseract) |
+| Computer Vision | OpenCV, Pillow |
+| PDF Processing | pdfplumber |
+| Database | MySQL + SQLAlchemy ORM + Alembic |
+| Background Tasks | Celery + Redis |
+| Authentication | JWT (python-jose, HS256) + bcrypt (passlib) |
+| Rate Limiting | SlowAPI |
+| External Intel | URLScan.io API (httpx) |
+| Geo/ASN Lookup | ip-api.com (aiohttp) |
+| Typosquatting | python-Levenshtein |
+| Web Scraping | aiohttp + BeautifulSoup4 |
+| Frontend | Vanilla HTML5 / CSS3 / JavaScript (ES6+) |
+| Browser Extension | Chrome Manifest V3 |
 
 ---
 
-## 📚 Detailed Documentation
+## 📚 Documentation
 
-Expand your knowledge regarding the platform's inner workings by exploring the `/docs` directory:
+| Document | Description |
+|---|---|
+| [Setup Guide](./docs/setup_guide.md) | Full installation, environment variables, and troubleshooting |
+| [Architecture](./docs/architecture.md) | System design, data flow, and deployment topology |
+| [API Documentation](./docs/api_documentation.md) | Complete REST API reference with request/response schemas |
+| [Detection Engines](./docs/detection_engines.md) | Technical deep-dive into all detection algorithms |
+| [Database Schema](./docs/database_schema.md) | All 9 tables, columns, and relationships |
+| [User Manual](./docs/user_manual.md) | End-user guide for all platform features |
+| [Admin Guide](./docs/admin_guide.md) | Admin dashboard and system configuration |
+| [Security Whitepaper](./docs/security_whitepaper.md) | Security architecture and threat model |
+| [Testing Guide](./docs/testing_guide.md) | Running tests and validation scripts |
+| [Changelog](./docs/changelog.md) | Version history and release notes |
+| [Roadmap](./docs/roadmap.md) | Planned features and future development |
+| [FAQ](./docs/faq.md) | Frequently asked questions |
 
-- 📖 **[Setup & Installation Guide](./docs/setup_guide.md)**: Deep dive into environment variables and troubleshooting.
-- 🏗️ **[Architecture Overview](./docs/architecture.md)**: Explore the Mermaid diagrams and system design principles.
-- 🔌 **[API Documentation](./docs/api_documentation.md)**: A complete reference for the RESTful endpoints available.
+---
+
+## ⚠️ Known Limitations
+
+| Area | Status |
+|---|---|
+| **LLM Cyber-Tutor** | Paused — commented out pending GPU infrastructure upgrade |
+| **Audio Vishing Detection** | Stub only — route exists but service is not implemented |
+| **Browser Extension** | Targets `localhost:8000` only — requires update for production use |
+| **Badges** | Only 2 milestones implemented (First Response, Phishing Hunter) |
+| **Report Status Workflow** | No admin endpoint to update report status (pending/reviewed/resolved) |
 
 ---
 
@@ -173,4 +212,4 @@ Expand your knowledge regarding the platform's inner workings by exploring the `
 
 This software is distributed under the [MIT License](LICENSE).
 
-**Disclaimer:** *CyberShield-EDU is developed purely for educational purposes to enhance cybersecurity awareness among student populations. It does not replace professional anti-virus or endpoint protection software. The creators assume no liability for any reliance on this tool.*
+**Disclaimer:** *CyberShield-EDU is developed for educational purposes to enhance cybersecurity awareness among student populations. It does not replace professional antivirus or endpoint protection software.*

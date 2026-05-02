@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models.schema import ScanRecord, ScamKeyword, ThreatPattern
+from app.models.schema import User, ScanRecord, ScamKeyword, ThreatPattern, SystemConfig
 from app.utils.auth import get_current_admin
 from app.config import settings
 from app.services.awareness_service import awareness_service
@@ -17,6 +17,9 @@ router = APIRouter(dependencies=[Depends(get_current_admin)])
 class ThresholdUpdate(BaseModel):
     low: float # Safe -> Suspicious (Default 0.3)
     high: float # Suspicious -> Scam (Default 0.7)
+
+class ResourceUpdate(BaseModel):
+    content: list
 
 @router.get("/config/thresholds")
 async def get_thresholds(db: Session = Depends(get_db)):

@@ -5,5 +5,5 @@ from . import (
 #     scam_report, public_api, explainer, gamification, awareness
 # )
 # Temporary: explainer removed from active routes
-    scam_report, public_api, gamification, awareness
+    scam_report, gamification, awareness
 )

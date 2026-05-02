@@ -147,135 +147,78 @@ After import, verify that 8 tables exist in the `cybershield` database:
 7. `scam_reports`
 8. `api_keys`
 
-> **Note:** The `threat_patterns` table is created automatically by SQLAlchemy on first backend startup. It is not included in the SQL seed script.
+> **Note:** `threat_patterns` and `system_config` are created automatically by SQLAlchemy on first backend startup. They are not included in the SQL seed script.
+
+### 3.4. Verify Tables
+
+After import and first server startup, verify that **9 tables** exist in the `cybershield` database:
+1. `users`
+2. `scan_records`
+3. `scam_keywords`
+4. `threat_patterns`  *(created by SQLAlchemy on first run)*
+5. `awareness_content`
+6. `verified_providers`
+7. `quiz_questions`
+8. `scam_reports`
+9. `system_config`  *(created by SQLAlchemy on first run)*
 
 ---
 
 ## 4. Backend Setup
 
 ### 4.1. Navigate to the Backend Directory
-
 ```bash
 cd "d:\AI Projects\CyeberShield-EDU\backend"
 ```
 
-### 4.2. Create a Virtual Environment
-
+### 4.2. Create and Activate a Virtual Environment
 ```bash
 python -m venv venv
+venv\Scripts\activate        # Windows CMD
+# OR
+.\venv\Scripts\Activate.ps1  # PowerShell
 ```
 
-### 4.3. Activate the Virtual Environment
-
-```bash
-# Windows Command Prompt
-venv\Scripts\activate
-
-# Windows PowerShell
-.\venv\Scripts\Activate.ps1
-```
-
-You should see `(venv)` appear at the beginning of your terminal prompt.
-
-### 4.4. Install Dependencies
-
+### 4.3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-This installs all 30+ packages including:
+Key packages: `fastapi`, `uvicorn`, `transformers`, `torch`, `opencv-python`, `pytesseract`, `pdfplumber`, `sqlalchemy`, `pymysql`, `celery`, `redis`, `python-jose`, `passlib`, `slowapi`, `python-Levenshtein`, `aiohttp`, `beautifulsoup4`, `python-dotenv`
 
-| Category | Packages |
-|:---|:---|
-| **Web Framework** | `fastapi`, `uvicorn`, `python-multipart`, `pydantic` |
-| **AI/ML** | `transformers`, `torch`, `scikit-learn`, `pandas`, `numpy`, `accelerate`, `datasets` |
-| **Computer Vision** | `opencv-python`, `pytesseract`, `pillow` |
-| **PDF Processing** | `pdfplumber` |
-| **Database** | `sqlalchemy`, `pymysql`, `mysql-connector-python`, `alembic` |
-| **Task Queue** | `celery`, `redis` |
-| **HTTP/Networking** | `aiohttp`, `beautifulsoup4` |
-| **Security** | `python-jose[cryptography]`, `passlib[bcrypt]`, `slowapi` |
-| **Text Analysis** | `python-Levenshtein` |
-| **Config** | `python-dotenv` |
-| **Testing** | `pytest`, `pytest-asyncio` |
-
-> **Note:** The `torch` package is ~2GB. Ensure you have adequate disk space and a stable internet connection. For CPU-only deployment (no NVIDIA GPU), you can install the CPU-only variant to save space:
-> ```bash
-> pip install torch --index-url https://download.pytorch.org/whl/cpu
-> ```
+> **Note:** `torch` is ~2GB. For CPU-only deployment: `pip install torch --index-url https://download.pytorch.org/whl/cpu`
 
 ---
 
 ## 5. Environment Configuration (.env)
 
-Create or verify the `.env` file in the **project root directory** (`CyeberShield-EDU/.env`):
+Create `.env` in the **project root** (`CyeberShield-EDU/.env`):
 
 ```env
-# Application Settings
 DEBUG=True
 APP_NAME="CyberShield EDU"
 API_V1_STR="/api/v1"
-
-# CORS: Comma-separated list of allowed frontend origins
 ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8081,http://127.0.0.1:8081
-
-# Security: JWT signing key (CHANGE IN PRODUCTION)
 SECRET_KEY="cyeber-shield-dev-secret-!@#"
-
-# Database: XAMPP MySQL connection string
 DATABASE_URL=mysql+pymysql://root@127.0.0.1/cybershield
-
-# Redis: Message broker for Celery background tasks
 REDIS_URL=redis://localhost:6379/0
-
-# External Intelligence: URLScan.io API key (optional, leave empty if not available)
 URLSCAN_API_KEY=""
 ```
 
-### Configuration Reference
-
-| Variable | Purpose | Default |
-|:---|:---|:---|
-| `DEBUG` | Enable debug logging | `True` |
-| `APP_NAME` | Application display name | `CyberShield EDU` |
-| `API_V1_STR` | API version prefix | `/api/v1` |
-| `ALLOWED_ORIGINS` | CORS whitelist for frontend URLs | Multiple localhost variants |
-| `SECRET_KEY` | JWT token signing secret | Dev key (change in prod!) |
-| `DATABASE_URL` | MySQL connection string | XAMPP default (no password) |
-| `REDIS_URL` | Redis connection for Celery | Default local Redis |
-| `URLSCAN_API_KEY` | URLScan.io threat intel API key | Empty (feature disabled) |
-
-> **⚠️ Important:** If your XAMPP MySQL has a root password set, update the `DATABASE_URL` accordingly:
-> ```
-> DATABASE_URL=mysql+pymysql://root:YOUR_PASSWORD@127.0.0.1/cybershield
-> ```
+> **⚠️ If MySQL has a root password:** `DATABASE_URL=mysql+pymysql://root:PASSWORD@127.0.0.1/cybershield`
 
 ---
 
 ## 6. AI Model Initialization
 
-### 6.1. First-Run Model Download
+On **first startup**, the system downloads `distilbert-base-multilingual-cased` (~250MB) from Hugging Face. This is cached at `~/.cache/huggingface/hub/` and is not re-downloaded on subsequent starts.
 
-On the **first startup**, CyberShield-EDU will automatically download the `distilbert-base-multilingual-cased` model from Hugging Face (~250MB). This requires an active internet connection and may take 2-10 minutes depending on bandwidth.
-
-The model is cached locally by Hugging Face in `~/.cache/huggingface/hub/` and will not be re-downloaded on subsequent starts.
-
-### 6.2. Fine-Tuned Model (Optional)
-
-If you have a fine-tuned model, place it at:
+If you have a fine-tuned model (`scam_detector_v1`), place it at:
 ```
 backend/app/ai_models/scam_detector_v1/
 ```
 
-The system automatically checks for the fine-tuned model first and falls back to the base multilingual model if not found.
-
-### 6.3. CUDA Detection
-
-The system automatically detects CUDA GPU availability:
-- **GPU detected:** Model runs on GPU (device=0) for ~4x faster inference
-- **No GPU:** Model runs on CPU (device=-1) — fully functional but slower
-
-No manual configuration is needed for GPU selection.
+CUDA/GPU is auto-detected — no manual configuration required.
 
 ---
 
@@ -286,23 +229,15 @@ cd backend
 python main.py
 ```
 
-### 7.1. Expected Startup Output
-
+**Expected output:**
 ```
-2026-04-11 14:30:00 | INFO     | CyberShield - 🚀 Pre-loading AI models...
-2026-04-11 14:30:05 | INFO     | CyberShield - Model loaded: distilbert-base-multilingual-cased
-2026-04-11 14:30:05 | INFO     | CyberShield - CUDA Available: False, Using: CPU
-2026-04-11 14:30:06 | INFO     | CyberShield - Database tables verified.
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO | CyberShield - 🚀 Pre-loading AI models...
+INFO | CyberShield - Model loaded: distilbert-base-multilingual-cased
+INFO | CyberShield - CUDA Available: False, Using: CPU
+INFO | Uvicorn running on http://0.0.0.0:8000
 ```
 
-### 7.2. Verify Backend
-
-- **API Health:** Open `http://localhost:8000/docs` in your browser — you should see the Swagger UI with all endpoints listed
-- **Direct Test:** Navigate to `http://localhost:8000/` — should return a JSON welcome message
+**Verify:** Visit `http://localhost:8000/docs` — Swagger UI should load.
 
 ---
 

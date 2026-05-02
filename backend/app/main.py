@@ -4,7 +4,7 @@ from slowapi.errors import RateLimitExceeded
 from app.utils.limiter import limiter
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_history, quiz, admin, auth, tasks, scam_report, public_api, gamification, awareness # , explainer
+from app.routes import detect_text, detect_url, detect_pdf, detect_image, detect_history, quiz, admin, auth, tasks, scam_report, gamification, awareness # , explainer
 from app.config import settings
 from app.utils.logger import logger
 
@@ -25,8 +25,6 @@ async def startup_event():
     logger.info("Pre-loading AI models...")
     text_detector.load_model()
     logger.info("System Ready.")
-
-# Global Exception Handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Global Error: {exc} | Path: {request.url.path}")
@@ -65,7 +63,7 @@ app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["a
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(tasks.router, prefix=f"{settings.API_V1_STR}/tasks", tags=["tasks"])
 app.include_router(scam_report.router, prefix=f"{settings.API_V1_STR}/report", tags=["reporting"])
-app.include_router(public_api.router, prefix=f"{settings.API_V1_STR}/public", tags=["developer"])
+
 # app.include_router(explainer.router, prefix=f"{settings.API_V1_STR}/help", tags=["assistance"]) # [PAUSED: High Resource Req]
 app.include_router(gamification.router, prefix=f"{settings.API_V1_STR}/gamification", tags=["gamification"])
 

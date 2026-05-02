@@ -73,29 +73,28 @@ graph TD
         Router --> AuthMiddleware[🔐 JWT Auth Middleware]
         Router --> RateLimiter[⏱️ SlowAPI Rate Limiter]
 
-        Router --> TextDetector[🧠 Pillar 1: Text Detector<br/>DistilBERT Multilingual]
-        Router --> URLDetector[🔗 Pillar 4: URL Detector<br/>9-Layer Heuristic Analysis]
-        Router --> PDFAnalyzer[📄 Pillar 7: PDF Analyzer<br/>Recursive Forensic Engine]
-        Router --> ImageDetector[📸 Pillar 5: Image Detector<br/>EXIF + Texture + OCR]
+        Router --> TextDetector[🧠 Text Detector<br/>scam_detector_v1 / DistilBERT]
+        Router --> URLDetector[🔗 URL Detector<br/>9-Layer Heuristic + Deep Scan]
+        Router --> PDFAnalyzer[📄 PDF Analyzer<br/>Recursive Forensic Engine]
+        Router --> ImageDetector[📸 Image Detector<br/>EXIF + Laplacian + OCR]
 
-        TextDetector --> PatternEngine[🧩 Pillar 2: Pattern Engine<br/>Dynamic Heuristic Rules]
-        TextDetector --> TrustService[🛡️ Pillar 3: Shield of Trust<br/>Impersonation Detection]
+        TextDetector --> PatternEngine[🧩 Pattern Engine - Pillar 2<br/>DB-driven Regex/Keyword/TLD]
+        TextDetector --> TrustService[🛡️ Shield of Trust - Pillar 3<br/>Whitelist + Impersonation]
         URLDetector --> PatternEngine
-        URLDetector --> ExternalIntel[🌐 External Intelligence<br/>URLScan.io API]
+        URLDetector --> ExternalIntel[🌐 URLScan.io Intel<br/>External Reputation API]
         
         PDFAnalyzer -->|Recursive URL Scan| URLDetector
         PDFAnalyzer --> TextDetector
         ImageDetector --> TextDetector
         ImageDetector --> URLDetector
 
-        TextDetector --> Correlation[🧠 Correlation Engine<br/>Multi-Modal Logic]
+        TextDetector --> Correlation[🔗 Correlation Engine<br/>5 Named Cross-Modal Rules]
         URLDetector --> Correlation
         PDFAnalyzer --> Correlation
         ImageDetector --> Correlation
 
-        Router --> GamifService[🎮 Pillar 8: Gamification Engine<br/>XP / Levels / Badges]
-        Router --> AdminService[📊 Pillar 9: Admin Analytics]
-        Router --> APIKeyService[🔌 Pillar 10: Developer API<br/>Key Management]
+        Router --> GamifService[🎮 Gamification Engine<br/>XP / Levels / Badges / Milestones]
+        Router --> AdminService[📊 Admin Analytics<br/>Stats + Pattern Hot-Reload]
     end
 
     subgraph "Async Workers"
@@ -373,13 +372,13 @@ def get_db():
 |:---|:---|:---|:---|
 | `users` | Auth & Progress | Accounts, XP, levels, badges | `hashed_password`, `xp`, `level`, `badges` (JSON) |
 | `scan_records` | Audit Trail | Complete scan history | `scan_type`, `prediction`, `confidence`, `reasoning` (JSON) |
-| `scam_keywords` | Detection Config | Heuristic keyword library | `keyword`, `weight` |
-| `threat_patterns` | Detection Config | Regex, TLD, domain rules | `pattern_type`, `value`, `risk_score`, `is_active` |
+| `scam_keywords` | Detection Config | Legacy keyword library | `keyword`, `weight`, `added_by` |
+| `threat_patterns` | Detection Config | Regex, TLD, domain, keyword rules | `pattern_type`, `value`, `risk_score`, `is_active` |
 | `awareness_content` | Education | Learning modules | `category`, `path_id`, `path_order`, `examples` (JSON) |
-| `verified_providers` | Trust Engine | White-listed organizations | `name`, `official_url`, `category` |
-| `quiz_questions` | Education | Interactive challenges | `content`, `is_scam`, `explanation` |
-| `scam_reports` | Community | User-submitted reports | `company_name`, `evidence_path`, `status` |
-| `api_keys` | Developer API | Managed access keys | `key_hash`, `uses_count`, `rate_limit` |
+| `verified_providers` | Trust Engine | Whitelisted organizations | `name`, `official_url`, `category`, `security_tips` |
+| `quiz_questions` | Education | Interactive challenges | `content`, `is_scam`, `explanation`, `difficulty` |
+| `scam_reports` | Community | User-submitted reports | `company_name`, `evidence_path`, `is_anonymous`, `status` |
+| `system_config` | Runtime Config | Dynamic thresholds & settings | `key`, `value` (JSON), `updated_at` |
 
 ---
 
@@ -526,20 +525,24 @@ sequenceDiagram
 
 ---
 
-## 12. Project Status: Phase II Completion (v2.0.0)
+## 12. Project Status: v2.0.0
 
-As of **April 2026**, CyberShield-EDU has transitioned from an initial research prototype to a **feature-complete security analytics platform**. 
+As of **May 2026**, CyberShield-EDU is a feature-complete security analytics platform.
 
-### 12.1. Feature Completion Status
-*   **Pillar 1: Text Engine** — Fully operational with DistilBERT.
-*   **Pillar 4: URL Engine** — Fully operational with recursive intel.
-*   **Pillar 5: Image Engine** — Fully operational with OCR and texture audit.
-*   **Pillar 7: PDF Engine** — Fully operational with recursive link scanning.
-*   **Pillar 8: Gamification** — Fully operational and persistent.
-*   **Audio Vishing / Security Tutor** — Documented as future roadmap items; intentionally excluded from the production-ready v2.0.0 release to ensure core stability.
-
-### 12.2. Maintenance Roadmap
-The platform is currently in a **stable maintenance state**. Future developments may include integration with real-time Speech-to-Text for vishing detection and the restoration of the LLM-based Security Tutor upon migration to GPU-accelerated infrastructure.
+### 12.1. Feature Status
+| Feature | Status | Notes |
+|---|---|---|
+| Text Detection Engine | ✅ Operational | `scam_detector_v1` + DistilBERT fallback |
+| URL Detection Engine | ✅ Operational | 9-layer analysis + URLScan.io + Deep scan |
+| Image Forensic Engine | ✅ Operational | OCR + EXIF + Laplacian Variance |
+| PDF Forensic Engine | ✅ Operational | Ghost links + Recursive URL scan |
+| Correlation Engine | ✅ Operational | 5 named cross-modal rules |
+| Gamification Academy | ✅ Operational | XP, levels, badges, quiz |
+| Admin Dashboard | ✅ Operational | Stats, pattern hot-reload, thresholds |
+| Community Reporting | ✅ Operational | Anonymous reports with file evidence |
+| LLM Cyber-Tutor | ⏸️ Paused | High resource requirements — commented out |
+| Audio Vishing Detection | 🔲 Stub | Route exists, service is a placeholder |
+| Chrome Extension | ⚠️ Dev-only | Targets `localhost:8000` — needs update for production |
 
 ---
 

@@ -1,494 +1,310 @@
-# Database Schema Documentation — CyberShield-EDU
+# Database Schema — CyberShield-EDU v2.0.0
 
-> Complete reference for the CyberShield-EDU relational database schema, including Entity-Relationship diagrams, detailed table specifications, column definitions, indexing strategies, foreign key relationships, data type rationale, and seed data documentation.
-
----
-
-## Table of Contents
-
-1. [Database Overview](#1-database-overview)
-2. [Entity-Relationship Diagram](#2-entity-relationship-diagram)
-3. [Table Specifications](#3-table-specifications)
-4. [Foreign Key Relationships](#4-foreign-key-relationships)
-5. [Indexing Strategy](#5-indexing-strategy)
-6. [Data Type Rationale](#6-data-type-rationale)
-7. [Seed Data Reference](#7-seed-data-reference)
-8. [ORM Mapping](#8-orm-mapping)
-9. [Migration Notes](#9-migration-notes)
+> Complete reference for all 9 database tables defined in `backend/app/models/schema.py`. All column types, constraints, and relationships are sourced directly from the SQLAlchemy model definitions.
 
 ---
 
-## 1. Database Overview
+## Overview
 
-| Property | Value |
-|:---|:---|
-| **Engine** | MySQL 8.0+ / MariaDB 10.5+ (via XAMPP) |
-| **Character Set** | `utf8mb4` (full Unicode support including emojis) |
-| **Collation** | `utf8mb4_general_ci` (case-insensitive) |
-| **ORM** | SQLAlchemy 2.0+ with `pymysql` driver |
-| **Connection String** | `mysql+pymysql://root@127.0.0.1/cybershield` |
-| **Total Tables** | 9 |
-| **Schema File** | `backend/app/models/schema.py` |
-| **SQL Setup** | `backend/setup_xampp.sql` |
+| Table | Purpose | Key Relationships |
+|---|---|---|
+| `users` | User accounts, XP, level, badges | Referenced by most tables |
+| `scan_records` | Full audit log of all scans | FK → `users.id` |
+| `scam_keywords` | Admin-managed scam keyword list | FK → `users.id` (added_by) |
+| `threat_patterns` | Dynamic heuristic rules | FK → `users.id` (added_by) |
+| `awareness_content` | Educational content | Standalone |
+| `verified_providers` | Trusted institution whitelist | Standalone |
+| `quiz_questions` | Forensic quiz library | Standalone |
+| `scam_reports` | Community scam reports | FK → `users.id` (optional) |
+| `system_config` | Dynamic runtime configuration | Standalone |
 
 ---
 
-## 2. Entity-Relationship Diagram
+## Table Definitions
 
-```mermaid
-erDiagram
-    USERS ||--o{ SCAN_RECORDS : "performs"
-    USERS ||--o{ SCAM_KEYWORDS : "adds"
-    USERS ||--o{ THREAT_PATTERNS : "creates"
-    USERS ||--o{ SCAM_REPORTS : "submits"
-    USERS ||--o{ API_KEYS : "owns"
+---
 
-    USERS {
-        int id PK
-        varchar username UK
-        varchar email UK
-        varchar hashed_password
-        varchar role
-        int xp
-        int level
-        json badges
-        timestamp created_at
-    }
+### `users`
 
-    SCAN_RECORDS {
-        int id PK
-        int user_id FK
-        varchar scan_type
-        text input_data
-        varchar prediction
-        float confidence
-        json reasoning
-        timestamp created_at
-    }
+Stores all user accounts including gamification state (XP, level, badges).
 
-    SCAM_KEYWORDS {
-        int id PK
-        varchar keyword UK
-        float weight
-        int added_by FK
-        timestamp created_at
-    }
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `username` | String(50) | Unique, Index | — | Used for login |
+| `email` | String(100) | Unique, Index | — | |
+| `hashed_password` | String(255) | — | — | bcrypt hash |
+| `role` | String(20) | — | `"student"` | `"student"` or `"admin"` |
+| `xp` | Integer | — | `0` | Total experience points |
+| `level` | Integer | — | `1` | `floor(xp / 100) + 1` |
+| `badges` | JSON | — | `[]` | List of badge name strings |
+| `created_at` | DateTime(tz) | — | `func.now()` | Server-side timestamp |
 
-    THREAT_PATTERNS {
-        int id PK
-        varchar pattern_type
-        varchar value UK
-        float risk_score
-        varchar description
-        boolean is_active
-        int added_by FK
-        timestamp created_at
-    }
+**Level formula:** `level = (xp // 100) + 1`
 
-    AWARENESS_CONTENT {
-        int id PK
-        varchar category
-        varchar title
-        text description
-        varchar difficulty
-        varchar link
-        json examples
-        varchar path_id
-        int path_order
-        timestamp created_at
-    }
+**Rank mapping (from `gamification.py`):**
+| Level | Rank |
+|---|---|
+| 1–2 | Cyber Scout |
+| 3–5 | Forensic Guardian |
+| 6–10 | Cyber Sentinel |
+| 11+ | Grand Protector |
 
-    VERIFIED_PROVIDERS {
-        int id PK
-        varchar name
-        varchar official_url
-        varchar category
-        text security_tips
-        timestamp verified_at
-    }
-
-    QUIZ_QUESTIONS {
-        int id PK
-        text content
-        varchar content_type
-        boolean is_scam
-        text explanation
-        varchar difficulty
-        timestamp created_at
-    }
-
-    SCAM_REPORTS {
-        int id PK
-        varchar company_name
-        text description
-        varchar evidence_path
-        boolean is_anonymous
-        int user_id FK
-        varchar status
-        timestamp created_at
-    }
-
-    API_KEYS {
-        int id PK
-        int user_id FK
-        varchar key_hash UK
-        varchar name
-        int uses_count
-        int rate_limit
-        timestamp last_reset
-        boolean is_active
-        timestamp created_at
-    }
+**Example record:**
+```json
+{
+  "id": 4,
+  "username": "student_ali",
+  "email": "ali@university.edu",
+  "role": "student",
+  "xp": 340,
+  "level": 4,
+  "badges": ["First Response", "Phishing Hunter"],
+  "created_at": "2026-04-15T10:22:00+05:30"
+}
 ```
 
 ---
 
-## 3. Table Specifications
+### `scan_records`
 
-### 3.1. `users` — User Accounts & Gamification State
+Immutable audit log. Every scan (text, URL, PDF, image) creates one record. This is the primary analytics data source for the admin dashboard.
 
-The central identity table that stores both authentication credentials and persistent gamification progress.
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `user_id` | Integer | FK(`users.id`), Index, Nullable | — | `null` for guest scans |
+| `scan_type` | String(20) | — | — | `"text"`, `"url"`, `"pdf"`, `"image"` |
+| `input_data` | Text | — | — | Truncated to 500 chars for privacy |
+| `prediction` | String(20) | — | — | `"safe"`, `"suspicious"`, `"scam"`, `"error"` |
+| `confidence` | Float | — | — | `0.0` to `1.0` |
+| `reasoning` | JSON | — | — | List of reasoning strings |
+| `created_at` | DateTime(tz) | — | `func.now()` | Server-side timestamp |
 
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique user identifier |
-| `username` | `VARCHAR(50)` | UNIQUE, NOT NULL, INDEXED | — | Login name and display name |
-| `email` | `VARCHAR(100)` | UNIQUE, NOT NULL, INDEXED | — | User email address |
-| `hashed_password` | `VARCHAR(255)` | NOT NULL | — | PBKDF2-SHA256 hashed password |
-| `role` | `VARCHAR(20)` | — | `'student'` | Access level: `student` or `admin` |
-| `xp` | `INT` | — | `0` | Total accumulated Experience Points |
-| `level` | `INT` | — | `1` | Current level: `(xp // 100) + 1` |
-| `badges` | `JSON` | — | `[]` | Array of earned badge names |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Account creation time |
+**Notes:**
+- `user_id` is nullable — guest users (not logged in) create records with `user_id = null`
+- `input_data` is capped at 500 chars to limit PII storage
+- `reasoning` is stored as a JSON array of strings for rich result replay
 
-**Design Decisions:**
-- **Why `badges` is JSON:** Badges are a variable-length, unstructured list of string names. A JSON column avoids the need for a separate `user_badges` junction table, simplifying queries for a feature that only reads/appends.
-- **Why `role` is VARCHAR(20):** Keeps RBAC simple with two roles. If more roles are needed, this can be expanded without schema migration.
-- **Why gamification lives on `users`:** XP, level, and badges are tightly coupled to user identity and accessed on every authenticated request. Storing them on the same row eliminates JOIN overhead.
-
----
-
-### 3.2. `scan_records` — Detection Audit Trail
-
-Stores the complete history of every analysis performed on the platform, providing audit capability and enabling future analytics.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique scan identifier |
-| `user_id` | `INT` | FK → `users.id`, NULLABLE, INDEXED | — | Owner (NULL for guest scans) |
-| `scan_type` | `VARCHAR(20)` | NOT NULL | — | Type: `text`, `url`, `pdf`, `image` |
-| `input_data` | `TEXT` | — | — | Original input (message, URL, filename) |
-| `prediction` | `VARCHAR(20)` | — | — | Verdict: `scam` or `safe` |
-| `confidence` | `FLOAT` | — | — | AI confidence score (0.0 - 1.0) |
-| `reasoning` | `JSON` | — | — | Array of human-readable reasoning strings |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Scan timestamp |
-
-**Design Decisions:**
-- **Why `user_id` is NULLABLE:** Supports guest scanning (detection works without authentication). The scan is recorded but not linked to any user.
-- **Why `reasoning` is JSON:** Reasoning is a variable-length list of strings generated by the detection pipeline. JSON preserves the ordered list structure without needing a separate `scan_reasons` table.
-- **Foreign Key Cascade:** `ON DELETE CASCADE` — when a user is deleted, their scan history is also removed.
-
----
-
-### 3.3. `scam_keywords` — Heuristic Keyword Library
-
-Stores individual scam-indicative keywords used by the Pattern Engine and Text Detector for heuristic matching.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique keyword identifier |
-| `keyword` | `VARCHAR(100)` | UNIQUE, NOT NULL, INDEXED | — | The scam keyword string |
-| `weight` | `FLOAT` | — | `0.1` | Risk weight (impact on confidence score) |
-| `added_by` | `INT` | FK → `users.id`, NULLABLE | — | Admin who added this keyword |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Creation timestamp |
-
-**Design Decisions:**
-- **Separate from `threat_patterns`:** Keywords have a simpler schema (no pattern_type, no active/inactive toggle). They serve a different purpose: direct string matching vs. regex/structural patterns.
-- **`weight` column:** Allows administrators to assign different risk impacts to different keywords. "Registration fee" (0.2) is stronger than "congratulations" (0.05).
-- **Foreign Key On Delete:** `ON DELETE SET NULL` — if the admin user is deleted, the keyword persists with `added_by = NULL`.
-
----
-
-### 3.4. `threat_patterns` — Dynamic Pattern Engine Rules
-
-The Pillar 2 Pattern Engine's rule storage. Supports four distinct pattern types for extensible heuristic detection.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique pattern identifier |
-| `pattern_type` | `VARCHAR(20)` | NOT NULL, INDEXED | — | Type: `keyword`, `regex`, `tld`, `domain` |
-| `value` | `VARCHAR(500)` | UNIQUE, NOT NULL, INDEXED | — | The actual pattern string |
-| `risk_score` | `FLOAT` | — | `0.2` | Impact on 0.0-1.0 risk scale |
-| `description` | `VARCHAR(255)` | NULLABLE | — | Human-readable description of what this pattern catches |
-| `is_active` | `BOOLEAN` | — | `TRUE` | Active/inactive toggle (soft delete) |
-| `added_by` | `INT` | FK → `users.id`, NULLABLE | — | Admin who created this pattern |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Creation timestamp |
-
-**Pattern Type Reference:**
-| Type | Value Example | Matching Logic |
-|:---|:---|:---|
-| `keyword` | `"registration fee"` | Case-insensitive substring search in text |
-| `regex` | `\b(pay\|send)\s+now\b` | Python `re` compiled regex pattern |
-| `tld` | `.xyz` | Top-level domain exact match on URLs |
-| `domain` | `scam-portal.com` | Exact domain blacklist match |
-
-**Design Decisions:**
-- **`is_active` toggle:** Allows administrators to disable a pattern without deleting it, preserving audit history and enabling quick re-activation.
-- **Auto-generated by SQLAlchemy:** This table is NOT in `setup_xampp.sql`. It is created automatically by SQLAlchemy's `Base.metadata.create_all()` on first backend startup.
-- **In-memory cache:** Active patterns are loaded from the database into the PatternService's in-memory cache on first access. Admin updates trigger cache invalidation.
-
----
-
-### 3.5. `awareness_content` — Educational Module Library
-
-Stores structured educational content for the academy, organized into learning paths with progressive difficulty.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique content identifier |
-| `category` | `VARCHAR(50)` | — | — | Category: `Threat Type`, `Pro Tip` |
-| `title` | `VARCHAR(255)` | NOT NULL | — | Content title |
-| `description` | `TEXT` | — | — | Detailed educational text |
-| `difficulty` | `VARCHAR(20)` | — | — | Difficulty: `Beginner`, `Easy`, `Intermediate` |
-| `link` | `VARCHAR(500)` | — | — | External resource link |
-| `examples` | `JSON` | — | — | Array of example strings (red flags) |
-| `path_id` | `VARCHAR(50)` | NULLABLE | — | Learning path identifier (e.g., `scam-0`, `tip-1`) |
-| `path_order` | `INT` | — | `0` | Ordering within a learning path |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Creation timestamp |
-
-**Design Decisions:**
-- **`path_id` + `path_order`:** Enables structured learning paths where content is consumed in sequence. Multiple entries can share a `path_id` prefix (e.g., `scam-0`, `scam-1`) to form a course.
-- **`examples` as JSON:** Stores a variable-length list of red flag examples. These are rendered as bullet points in the frontend education UI.
-
----
-
-### 3.6. `verified_providers` — Shield of Trust Whitelist
-
-The Pillar 3 Trust Engine's whitelist database, storing verified legitimate organizations and their official domains.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique provider identifier |
-| `name` | `VARCHAR(255)` | NOT NULL, INDEXED | — | Organization display name |
-| `official_url` | `VARCHAR(500)` | — | — | Verified official website URL |
-| `category` | `VARCHAR(50)` | — | — | Category: `Internship`, `Scholarship` |
-| `security_tips` | `TEXT` | — | — | Security advice specific to this provider |
-| `verified_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Verification timestamp |
-
-**Usage:** When a URL scan targets a domain, the TrustService queries this table. If the domain matches a verified provider's `official_url`, the scan result includes a "Shield of Trust" badge and the provider's security tips.
-
----
-
-### 3.7. `quiz_questions` — Interactive Challenge Library
-
-Stores the "Spot the Scam" quiz questions with realistic scenarios and educational explanations.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique question identifier |
-| `content` | `TEXT` | NOT NULL | — | The scenario text or image URL |
-| `content_type` | `VARCHAR(20)` | — | `'text'` | Input type: `text` or `image` |
-| `is_scam` | `BOOLEAN` | — | — | Correct answer: `TRUE` = scam, `FALSE` = safe |
-| `explanation` | `TEXT` | — | — | Educational explanation shown after answering |
-| `difficulty` | `VARCHAR(20)` | — | — | Difficulty level |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Creation timestamp |
-
-**Query Note:** The quiz API retrieves questions using `ORDER BY RAND()` with a `LIMIT` parameter, ensuring each quiz session presents a randomized selection.
-
----
-
-### 3.8. `scam_reports` — Community Reporting
-
-Stores user-submitted scam reports with optional evidence file references. Supports anonymous reporting.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique report identifier |
-| `company_name` | `VARCHAR(255)` | INDEXED | — | Name of the fraudulent entity |
-| `description` | `TEXT` | — | — | Detailed scam description |
-| `evidence_path` | `VARCHAR(500)` | NULLABLE | — | Filesystem path to uploaded evidence file |
-| `is_anonymous` | `BOOLEAN` | — | `TRUE` | Whether the report is anonymous |
-| `user_id` | `INT` | FK → `users.id`, NULLABLE | — | Reporter's user ID (NULL if anonymous) |
-| `status` | `VARCHAR(20)` | — | `'pending'` | Review status: `pending`, `reviewed`, `resolved` |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Submission timestamp |
-
-**Design Decisions:**
-- **`is_anonymous` + `user_id`:** A logged-in user can still submit anonymously (`is_anonymous = true`, `user_id = null`). This encourages reporting without fear of identification.
-- **`evidence_path`:** Stores a relative filesystem path pointing to `uploads/reports/`. Evidence files are stored outside the database for storage efficiency.
-- **`status` workflow:** `pending` → `reviewed` → `resolved` tracks the admin review lifecycle.
-
----
-
-### 3.9. `api_keys` — Developer API Access Management
-
-Manages developer API keys with usage tracking and rate limiting.
-
-| Column | Type | Constraints | Default | Description |
-|:---|:---|:---|:---|:---|
-| `id` | `INT` | PK, AUTO_INCREMENT, INDEXED | — | Unique key identifier |
-| `user_id` | `INT` | FK → `users.id`, INDEXED | — | Key owner |
-| `key_hash` | `VARCHAR(255)` | UNIQUE, NOT NULL, INDEXED | — | SHA-256 hash of the actual API key |
-| `name` | `VARCHAR(100)` | — | — | Human-readable key name/description |
-| `uses_count` | `INT` | — | `0` | Requests consumed today |
-| `rate_limit` | `INT` | — | `1000` | Maximum requests per 24-hour period |
-| `last_reset` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Last daily counter reset time |
-| `is_active` | `BOOLEAN` | — | `TRUE` | Key active/revoked toggle |
-| `created_at` | `TIMESTAMP` | — | `CURRENT_TIMESTAMP` | Key creation timestamp |
-
-**Security Note:** The raw API key is shown to the user exactly once during generation. Only the SHA-256 hash is stored in the database. Authentication works by hashing the incoming `X-API-Key` header and comparing against `key_hash`.
-
----
-
-## 4. Foreign Key Relationships
-
-```mermaid
-graph LR
-    SR[scan_records.user_id] -->|CASCADE| U[users.id]
-    SK[scam_keywords.added_by] -->|SET NULL| U
-    TP[threat_patterns.added_by] -->|SET NULL| U
-    SR2[scam_reports.user_id] -->|SET NULL| U
-    AK[api_keys.user_id] -->|CASCADE| U
+**Example record:**
+```json
+{
+  "id": 201,
+  "user_id": 4,
+  "scan_type": "url",
+  "input_data": "http://paypa1-secure.xyz/login",
+  "prediction": "scam",
+  "confidence": 0.96,
+  "reasoning": ["Possible typosquatting detected for: paypal.com", "Uses insecure HTTP protocol"],
+  "created_at": "2026-05-01T14:30:00+05:30"
+}
 ```
 
-| Child Table | Column | Parent Table | Column | On Delete |
-|:---|:---|:---|:---|:---|
-| `scan_records` | `user_id` | `users` | `id` | **CASCADE** — User deletion removes scan history |
-| `scam_keywords` | `added_by` | `users` | `id` | **SET NULL** — Keywords persist after admin deletion |
-| `threat_patterns` | `added_by` | `users` | `id` | **SET NULL** — Patterns persist after admin deletion |
-| `scam_reports` | `user_id` | `users` | `id` | **SET NULL** — Reports persist after user deletion |
-| `api_keys` | `user_id` | `users` | `id` | **CASCADE** — User deletion revokes all their API keys |
+---
 
-**Rationale:** Detection configuration (keywords, patterns) and community data (reports) use SET NULL to preserve institutional knowledge even when the contributing admin leaves. User-personal data (scan history, API keys) uses CASCADE for clean deletion.
+### `scam_keywords`
+
+Legacy keyword store, pre-dating the `threat_patterns` table. Keywords here are loaded by the PatternService as `type: "keyword"` entries with `desc: "Legacy Scam Keyword"`.
+
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `keyword` | String(100) | Unique, Index | — | Case-insensitive match at runtime |
+| `weight` | Float | — | `0.1` | Impact on risk score (`0.0`–`1.0`) |
+| `added_by` | Integer | FK(`users.id`), Nullable | — | Admin who added it |
+| `created_at` | DateTime(tz) | — | `func.now()` | |
+
+**Initial keywords (from `config.py` — loaded as fallback if table is empty):**
+
+High-risk (direct threat):
+- `registration fee`, `security deposit`, `processing fee`
+- `pay for internship`, `urgent payment`, `bank transfer`
+- `send money`, `crypto payment`
+- Roman Urdu: `fees jama`, `jama karwaein`, `paise bhejein`, `advans`, `security jama`
+
+Medium-risk (suspicious indicators):
+- `whatsapp`, `telegram`, `limited seats`, `selected`, `immediate joining`
+- `congratulations`, `mubarak ho`, `inam mila`, `select ho gaye`, `jeeti hai`
+- `inbox aayein`, `jaldi karein`
+
+Context-only (reduced weight when seen alone):
+- `internship`, `job`, `offer`, `scholarship`, `recruitment`, `career`, `hiring`, `student`, `naukri`, `mulazmat`
 
 ---
 
-## 5. Indexing Strategy
+### `threat_patterns`
 
-| Table | Indexed Columns | Index Type | Purpose |
-|:---|:---|:---|:---|
-| `users` | `id` | PRIMARY | Row lookups |
-| `users` | `username` | UNIQUE | Login query: `WHERE username = ?` |
-| `users` | `email` | UNIQUE | Registration duplicate check |
-| `scan_records` | `id` | PRIMARY | Row lookups |
-| `scan_records` | `user_id` | B-TREE | History query: `WHERE user_id = ?` |
-| `scam_keywords` | `keyword` | UNIQUE | Duplicate prevention, lookup |
-| `threat_patterns` | `pattern_type` | B-TREE | Type-filtered queries in Pattern Engine |
-| `threat_patterns` | `value` | UNIQUE | Duplicate prevention |
-| `verified_providers` | `name` | B-TREE | Trust verification lookups |
-| `scam_reports` | `company_name` | B-TREE | Search and grouping |
-| `api_keys` | `key_hash` | UNIQUE | API authentication: `WHERE key_hash = ?` |
-| `api_keys` | `user_id` | B-TREE | User's key management: `WHERE user_id = ?` |
+The primary dynamic rule store. Supports four pattern types: `regex`, `keyword`, `tld`, `domain`. Loaded into in-memory cache by `PatternService` on first use and refreshed on every admin add/edit.
 
----
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `pattern_type` | String(20) | Index | — | `"regex"`, `"keyword"`, `"tld"`, `"domain"` |
+| `value` | String(500) | Unique, Index | — | The rule value |
+| `risk_score` | Float | — | `0.2` | Risk contribution (`0.0`–`1.0`) |
+| `description` | String(255) | Nullable | — | Human-readable explanation |
+| `is_active` | Boolean | — | `True` | Inactive patterns are not loaded |
+| `added_by` | Integer | FK(`users.id`), Nullable | — | |
+| `created_at` | DateTime(tz) | — | `func.now()` | |
 
-## 6. Data Type Rationale
+**Pattern types explained:**
+| Type | Matching Method | Used By |
+|---|---|---|
+| `keyword` | Case-insensitive substring match | Text + URL analysis |
+| `regex` | `re.search(pattern, text, re.IGNORECASE)` | Text analysis |
+| `tld` | `domain.endswith(tld_value)` | URL analysis |
+| `domain` | `domain_value in domain` | URL analysis |
 
-| Decision | Type Chosen | Why Not Alternative |
-|:---|:---|:---|
-| Passwords | `VARCHAR(255)` | PBKDF2-SHA256 hashes are variable length (87-130 chars). 255 provides future-proof headroom. |
-| Badges | `JSON` | Avoids junction table overhead for a simple, append-only string array. |
-| Reasoning | `JSON` | Variable-length list of strings. Relational normalization would require a `scan_reasoning` table with heavy write amplification. |
-| Examples | `JSON` | Same rationale as reasoning — read-heavy, variable-length string arrays. |
-| Confidence | `FLOAT` | 32-bit precision is sufficient for percentage values (0.0 - 1.0). `DOUBLE` would be wasteful. |
-| Input Data | `TEXT` | Messages can be up to 3000 characters. `VARCHAR(255)` would truncate. |
-| Evidence Path | `VARCHAR(500)` | File paths stored as references. Actual files live on disk in `uploads/reports/`. |
+**Initial TLDs (from `config.py`):**
+`.xyz`, `.top`, `.pw`, `.zip`, `.click`, `.link`, `.bid`, `.loan`
+
+**Admin hot-reload:** Adding a pattern via `POST /api/v1/admin/patterns` immediately calls `pattern_service.load_from_db()` — changes take effect on the next scan with no restart.
 
 ---
 
-## 7. Seed Data Reference
+### `awareness_content`
 
-The `setup_xampp.sql` script populates the following initial data:
+Stores educational content for the Learning Academy. Content is organized into learning paths with ordering.
 
-### 7.1. Default Admin Account
-| Field | Value |
-|:---|:---|
-| Username | `admin` |
-| Email | `admin@cybershield.edu` |
-| Password | `admin123` (hashed with PBKDF2-SHA256) |
-| Role | `admin` |
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `category` | String(50) | — | — | e.g., `"phishing"`, `"internship-scams"` |
+| `title` | String(255) | — | — | Module title |
+| `description` | Text | — | — | Full content body |
+| `difficulty` | String(20) | — | — | e.g., `"beginner"`, `"intermediate"` |
+| `link` | String(500) | — | — | External resource URL |
+| `examples` | JSON | — | — | Example scam scenarios |
+| `path_id` | String(50) | Nullable | — | Learning path identifier e.g., `"phishing-101"` |
+| `path_order` | Integer | — | `0` | Order within the learning path |
+| `created_at` | DateTime(tz) | — | `func.now()` | |
 
-### 7.2. Awareness Content (4 entries)
-| Category | Title | Path ID | Difficulty |
-|:---|:---|:---|:---|
-| Threat Type | Internship Scams | `scam-0` | Beginner |
-| Threat Type | Scholarship/Grant Scams | `scam-1` | Beginner |
-| Pro Tip | Verify Before You Pay | `tip-0` | Easy |
-| Pro Tip | Check the Email Domain | `tip-1` | Easy |
-
-### 7.3. Verified Providers (3 entries)
-| Name | Category | Official URL |
-|:---|:---|:---|
-| Google Student Careers | Internship | buildyourfuture.withgoogle.com |
-| Chegg Scholarships | Scholarship | chegg.com/scholarships |
-| Microsoft Internship Program | Internship | careers.microsoft.com/students |
-
-### 7.4. Quiz Questions (2 entries)
-| Scenario | Is Scam | Difficulty |
-|:---|:---|:---|
-| WhatsApp HR Manager offering Google internship for ₹500 | Yes | Beginner |
-| PDF offer letter with no signature from @gmail.com | Yes | Beginner |
-
-### 7.5. Scam Keywords (8 entries)
-`registration fee`, `security deposit`, `processing charge`, `urgent payment`, `gift card payment`, `exclusive offer`, `guaranteed scholarship`, `no interview required`
+**Admin update:** `POST /api/v1/admin/resources` overwrites `data/educational_resources.json` and reloads `awareness_service.content`.
 
 ---
 
-## 8. ORM Mapping
+### `verified_providers`
 
-### 8.1. SQLAlchemy Model ↔ Database Table Mapping
+The "Shield of Trust" whitelist. Domains matched here receive a **-0.50 risk score offset** — the strongest trust signal in the system.
 
-| Python Class | Table Name | File |
-|:---|:---|:---|
-| `User` | `users` | `models/schema.py:5` |
-| `ScanRecord` | `scan_records` | `models/schema.py:18` |
-| `ScamKeyword` | `scam_keywords` | `models/schema.py:30` |
-| `ThreatPattern` | `threat_patterns` | `models/schema.py:39` |
-| `AwarenessContent` | `awareness_content` | `models/schema.py:56` |
-| `VerifiedProvider` | `verified_providers` | `models/schema.py:70` |
-| `QuizQuestion` | `quiz_questions` | `models/schema.py:79` |
-| `ScamReport` | `scam_reports` | `models/schema.py:90` |
-| `ApiKey` | `api_keys` | `models/schema.py:102` |
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `name` | String(255) | Index | — | Institution name |
+| `official_url` | String(500) | — | — | Official domain |
+| `category` | String(50) | — | — | `"internship"`, `"scholarship"`, `"academic"`, etc. |
+| `security_tips` | Text | Nullable | — | Tips shown when trust is verified |
+| `verified_at` | DateTime(tz) | — | `func.now()` | |
 
-### 8.2. Session Management Pattern
+**Trust service lookup logic:**
+1. Exact domain match in `official_url`
+2. Root domain match (strips subdomains)
+3. If matched: returns `{name, category, security_tips, verified_at}`
+4. URL detector applies **-0.50** to risk score on match
 
+**Hardcoded brand watchlist (in `trust_service.py`, separate from DB):**
+Amazon, PayPal, Google, Microsoft, Apple, Netflix, Facebook, Instagram, WhatsApp, Binance, Coinbase, MetaMask, eBay, FedEx, UPS, DHL, Stripe, and generic `.edu`/`.ac.in`/`.edu.pk` domains.
+
+---
+
+### `quiz_questions`
+
+Forensic quiz library used by the "Spot the Scam" module.
+
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `content` | Text | — | — | Question text or image URL |
+| `content_type` | String(20) | — | — | `"text"` or `"image"` |
+| `is_scam` | Boolean | — | — | Correct answer |
+| `explanation` | Text | — | — | Shown after answering |
+| `difficulty` | String(20) | — | — | `"easy"`, `"medium"`, `"hard"` |
+| `created_at` | DateTime(tz) | — | `func.now()` | |
+
+**Population:** Seed with `backend/scripts/seed_quiz.py`. The API returns a **random sample** of `limit` questions (default 5) per request.
+
+---
+
+### `scam_reports`
+
+Community-submitted scam reports with optional file evidence.
+
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `company_name` | String(255) | Index | — | Reported entity name |
+| `description` | Text | — | — | Scam description |
+| `evidence_path` | String(500) | Nullable | — | Relative path to uploaded file |
+| `is_anonymous` | Boolean | — | `True` | Hides user identity |
+| `user_id` | Integer | FK(`users.id`), Nullable | — | Optional link to registered user |
+| `status` | String(20) | — | `"pending"` | `"pending"`, `"reviewed"`, `"resolved"` |
+| `created_at` | DateTime(tz) | — | `func.now()` | |
+
+**File storage:** Evidence files are saved to `uploads/reports/` with filename format `YYYYMMDD_HHMMSS_originalname`. If DB save fails after upload, the file is automatically deleted.
+
+**Status lifecycle:** Reports start as `"pending"`. Status update endpoints are not yet implemented — this is a known gap.
+
+---
+
+### `system_config`
+
+Dynamic runtime configuration store. Allows admins to adjust detection thresholds and other system settings without restarting the server.
+
+| Column | Type | Constraints | Default | Notes |
+|---|---|---|---|---|
+| `id` | Integer | PK, Index | Auto | |
+| `key` | String(50) | Unique, Index | — | Config key identifier |
+| `value` | JSON | — | — | Config value (number, string, or object) |
+| `description` | String(255) | Nullable | — | Human-readable description |
+| `updated_at` | DateTime(tz) | `onupdate=func.now()` | — | Auto-updated on change |
+
+**Known config keys:**
+
+| Key | Value Format | Default | Description |
+|---|---|---|---|
+| `analysis_thresholds` | `{"low": float, "high": float}` | `{"low": 0.3, "high": 0.7}` | Tri-state prediction cutoffs |
+
+**How thresholds work:**
+- Score `>= high` → `"scam"`
+- Score `>= low` and `< high` → `"suspicious"`
+- Score `< low` → `"safe"`
+
+All four detection services (text, URL, PDF, image) query these thresholds at runtime via `config_helper.get_thresholds()`. Changes via the Admin API take effect immediately.
+
+---
+
+## Entity-Relationship Summary
+
+```
+users (1) ──────────────── (N) scan_records
+users (1) ──────────────── (N) scam_keywords      [added_by]
+users (1) ──────────────── (N) threat_patterns     [added_by]
+users (1) ──────────────── (N) scam_reports        [user_id, optional]
+
+awareness_content ────────── (standalone)
+verified_providers ─────────── (standalone)
+quiz_questions ─────────────── (standalone)
+system_config ──────────────── (standalone)
+```
+
+---
+
+## Schema Initialization
+
+Tables are created automatically on startup via:
 ```python
-# database.py — Session-per-request with guaranteed cleanup
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db       # Provide session to route handler via DI
-    finally:
-        db.close()     # Guaranteed cleanup even if exception occurs
-
-# Usage in route handlers:
-@router.get("/history")
-async def get_history(db: Session = Depends(get_db)):
-    records = db.query(ScanRecord).filter(...).all()
+Base.metadata.create_all(bind=engine)  # in main.py
 ```
 
----
-
-## 9. Migration Notes
-
-### 9.1. Table Creation Strategy
-- **SQL Script Tables (8):** Created by `setup_xampp.sql` during initial setup
-- **ORM-Managed Tables (1):** `threat_patterns` is created by SQLAlchemy's `create_all()` on backend startup
-- **Discrepancy:** The `scam_keywords` SQL definition lacks the `weight` column that exists in the ORM model. SQLAlchemy handles this gracefully by ignoring the missing column on read and using the default value.
-
-### 9.2. Adding New Tables
-To add a new table:
-1. Define the SQLAlchemy model in `models/schema.py`
-2. The table will be auto-created on next backend startup via `Base.metadata.create_all()`
-3. Optionally add an `INSERT IGNORE INTO` block in `setup_xampp.sql` for seed data
-
-### 9.3. Schema Evolution
-For production deployments, Alembic (included in `requirements.txt`) should be used for managed migrations:
+For production migrations, use Alembic:
 ```bash
-alembic init alembic           # Initialize migration framework
-alembic revision --autogenerate -m "Add new column"  # Generate migration
-alembic upgrade head           # Apply migration
+cd backend
+alembic revision --autogenerate -m "description"
+alembic upgrade head
 ```
+
+The SQL setup script for XAMPP is at `backend/setup_xampp.sql`.
 
 ---
 
-*This schema documentation reflects the current production state as of April 2026. For changes, update `backend/app/models/schema.py` and regenerate this document.*
+*Document reflects `backend/app/models/schema.py` in CyberShield-EDU v2.0.0.*
